@@ -58,12 +58,10 @@ export function initInteractive() {
     catMoveTimeout = setTimeout(() => {
       cat.style.backgroundImage = `url(${staticImage})`;
       cat.style.transform = `translate(-50%, -50%) rotate(${angleDegrees}deg) scaleX(-1)`; 
-    }, 200);
+    }, 1500); // 1.5s to match the running CSS transition
   }
 
-  document.addEventListener('mousemove', handleCatMove);
-  document.addEventListener('touchmove', handleCatMove, { passive: true });
-  document.addEventListener('touchstart', handleCatMove, { passive: true });
+  document.addEventListener('click', handleCatMove);
 
   // Theme Toggle
   const toggleButton = document.querySelector("#color-mode");
