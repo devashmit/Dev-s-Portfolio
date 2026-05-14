@@ -1,59 +1,16 @@
-# Ashmit Dev | Portfolio
+# React + Vite
 
-Welcome to the personal portfolio repository of **Ashmit Dev**, a Full Stack Developer & UI Engineer based in Nepal.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-This repository contains the source code for my interactive, high-performance web portfolio built to showcase my projects, technical stack, and design philosophy.
+Currently, two official plugins are available:
 
-## ✨ Features
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-- **Modern Architecture**: Built on Vite for lightning-fast bundling and Hot Module Replacement.
-- **Bento Grid Design**: A sleek, premium, and highly responsive multi-column layout.
-- **Interactive Experience**: 
-  - Dynamic ripple effects on click.
-  - A responsive cat companion that follows your pointer natively on both desktop and mobile.
-  - Smooth scrolling powered by Lenis.
-- **Dark/Light Mode**: Toggleable themes that persist across sessions.
-- **Optimized Assets**: Handled efficiently to ensure maximum performance across all devices.
+## React Compiler
 
-## 🛠️ Tech Stack
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- **Core**: Vanilla HTML, CSS, JavaScript (ES Modules)
-- **Tooling**: Vite
-- **Animations**: GSAP (GreenSock Animation Platform) & ScrollTrigger
-- **Scrolling**: Lenis
+## Expanding the ESLint configuration
 
-## 🚀 Running Locally
-
-To run this project locally, make sure you have Node.js installed, then follow these steps:
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/devashmit/Dev-s-Portfolio.git
-   cd Dev-s-Portfolio
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-4. **Build for production:**
-   ```bash
-   npm run build
-   ```
-
-## 📬 Contact
-
-I am currently available for new opportunities. Feel free to reach out to me!
-
-- **Email**: devvv0264@gmail.com
-- **LinkedIn**: [Ashmit Dev](https://www.linkedin.com/in/abhishek-dev-5b5148357)
-- **WhatsApp**: [Message Me](https://wa.me/message/6VRRX2XZZ4UFO1)
-
----
-*Built with ❤️ and TypeScript in Nepal.*
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
