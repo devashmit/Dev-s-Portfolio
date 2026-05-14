@@ -1,20 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { initHeroField } from '../three/hero-field';
+import TextReveal from './TextReveal';
 
 export default function Hero() {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
-    let field;
-    if (!isTouchDevice && canvasRef.current) {
-      field = initHeroField(canvasRef.current);
-    }
-    return () => {
-      if (field) field.dispose();
-    };
-  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -34,7 +22,6 @@ export default function Hero() {
 
   return (
     <section id="hero" aria-label="Introduction">
-      <canvas id="hero-canvas" ref={canvasRef} aria-hidden="true"></canvas>
       <motion.div 
         className="hero-content"
         variants={containerVariants}
@@ -46,8 +33,8 @@ export default function Hero() {
         </motion.div>
         
         <div className="hero-name-block">
-          <motion.h1 className="hero-name" variants={itemVariants}>Ashmit Dev</motion.h1>
-          <motion.h2 className="hero-role" variants={itemVariants}>Full Stack Developer & UI Engineer</motion.h2>
+          <TextReveal text="Ashmit Dev" className="hero-name" tag="h1" delay={2.3} />
+          <TextReveal text="Full Stack Developer & UI Engineer" className="hero-role" tag="h2" delay={2.5} />
         </div>
         
         <div className="hero-footer-row">
@@ -56,10 +43,10 @@ export default function Hero() {
           </motion.p>
           
           <motion.div className="hero-badges" variants={itemVariants}>
-            <span className="badge">React</span>
-            <span className="badge">TypeScript</span>
-            <span className="badge">Node.js</span>
-            <span className="badge">Java</span>
+            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">React</motion.span>
+            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">TypeScript</motion.span>
+            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">Node.js</motion.span>
+            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">Java</motion.span>
           </motion.div>
           
           <motion.div className="hero-cta" variants={itemVariants}>

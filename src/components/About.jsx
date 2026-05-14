@@ -46,21 +46,21 @@ export default function About() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        <motion.article variants={itemVariants} style={{ gridColumn: 'span 8' }}>
+        <motion.article variants={itemVariants} className="about-col-8">
           <BentoCard className="about-card about-card--large">
             <h3 className="about-card-title">Who I Am</h3>
             <p className="about-card-text">Final year BSc Hons in Computer Science student at Itahari International College (London Metropolitan University) in Nepal. I study systems during the day and build them at night.</p>
           </BentoCard>
         </motion.article>
         
-        <motion.article variants={itemVariants} style={{ gridColumn: 'span 4' }}>
+        <motion.article variants={itemVariants} className="about-col-4">
           <BentoCard className="about-card">
             <h3 className="about-card-title">What I Do</h3>
             <p className="about-card-text">I write TypeScript and build functional web applications. My focus is on creating scalable, responsive digital products with clean architecture and engaging user interfaces.</p>
           </BentoCard>
         </motion.article>
 
-        <motion.article variants={itemVariants} style={{ gridColumn: 'span 4' }}>
+        <motion.article variants={itemVariants} className="about-col-4">
           <BentoCard className="about-card">
             <h3 className="about-card-title">Philosophy</h3>
             <p className="about-card-text">Code is honest. I believe in continuous learning and iteration. Most things we build start slightly beyond our grasp, and the development process is the journey to master them.</p>

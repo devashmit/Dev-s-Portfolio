@@ -1,74 +1,87 @@
-import { motion } from 'framer-motion';
-import BentoCard from './BentoCard';
-import { stackData } from '../data/content';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import TextReveal from './TextReveal';
+import { stackItems, floatingIcons } from '../data/content';
 
 export default function Stack() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, -150]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.05
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  };
-
-  const textVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7 } }
+    hidden: { opacity: 0, scale: 0.8, y: 20 },
+    visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 12 } }
   };
 
   return (
-    <section id="stack" aria-label="Technical skills">
-      <div className="section-intro">
+    <section id="stack" aria-label="Technical skills" ref={containerRef} style={{ position: 'relative' }}>
+      
+      {/* Floating Background Icons */}
+      <div className="floating-icons-container">
+        {floatingIcons.map((icon, idx) => (
+          <motion.img 
+            key={idx}
+            src={icon} 
+            className={`floating-icon float-${idx}`}
+            style={{ y: idx % 2 === 0 ? y1 : idx % 3 === 0 ? y2 : y3 }}
+            alt=""
+            aria-hidden="true"
+          />
+        ))}
+      </div>
+
+      <div className="section-intro relative-z">
         <motion.p 
           className="section-eyebrow" 
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={textVariants}
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
         >
           02 / THE ARSENAL
         </motion.p>
-        <motion.h2 
-          className="section-title"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={textVariants}
-        >
-          Tech Stack
-        </motion.h2>
+        <TextReveal text="Tech Stack" className="section-title" tag="h2" delay={0.1} />
       </div>
 
       <motion.div 
-        className="bento-grid stack-grid"
+        className="stack-icon-grid relative-z"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        {stackData.map((category, idx) => (
-          <motion.div key={idx} variants={itemVariants} style={{ gridColumn: 'span 6' }}>
-            <BentoCard className="stack-card">
-              <div className="stack-category">
-                <div dangerouslySetInnerHTML={{ __html: category.icon }} />
-                {category.category}
-              </div>
-              <div className="stack-items">
-                {category.items.map((item, i) => (
-                  <div key={i} className="stack-item-card">
-                    <span className="stack-item-name">{item.name}</span>
-                    <span className="stack-item-level">{item.level}</span>
-                  </div>
-                ))}
-              </div>
-            </BentoCard>
+        {stackItems.map((item, idx) => (
+          <motion.div 
+            key={idx} 
+            variants={itemVariants}
+            className="stack-icon-card"
+            style={{ '--brand-color': item.color }}
+            whileHover={{ y: -5 }}
+          >
+            <div className="stack-icon-glow"></div>
+            <div className="stack-icon-inner">
+              <img src={item.icon} alt={item.name} className={item.invertInDark ? 'invert-in-dark' : ''} />
+            </div>
+            <span className="stack-icon-name">{item.name}</span>
           </motion.div>
         ))}
       </motion.div>
 
       {/* Infinite Marquee using Framer Motion */}
-      <div className="marquee-container">
+      <div className="marquee-container relative-z">
         <motion.div 
           className="marquee-track"
           animate={{ x: ["0%", "-50%"] }}

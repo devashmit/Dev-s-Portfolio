@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import BentoCard from './BentoCard';
 import Magnetic from './Magnetic';
+import TextReveal from './TextReveal';
 
 export default function Projects() {
   const containerVariants = {
@@ -32,12 +33,7 @@ export default function Projects() {
         >
           01 / SELECTED WORK
         </motion.p>
-        <motion.h2 
-          className="section-title"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={textVariants}
-        >
-          Featured Projects
-        </motion.h2>
+        <TextReveal text="Featured Projects" className="section-title" tag="h2" delay={0.2} />
       </div>
 
       <motion.div 
@@ -47,7 +43,7 @@ export default function Projects() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        <motion.article variants={itemVariants} style={{ gridColumn: 'span 6' }}>
+        <motion.article variants={itemVariants} className="project-col-6">
           <BentoCard className="project-card">
             <div className="project-card-inner">
               <div className="project-header">
@@ -67,7 +63,7 @@ export default function Projects() {
           </BentoCard>
         </motion.article>
 
-        <motion.article variants={itemVariants} style={{ gridColumn: 'span 6' }}>
+        <motion.article variants={itemVariants} className="project-col-6">
           <BentoCard className="project-card">
             <div className="project-card-inner">
               <div className="project-header">
@@ -87,7 +83,7 @@ export default function Projects() {
           </BentoCard>
         </motion.article>
 
-        <motion.article variants={itemVariants} style={{ gridColumn: 'span 6' }}>
+        <motion.article variants={itemVariants} className="project-col-6">
           <BentoCard className="project-card">
             <div className="project-card-inner">
               <div className="project-header">
@@ -107,7 +103,7 @@ export default function Projects() {
           </BentoCard>
         </motion.article>
 
-        <motion.article variants={itemVariants} style={{ gridColumn: 'span 6' }} className="project-card--featured-wrapper">
+        <motion.article variants={itemVariants} className="project-col-12 project-card--featured-wrapper">
           <BentoCard className="project-card project-card--featured">
             <div className="project-card-inner">
               <div className="project-header">

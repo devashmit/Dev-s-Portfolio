@@ -10,6 +10,7 @@ import Preloader from './components/Preloader'
 import CustomCursor from './components/CustomCursor'
 import CatCompanion from './components/CatCompanion'
 import RippleEffect from './components/RippleEffect'
+import FloatingIcons from './components/FloatingIcons'
 import './App.css'
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
 
   return (
     <>
+      <FloatingIcons />
       <a className="skip-link" href="#main">Skip to main content</a>
       <Preloader />
       <CustomCursor />
@@ -56,13 +58,48 @@ function App() {
       <CatCompanion />
       
       <div id="color-mode">
-        <div id="toggle-button" onClick={() => {
-          document.documentElement.classList.toggle('light-mode');
-          if (document.documentElement.classList.contains('light-mode')) {
-            localStorage.setItem('color-mode', 'light-mode');
-          } else {
-            localStorage.setItem('color-mode', 'dark-mode');
+        <div id="toggle-button" onClick={(e) => {
+          const toggleTheme = () => {
+            document.documentElement.classList.toggle('light-mode');
+            if (document.documentElement.classList.contains('light-mode')) {
+              localStorage.setItem('color-mode', 'light-mode');
+            } else {
+              localStorage.setItem('color-mode', 'dark-mode');
+            }
+          };
+
+          if (!document.startViewTransition) {
+            toggleTheme();
+            return;
           }
+
+          const x = e.clientX;
+          const y = e.clientY;
+          const endRadius = Math.hypot(
+            Math.max(x, window.innerWidth - x),
+            Math.max(y, window.innerHeight - y)
+          );
+
+          const transition = document.startViewTransition(() => {
+            toggleTheme();
+          });
+
+          transition.ready.then(() => {
+            const isLight = document.documentElement.classList.contains('light-mode');
+            document.documentElement.animate(
+              {
+                clipPath: [
+                  `circle(0px at ${x}px ${y}px)`,
+                  `circle(${endRadius}px at ${x}px ${y}px)`
+                ]
+              },
+              {
+                duration: 500,
+                easing: 'ease-in-out',
+                pseudoElement: isLight ? '::view-transition-new(root)' : '::view-transition-old(root)'
+              }
+            );
+          });
         }}></div>
       </div>
     </>

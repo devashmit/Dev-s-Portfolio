@@ -33,13 +33,14 @@ export default function CatCompanion() {
       const dx = clientX - catX;
       const dy = clientY - catY;
       
-      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
-        catRotation = Math.atan2(dy, dx) * (180 / Math.PI);
+      // Flip based on direction
+      if (Math.abs(dx) > 5) {
         catScaleX = dx > 0 ? -1 : 1; 
-        
+      }
+
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
         cat.style.backgroundImage = `url(${runningGif})`;
         
-        // Target positions updated
         lastX = clientX;
         lastY = clientY;
       }
@@ -49,7 +50,7 @@ export default function CatCompanion() {
         if (!isActing) {
           cat.style.backgroundImage = `url(${staticImage})`;
         }
-      }, 300);
+      }, 150); // Faster return to static
     }
 
     const onMouseMove = (e) => updateCat(e.clientX, e.clientY);
@@ -63,7 +64,6 @@ export default function CatCompanion() {
       
       cat.style.backgroundImage = `url(${actionImage})`;
       
-      // Simple jump animation
       const startY = catY;
       let start = null;
       
@@ -71,11 +71,11 @@ export default function CatCompanion() {
         if (!start) start = timestamp;
         const progress = timestamp - start;
         
-        if (progress < 200) {
-          catScale = 1.4;
-          catY = startY - 20;
+        if (progress < 250) {
+          catScale = 1.3;
+          catY = startY - 30;
           requestAnimationFrame(animateJump);
-        } else if (progress < 400) {
+        } else if (progress < 500) {
           catScale = 1;
           catY = startY;
           requestAnimationFrame(animateJump);
@@ -91,10 +91,12 @@ export default function CatCompanion() {
     let animationFrameId;
     const render = () => {
       if (!isActing) {
-        catX += (lastX - catX) * 0.05;
-        catY += (lastY - catY) * 0.05;
+        // Slightly faster following
+        catX += (lastX - catX) * 0.08;
+        catY += (lastY - catY) * 0.08;
       }
-      cat.style.transform = `translate(-50%, -50%) translate(${catX}px, ${catY}px) rotate(${catRotation}deg) scale(${catScaleX * catScale}, ${catScale})`;
+      // Removed catRotation from transform
+      cat.style.transform = `translate(-50%, -50%) translate(${catX}px, ${catY}px) scale(${catScaleX * catScale}, ${catScale})`;
       animationFrameId = requestAnimationFrame(render);
     };
     render();
