@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TextReveal from './TextReveal';
+import TextScramble from './TextScramble';
+import Magnetic from './Magnetic';
+import RoleCycler from './RoleCycler';
 
 export default function Hero() {
 
@@ -33,8 +36,12 @@ export default function Hero() {
         </motion.div>
         
         <div className="hero-name-block">
-          <TextReveal text="Ashmit Dev" className="hero-name" tag="h1" delay={2.3} />
-          <TextReveal text="Full Stack Developer & UI Engineer" className="hero-role" tag="h2" delay={2.5} />
+          <motion.h1 className="hero-name" variants={itemVariants}>
+            <TextScramble text="Ashmit Dev" delay={2.3} />
+          </motion.h1>
+          <motion.h2 className="hero-role" variants={itemVariants} style={{ display: 'flex', gap: '0.5ch' }}>
+            <RoleCycler />
+          </motion.h2>
         </div>
         
         <div className="hero-footer-row">
@@ -43,15 +50,27 @@ export default function Hero() {
           </motion.p>
           
           <motion.div className="hero-badges" variants={itemVariants}>
-            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">React</motion.span>
-            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">TypeScript</motion.span>
-            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">Node.js</motion.span>
-            <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">Java</motion.span>
+            <Magnetic>
+              <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">React</motion.span>
+            </Magnetic>
+            <Magnetic>
+              <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">TypeScript</motion.span>
+            </Magnetic>
+            <Magnetic>
+              <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">Node.js</motion.span>
+            </Magnetic>
+            <Magnetic>
+              <motion.span drag dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.2} whileDrag={{ scale: 1.1, zIndex: 10, cursor: 'grabbing' }} whileHover={{ scale: 1.05 }} className="badge">Java</motion.span>
+            </Magnetic>
           </motion.div>
           
           <motion.div className="hero-cta" variants={itemVariants}>
-            <a className="btn btn-primary" href="#projects">View Work</a>
-            <a className="btn btn-ghost" href="https://github.com/devashmit" target="_blank" rel="noopener noreferrer">GitHub &#8594;</a>
+            <Magnetic>
+              <a className="btn btn-primary" href="#projects">View Work</a>
+            </Magnetic>
+            <Magnetic>
+              <a className="btn btn-ghost" href="https://github.com/devashmit" target="_blank" rel="noopener noreferrer">GitHub &#8594;</a>
+            </Magnetic>
           </motion.div>
         </div>
       </motion.div>

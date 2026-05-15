@@ -11,6 +11,7 @@ import CustomCursor from './components/CustomCursor'
 import CatCompanion from './components/CatCompanion'
 import RippleEffect from './components/RippleEffect'
 import FloatingIcons from './components/FloatingIcons'
+import PageSpotlight from './components/PageSpotlight'
 import './App.css'
 
 function App() {
@@ -35,6 +36,8 @@ function App() {
 
   return (
     <>
+      <PageSpotlight />
+      <div id="bg-layer"></div>
       <FloatingIcons />
       <a className="skip-link" href="#main">Skip to main content</a>
       <Preloader />

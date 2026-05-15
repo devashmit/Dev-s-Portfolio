@@ -35,21 +35,23 @@ export default function FloatingIcons() {
     <Particles
       id="tsparticles"
       options={{
-        fullScreen: { enable: true, zIndex: -1 },
+        fullScreen: { enable: true, zIndex: -1 }, // Now safe with transparent body
         fpsLimit: 60,
         interactivity: {
             events: {
                 onHover: {
                     enable: true,
-                    mode: "repulse", // Back to repulse for more interaction
+                    mode: "bubble", // Focus on bubble for the 'blink' effect
                 },
                 resize: true,
             },
             modes: {
-                repulse: {
-                    distance: 150,
-                    duration: 0.4,
-                },
+                bubble: {
+                    distance: 100,
+                    duration: 0.2,
+                    size: 60,      // Much larger for obvious 'pop'
+                    opacity: 1,    // Full brightness
+                }
             },
         },
         particles: {
@@ -60,7 +62,7 @@ export default function FloatingIcons() {
                     default: "out",
                 },
                 random: true,
-                speed: 1.5, // Medium pace
+                speed: 3, // Faster medium pace
                 straight: false,
             },
             number: {
@@ -68,15 +70,15 @@ export default function FloatingIcons() {
                     enable: true,
                     area: 800,
                 },
-                value: 20, // Slightly more icons for texture
+                value: 80, // High density for visual texture
             },
             opacity: {
-                value: 0.4, // Slightly more visible for 'glow' to show through
+                value: { min: 0.05, max: 0.2 }, // Very subtle base
                 random: true,
                 anim: {
                     enable: true,
-                    speed: 0.5,
-                    opacity_min: 0.1,
+                    speed: 2,
+                    opacity_min: 0.05,
                     sync: false
                 }
             },
@@ -87,7 +89,7 @@ export default function FloatingIcons() {
                 },
             },
             size: {
-                value: { min: 20, max: 40 },
+                value: { min: 8, max: 18 }, // Smaller base size
                 random: true,
             },
             rotate: {
@@ -95,14 +97,14 @@ export default function FloatingIcons() {
                 direction: "random",
                 animation: {
                     enable: true,
-                    speed: 5,
+                    speed: 8, // Faster rotation
                     sync: false
                 }
             },
             shadow: {
                 enable: true,
                 color: "#ffffff",
-                blur: 15,
+                blur: 20, // Strong glow
                 offset: {
                     x: 0,
                     y: 0
