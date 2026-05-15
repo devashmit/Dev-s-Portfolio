@@ -57,6 +57,9 @@ export default function CatCompanion() {
     const onTouchMove = (e) => {
       if (e.touches.length > 0) updateCat(e.touches[0].clientX, e.touches[0].clientY);
     };
+    const onTouchStart = (e) => {
+      if (e.touches.length > 0) updateCat(e.touches[0].clientX, e.touches[0].clientY);
+    };
 
     const onClick = () => {
       if (isActing) return;
@@ -88,14 +91,22 @@ export default function CatCompanion() {
       requestAnimationFrame(animateJump);
     };
 
+    // On mobile, scrolling is the primary interaction. 
+    // Let's make the cat react to scrolling.
+    let lastScrollY = window.scrollY;
+    const onScroll = () => {
+      const scrollDiff = window.scrollY - lastScrollY;
+      lastY += scrollDiff * 0.1; // Cat drifts slightly with scroll
+      lastScrollY = window.scrollY;
+    };
+
     let animationFrameId;
     const render = () => {
       if (!isActing) {
-        // Slower, smoother following (0.04 instead of 0.08)
+        // Slower, smoother following
         catX += (lastX - catX) * 0.04;
         catY += (lastY - catY) * 0.04;
       }
-      // Removed catRotation from transform
       cat.style.transform = `translate(-50%, -50%) translate(${catX}px, ${catY}px) scale(${catScaleX * catScale}, ${catScale})`;
       animationFrameId = requestAnimationFrame(render);
     };
@@ -103,12 +114,16 @@ export default function CatCompanion() {
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('touchmove', onTouchMove, { passive: true });
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
     document.addEventListener('click', onClick);
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('touchmove', onTouchMove);
-      document.addEventListener('click', onClick);
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('click', onClick);
+      window.removeEventListener('scroll', onScroll);
       cancelAnimationFrame(animationFrameId);
       clearTimeout(moveTimeout);
     };
