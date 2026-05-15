@@ -91,9 +91,9 @@ export default function CatCompanion() {
     let animationFrameId;
     const render = () => {
       if (!isActing) {
-        // Slightly faster following
-        catX += (lastX - catX) * 0.08;
-        catY += (lastY - catY) * 0.08;
+        // Slower, smoother following (0.04 instead of 0.08)
+        catX += (lastX - catX) * 0.04;
+        catY += (lastY - catY) * 0.04;
       }
       // Removed catRotation from transform
       cat.style.transform = `translate(-50%, -50%) translate(${catX}px, ${catY}px) scale(${catScaleX * catScale}, ${catScale})`;
