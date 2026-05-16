@@ -1,7 +1,8 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import TextReveal from './TextReveal';
 import { stackItems, floatingIcons } from '../data/content';
+import SystemConsole from './SystemConsole';
 
 function StackCard({ item, index }) {
   const cardRef = useRef(null);
@@ -123,24 +124,8 @@ export default function Stack() {
         ))}
       </div>
 
-      {/* Infinite Marquee */}
-      <div className="marquee-container relative-z">
-        <motion.div 
-          className="marquee-track"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{
-            repeat: Infinity,
-            ease: "linear",
-            duration: 30 // Slower, more premium feel
-          }}
-        >
-          {Array(4).fill(null).map((_, i) => (
-            <span key={i}>
-              AVAILABLE FOR FREELANCE • FULL STACK DEVELOPER • UI ENGINEER • 
-            </span>
-          ))}
-        </motion.div>
-      </div>
+      {/* Replacement for Infinite Marquee */}
+      <SystemConsole />
     </section>
   );
 }
