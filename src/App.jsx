@@ -12,6 +12,7 @@ import CatCompanion from './components/CatCompanion'
 import RippleEffect from './components/RippleEffect'
 import FloatingIcons from './components/FloatingIcons'
 import PageSpotlight from './components/PageSpotlight'
+import ScrollProgress from './components/ScrollProgress'
 import './App.css'
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
 
   return (
     <>
+      <ScrollProgress />
       <PageSpotlight />
       <div id="bg-layer"></div>
       <FloatingIcons />

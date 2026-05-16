@@ -9,12 +9,7 @@ export default function CustomCursor() {
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    // Check touch device
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      dot.style.display = 'none';
-      ring.style.display = 'none';
-      return;
-    }
+    // Custom cursor now enabled on all devices to allow cat to follow it
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
@@ -22,7 +17,7 @@ export default function CustomCursor() {
     let ringY = mouseY;
     let isHovering = false;
 
-    const onMouseMove = (e) => {
+    const onPointerMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
       dot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
@@ -32,19 +27,19 @@ export default function CustomCursor() {
       }
     };
 
-    const onMouseLeave = () => {
+    const onPointerLeave = () => {
       dot.classList.add('hidden');
       ring.style.opacity = '0';
     };
 
-    const onMouseEnter = () => {
+    const onPointerEnter = () => {
       dot.classList.remove('hidden');
       ring.style.opacity = '1';
     };
 
-    window.addEventListener('mousemove', onMouseMove);
-    document.documentElement.addEventListener('mouseleave', onMouseLeave);
-    document.documentElement.addEventListener('mouseenter', onMouseEnter);
+    window.addEventListener('pointermove', onPointerMove);
+    document.documentElement.addEventListener('pointerleave', onPointerLeave);
+    document.documentElement.addEventListener('pointerenter', onPointerEnter);
 
     const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .bento-card, .btn');
     
@@ -72,9 +67,9 @@ export default function CustomCursor() {
     render();
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      document.documentElement.removeEventListener('mouseleave', onMouseLeave);
-      document.documentElement.removeEventListener('mouseenter', onMouseEnter);
+      window.removeEventListener('pointermove', onPointerMove);
+      document.documentElement.removeEventListener('pointerleave', onPointerLeave);
+      document.documentElement.removeEventListener('pointerenter', onPointerEnter);
       interactiveElements.forEach(el => {
         el.removeEventListener('mouseenter', handleHoverEnter);
         el.removeEventListener('mouseleave', handleHoverLeave);
