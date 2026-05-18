@@ -583,46 +583,31 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
   to { transform: rotate(360deg); }
 }
 
-.ripple{
-  width: 25px;
-  height: 25px;
+.ripple {
   position: fixed;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 9996;
-}
-
-.ripple::before, .ripple::after{
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  filter: blur(1px);
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--accent);
   border-radius: 50%;
-  transform: translate(-50%,-50%);
-  box-shadow: 7px 7px 14px var(--accent) ,-7px -7px 14px #fff
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  background: transparent;
+  animation: clickPulse 0.45s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
 }
 
-.ripple::before{
-     background:linear-gradient(to bottom right, var(--accent) 0%,#fff 100%);
-     animation : waves 4s linear forwards;
-}
-
-.ripple::after{
-  animation : waves 4s linear .35s forwards;
-}
-
-@keyframes waves {
-  from{
-     opacity: 1;
-     transform: translate(-50%, -50%) scale(1);
+@keyframes clickPulse {
+  from {
+    width: 12px;
+    height: 12px;
+    opacity: 0.85;
+    border-width: 1.5px;
   }
-  to{
-     opacity: 0;
-     transform: translate(-50%,-50%) scale(13) ;
+  to {
+    width: 95px;
+    height: 95px;
+    opacity: 0;
+    border-width: 0.5px;
   }
 }
 /* Spotlight Hover Effect */
