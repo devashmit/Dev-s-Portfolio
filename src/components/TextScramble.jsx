@@ -1,46 +1,46 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
+const CHARS = '0123456789ABCDEF█░▒▓<>_[]{}';
 
-export default function TextScramble({ text, className = '', delay = 0, duration = 1.5 }) {
-  const [displayText, setDisplayText] = useState('');
+export default function TextScramble({ text, className = '', delay = 0 }) {
+  const [scrambleProgress, setScrambleProgress] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const intervalRef = useRef(null);
 
-  const scramble = useCallback(() => {
+  const startScramble = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    
+    setIsAnimating(true);
+    setScrambleProgress(0);
     let iteration = 0;
-    const interval = setInterval(() => {
-      setDisplayText(prev => 
-        text.split('')
-          .map((char, index) => {
-            if (index < iteration) {
-              return text[index];
-            }
-            return CHARS[Math.floor(Math.random() * CHARS.length)];
-          })
-          .join('')
-      );
+    
+    intervalRef.current = setInterval(() => {
+      iteration += 1 / 3;
+      setScrambleProgress(iteration);
 
       if (iteration >= text.length) {
-        clearInterval(interval);
+        clearInterval(intervalRef.current);
+        setIsAnimating(false);
       }
-
-      iteration += 1 / 3;
     }, 30);
-
-    return () => clearInterval(interval);
   }, [text]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      scramble();
+      startScramble();
     }, delay * 1000);
-    return () => clearTimeout(timeout);
-  }, [scramble, delay]);
+    
+    return () => {
+      clearTimeout(timeout);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [startScramble, delay]);
 
   const handleMouseEnter = () => {
-    if (!isHovered) {
+    if (!isHovered && !isAnimating) {
       setIsHovered(true);
-      scramble();
+      startScramble();
     }
   };
 
@@ -48,14 +48,46 @@ export default function TextScramble({ text, className = '', delay = 0, duration
     setIsHovered(false);
   };
 
+  // Generate random character references for scrambling letters
+  const getRandomChar = () => CHARS[Math.floor(Math.random() * CHARS.length)];
+
   return (
     <span 
-      className={className} 
+      className={`scramble-wrapper ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{ cursor: 'default' }}
+      style={{ cursor: 'default', display: 'inline-flex', alignItems: 'center' }}
     >
-      {displayText || text.split('').map(() => ' ').join('')}
+      <span className="scramble-bracket">[</span>
+      
+      <span className="scramble-content" style={{ display: 'inline-flex', alignItems: 'center' }}>
+        {text.split('').map((char, index) => {
+          const isResolved = index < scrambleProgress;
+          
+          if (char === ' ') {
+            return <span key={index} className="scramble-space">&nbsp;</span>;
+          }
+          
+          if (isResolved) {
+            return (
+              <span key={index} className="scramble-char resolved">
+                {char}
+              </span>
+            );
+          } else {
+            return (
+              <span key={index} className="scramble-char active-scramble">
+                {getRandomChar()}
+              </span>
+            );
+          }
+        })}
+      </span>
+      
+      {/* Dynamic Terminal Cursor that shows during compilation */}
+      {isAnimating && <span className="scramble-cursor">▮</span>}
+      
+      <span className="scramble-bracket">]</span>
     </span>
   );
 }
