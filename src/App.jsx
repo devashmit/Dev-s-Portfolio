@@ -13,7 +13,7 @@ import RippleEffect from './components/RippleEffect'
 import FloatingIcons from './components/FloatingIcons'
 import PageSpotlight from './components/PageSpotlight'
 import ScrollProgress from './components/ScrollProgress'
-import './App.css'
+
 
 function App() {
   useEffect(() => {
