@@ -105,5 +105,15 @@ export default function CatCompanion() {
     };
   }, []);
 
-  return <div id="cat" ref={catRef}></div>;
+  return (
+    <div id="cat" ref={catRef}>
+      <div className="cat-hud-target">
+        <svg viewBox="0 0 100 100" className="cat-hud-svg">
+          <circle cx="50" cy="50" r="40" stroke="var(--accent)" strokeWidth="1.5" strokeDasharray="6,4" fill="none" />
+          <circle cx="50" cy="50" r="28" stroke="var(--accent)" strokeWidth="0.75" strokeDasharray="2,2" fill="none" opacity="0.4" />
+          <path d="M 50 8 L 50 16 M 50 84 L 50 92 M 8 50 L 16 50 M 84 50 L 92 50" stroke="var(--accent)" strokeWidth="1.5" opacity="0.8" />
+        </svg>
+      </div>
+    </div>
+  );
 }

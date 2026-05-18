@@ -103,7 +103,7 @@ export default function FloatingIcons() {
             },
             shadow: {
                 enable: true,
-                color: "#ffffff",
+                color: "#FACC15",
                 blur: 20, // Strong glow
                 offset: {
                     x: 0,

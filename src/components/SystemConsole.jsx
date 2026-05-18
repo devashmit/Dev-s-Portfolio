@@ -1,89 +1,47 @@
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 
-const roles = [
-  "Creative Developer",
-  "UI Engineer",
-  "Full Stack Dev",
-  "Motion Designer"
+const codeLines = [
+  { text: "const", type: "keyword" },
+  { text: " batcomputer ", type: "variable" },
+  { text: "= {", type: "punctuation" },
+  { text: "\n  operator: ", type: "property" },
+  { text: '"Ashmit Dev"', type: "string" },
+  { text: ",\n  role: ", type: "property" },
+  { text: '"Systems Engineer"', type: "string" },
+  { text: ",\n  hq: ", type: "property" },
+  { text: '"Batcave Mainframe"', type: "string" },
+  { text: ",\n  batarang_guidance: ", type: "property" },
+  { text: '"Optimized (99.8%)"', type: "string" },
+  { text: ",\n  batmobile_engine: ", type: "property" },
+  { text: '"Ready / Active"', type: "string" },
+  { text: ",\n  gotham_defense_grid: [", type: "property" },
+  { text: '"React"', type: "string" },
+  { text: ", ", type: "punctuation" },
+  { text: '"Node"', type: "string" },
+  { text: ", ", type: "punctuation" },
+  { text: '"Java"', type: "string" },
+  { text: ", ", type: "punctuation" },
+  { text: '"Python"', type: "string" },
+  { text: "],\n", type: "punctuation" },
+  { text: "  location: ", type: "property" },
+  { text: '"Nepal"\n', type: "string" },
+  { text: "};", type: "punctuation" }
 ];
-
-const logs = [
-  { prefix: "SYSTEM", text: "Portfolio initialized..." },
-  { prefix: "ROLE", text: "Full Stack Developer" },
-  { prefix: "FOCUS", text: "UI Engineering + Motion Design" },
-  { prefix: "STATUS", text: "Available for freelance" },
-  { prefix: "STACK", text: "React • Node • Framer Motion • Java" },
-  { prefix: "BUILD", text: "Experiments shipping..." },
-  { prefix: "CORE", text: "Performance-first architecture" },
-  { prefix: "USER", text: "Session authenticated: GUEST_01" }
-];
-
-function ResourceMonitor() {
-  const [stats, setStats] = useState([74, 42, 18]);
-  
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setStats([
-        Math.floor(60 + Math.random() * 20),
-        Math.floor(30 + Math.random() * 30),
-        Math.floor(10 + Math.random() * 40)
-      ]);
-    }, 2000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div className="console-sidebar">
-      <div className="hud-stat-box">
-        <div className="hud-stat-label">
-          <span>CPU LOAD</span>
-          <span>{stats[0]}%</span>
-        </div>
-        <div className="hud-visual-bars">
-          <div className="hud-bar"><div className="hud-bar-fill" style={{ '--fill': `${stats[0]}%` }}></div></div>
-        </div>
-      </div>
-
-      <div className="hud-stat-box">
-        <div className="hud-stat-label">
-          <span>MEMORY</span>
-          <span>{stats[1]}%</span>
-        </div>
-        <div className="hud-visual-bars">
-          <div className="hud-bar"><div className="hud-bar-fill" style={{ '--fill': `${stats[1]}%` }}></div></div>
-        </div>
-      </div>
-
-      <div className="hud-stat-box">
-        <div className="hud-stat-label">
-          <span>TRAFFIC</span>
-          <span>{stats[2]}%</span>
-        </div>
-        <div className="hud-visual-bars">
-          <div className="hud-bar"><div className="hud-bar-fill" style={{ '--fill': `${stats[2]}%` }}></div></div>
-        </div>
-      </div>
-
-      <div className="mt-auto opacity-30 font-mono text-[10px] space-y-1">
-        <div>UUID: 7F-B2-01-A4</div>
-        <div>KERNEL: DARWIN_X64</div>
-        <div>LATENCY: 12ms</div>
-      </div>
-    </div>
-  );
-}
 
 export default function SystemConsole() {
-  const [roleIndex, setRoleIndex] = useState(0);
-  const [visibleLogs, setVisibleLogs] = useState([]);
-  const [logIndex, setLogIndex] = useState(0);
-  
-  // 3D Tilt Logic
+  const [typedCode, setTypedCode] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 3D Tilt & Parallax Grid Logic
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [5, -5]), { stiffness: 100, damping: 20 });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-5, 5]), { stiffness: 100, damping: 20 });
+  
+  // Springs for smooth, responsive animations
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [4, -4]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-4, 4]), { stiffness: 150, damping: 20 });
+  const gridX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-12, 12]), { stiffness: 120, damping: 25 });
+  const gridY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-12, 12]), { stiffness: 120, damping: 25 });
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -97,98 +55,168 @@ export default function SystemConsole() {
   };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % roles.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (logIndex < logs.length) {
+    if (currentIndex < codeLines.length) {
       const timer = setTimeout(() => {
-        setVisibleLogs((prev) => [...prev, logs[logIndex]]);
-        setLogIndex((prev) => prev + 1);
-      }, 800 + Math.random() * 1500);
+        setTypedCode(prev => [...prev, codeLines[currentIndex]]);
+        setCurrentIndex(prev => prev + 1);
+      }, 100 + Math.random() * 150); // Random typing delay
       return () => clearTimeout(timer);
-    } else {
-        const resetTimer = setTimeout(() => {
-            setVisibleLogs([]);
-            setLogIndex(0);
-        }, 12000);
-        return () => clearTimeout(resetTimer);
     }
-  }, [logIndex]);
+  }, [currentIndex]);
 
   return (
-    <div className="console-container relative-z">
-      <div className="console-glow"></div>
+    <div 
+      className="console-container relative-z"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Concentric Sonar Grid Background */}
+      <div className="sonar-grid-overlay">
+        <motion.div 
+          style={{ x: gridX, y: gridY }}
+          className="sonar-grid-inner"
+        >
+          <svg width="100%" height="100%" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="400" cy="400" r="100" stroke="currentColor" strokeWidth="1" strokeDasharray="4 8" className="sonar-ring ring-1" />
+            <circle cx="400" cy="400" r="200" stroke="currentColor" strokeWidth="1" strokeDasharray="2 4" className="sonar-ring ring-2" />
+            <circle cx="400" cy="400" r="300" stroke="currentColor" strokeWidth="1" className="sonar-ring ring-3" />
+            <circle cx="400" cy="400" r="380" stroke="currentColor" strokeWidth="0.5" strokeDasharray="10 15" className="sonar-ring ring-4" />
+            
+            <line x1="400" y1="0" x2="400" y2="800" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 5" />
+            <line x1="0" y1="400" x2="800" y2="400" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 5" />
+            
+            <line x1="117" y1="117" x2="683" y2="683" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 8" />
+            <line x1="117" y1="683" x2="683" y2="117" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 8" />
+            
+            <circle cx="400" cy="400" r="4" fill="var(--accent)" className="sonar-center-dot" />
+          </svg>
+        </motion.div>
+      </div>
       
-      {/* Cinematic Spotlight */}
       <div className="console-spotlight">
-        <AnimatePresence mode="wait">
-          <motion.h2
-            key={roles[roleIndex]}
-            className="console-spotlight-text"
-            initial={{ opacity: 0, y: 20, filter: 'blur(15px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -20, filter: 'blur(15px)' }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {roles[roleIndex]}
-          </motion.h2>
-        </AnimatePresence>
+        {/* Systems Diagnostics HUD Bar */}
+        <motion.div 
+          className="hud-status-bar"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="hud-status-node">
+            <span className="hud-pulse-dot"></span>
+            <span className="hud-label">SYS_STATUS: ACTIVE</span>
+          </div>
+          <span className="hud-divider">//</span>
+          <div className="hud-metric">
+            <span className="hud-metric-label">LOC:</span>
+            <span className="hud-metric-val">27.7172° N, 85.3240° E</span>
+          </div>
+          <span className="hud-divider">//</span>
+          <div className="hud-metric">
+            <span className="hud-metric-label">NODE:</span>
+            <span className="hud-metric-val">KTM_04</span>
+          </div>
+          <span className="hud-divider">//</span>
+          <div className="hud-metric hide-mobile">
+            <span className="hud-metric-label">PING:</span>
+            <span className="hud-metric-val">12ms</span>
+          </div>
+        </motion.div>
+
+        {/* Rebuilt Typographic Heading */}
+        <motion.h2
+          className="console-spotlight-text"
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <span className="text-hollow">FULL STACK</span>
+          <br/>
+          <span className="text-solid">DEVELOPER</span>
+        </motion.h2>
+
+        {/* Enhanced Readable Sub-Headline */}
+        <motion.p
+          className="console-spotlight-sub"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        >
+          Building <span className="text-highlight">immersive digital experiences</span> through <span className="text-highlight-accent">engineering + motion design</span>.
+        </motion.p>
       </div>
 
-      {/* Cyberdeck HUD Window */}
+      {/* Interactive IDE Window */}
       <motion.div 
-        className="console-window"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        className="ide-window"
         style={{ rotateX, rotateY }}
       >
-        <div className="console-scanlines"></div>
-        
-        {/* Decorative Corners */}
-        <div className="hud-corner hud-corner-tl"></div>
-        <div className="hud-corner hud-corner-tr"></div>
-        <div className="hud-corner hud-corner-bl"></div>
-        <div className="hud-corner hud-corner-br"></div>
-
         {/* Window Header */}
-        <div className="console-header">
-          <div className="console-controls">
-            <div className="console-dot red"></div>
-            <div className="console-dot yellow"></div>
-            <div className="console-dot green"></div>
+        <div className="ide-header">
+          <div className="ide-controls">
+            <div className="ide-dot red"></div>
+            <div className="ide-dot yellow"></div>
+            <div className="ide-dot green"></div>
           </div>
-          <div className="console-title">ashmit@portfolio: ~/arsenal/kernel_init.sh</div>
-          <div className="opacity-20 font-mono text-[10px]">VER_2.1.0</div>
+          <div className="ide-title">BATCOMPUTER mainframe - tactical-node-04</div>
+          <div className="ide-spacer"></div>
         </div>
 
         {/* Window Body */}
-        <div className="console-body">
-          {/* Main Feed */}
-          <div className="console-main-feed">
-            {visibleLogs.map((log, i) => (
-              <motion.div 
-                key={i} 
-                className="console-log-line"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="console-log-prefix">[{log.prefix}]</span>
-                <span className="console-log-text">{log.text}</span>
-              </motion.div>
-            ))}
-            <div className="console-log-line">
-              <span className="console-log-prefix">&gt;</span>
-              <span className="console-caret"></span>
+        <div className="ide-body">
+          {/* Sidebar Explorer */}
+          <div className="ide-sidebar">
+            <div className="ide-sidebar-title">HQ_DATABASE</div>
+            <ul className="ide-file-list">
+              <li className="active"><span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> batmobile.ts</li>
+              <li><span className="file-icon">PY</span> batarang.py</li>
+              <li><span className="file-icon">SH</span> gotham-coms.sh</li>
+              <li><span className="file-icon">JSON</span> suit-config.json</li>
+            </ul>
+            
+            <div className="ide-sidebar-title mt-6">SUIT METRICS</div>
+            <div className="ide-status-item" style={{ gap: '0.4rem', color: 'var(--accent)' }}>
+              <span className="status-dot"></span> COMS ONLINE
+            </div>
+            <div className="ide-status-item" style={{ marginTop: '0.25rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+              🔋 BAT-MOBILE: 100%
+            </div>
+            <div className="ide-status-item" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+              🛡️ SHIELD: ACTIVE
             </div>
           </div>
 
-          {/* Sidebar Monitor */}
-          <ResourceMonitor />
+          {/* Main Editor */}
+          <div className="ide-main">
+            <div className="ide-tabs">
+              <div className="ide-tab active">
+                <span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> batmobile.ts
+              </div>
+              <div className="ide-tab">
+                <span className="file-icon">JSON</span> suit-config.json
+              </div>
+            </div>
+            
+            <div className="ide-editor-content">
+              <div className="ide-line-numbers">
+                {[1,2,3,4,5,6,7,8,9,10,11].map(num => <div key={num}>{num}</div>)}
+              </div>
+              <div className="ide-code">
+                <pre>
+                  <code>
+                    {typedCode.map((segment, i) => (
+                      <span key={i} className={`token ${segment.type}`}>
+                        {segment.text}
+                      </span>
+                    ))}
+                    <span className="ide-cursor"></span>
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
     </div>
