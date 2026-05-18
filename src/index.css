@@ -7,7 +7,7 @@
   --ink:           #F8FAFC;          /* Clean white */
   --ink-mid:       #94A3B8;          /* Slate/steel mid-tone text */
   --ink-dim:       #475569;          /* Dark armor border text */
-  --accent:        #FACC15;          /* Glowing Bat-Signal Neon Yellow */
+  --accent:        #FACC15;          /* Glowing Terminal Neon Yellow */
   --accent-hover:  #EAB308;          /* Gold-amber hover */
   
   --border:        rgba(250, 204, 21, 0.08); /* Cyber glowing borders */
@@ -23,7 +23,7 @@
 }
 
 :root.light-mode {
-  --bg:            #F8FAFC;          /* Wayne Ent. Platinum Corporate White */
+  --bg:            #F8FAFC;          /* Executive Platinum Corporate White */
   --bg-raised:     #FFFFFF;          /* Executive white board room panels */
   --ink:           #0F172A;          /* High contrast charcoal */
   --ink-mid:       #475569;          /* High contrast executive text */
@@ -563,7 +563,7 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
   transform: translate(-50%, -50%);
   background-image: url('/cat/catani1.png'); 
   z-index: 9999;
-  filter: drop-shadow(0 0 6px var(--accent)); /* Glowing Batcomputer tracker */
+  filter: drop-shadow(0 0 6px var(--accent)); /* Glowing core systems tracker */
 }
 
 .cat-hud-target {

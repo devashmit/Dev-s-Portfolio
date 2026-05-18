@@ -48,7 +48,7 @@ export default function Preloader() {
     >
       <div className="pre-inner">
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', letterSpacing: '0.35em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: '1.25rem', opacity: 0.8, textAlign: 'center' }}>
-          WAYNE ENTERPRISES · SYSTEM BOOT v4.12
+          ASHMIT DEV · CORE SYSTEM BOOT v5.02
         </div>
         <div className="pre-count">{displayCount}%</div>
         <motion.div 
@@ -76,7 +76,7 @@ export default function Preloader() {
           <motion.span variants={letterVariants}>V</motion.span>
         </motion.div>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--ink-dim)', marginTop: '1.5rem', textAlign: 'center', textTransform: 'uppercase' }}>
-          [ DECRYPTING BATCAVE SECURE DOSSIER UPLINK... ]
+          [ DECRYPTING SECURE DEVELOPER DOSSIER... ]
         </div>
       </div>
     </motion.div>

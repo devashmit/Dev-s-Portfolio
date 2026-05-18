@@ -3,29 +3,29 @@ import { useState, useEffect, useRef } from 'react';
 
 const codeLines = [
   { text: "const", type: "keyword" },
-  { text: " batcomputer ", type: "variable" },
+  { text: " developerProfile ", type: "variable" },
   { text: "= {", type: "punctuation" },
-  { text: "\n  operator: ", type: "property" },
+  { text: "\n  engineer: ", type: "property" },
   { text: '"Ashmit Dev"', type: "string" },
-  { text: ",\n  role: ", type: "property" },
-  { text: '"Systems Engineer"', type: "string" },
-  { text: ",\n  hq: ", type: "property" },
-  { text: '"Batcave Mainframe"', type: "string" },
-  { text: ",\n  batarang_guidance: ", type: "property" },
-  { text: '"Optimized (99.8%)"', type: "string" },
-  { text: ",\n  batmobile_engine: ", type: "property" },
-  { text: '"Ready / Active"', type: "string" },
-  { text: ",\n  gotham_defense_grid: [", type: "property" },
+  { text: ",\n  specialties: ", type: "property" },
+  { text: '["Full Stack", "Systems Architecture"]', type: "string" },
+  { text: ",\n  environment: ", type: "property" },
+  { text: '"Secure Core Terminal"', type: "string" },
+  { text: ",\n  system_status: ", type: "property" },
+  { text: '"Production Ready"', type: "string" },
+  { text: ",\n  latency: ", type: "property" },
+  { text: '"0.08ms (Optimized)"', type: "string" },
+  { text: ",\n  active_tech_stack: [", type: "property" },
   { text: '"React"', type: "string" },
   { text: ", ", type: "punctuation" },
-  { text: '"Node"', type: "string" },
+  { text: '"TypeScript"', type: "string" },
+  { text: ", ", type: "punctuation" },
+  { text: '"Node.js"', type: "string" },
   { text: ", ", type: "punctuation" },
   { text: '"Java"', type: "string" },
-  { text: ", ", type: "punctuation" },
-  { text: '"Python"', type: "string" },
   { text: "],\n", type: "punctuation" },
-  { text: "  location: ", type: "property" },
-  { text: '"Nepal"\n', type: "string" },
+  { text: "  coordinates: ", type: "property" },
+  { text: '"27.7172 N, 85.3240 E"\n', type: "string" },
   { text: "};", type: "punctuation" }
 ];
 
@@ -160,7 +160,7 @@ export default function SystemConsole() {
             <div className="ide-dot yellow"></div>
             <div className="ide-dot green"></div>
           </div>
-          <div className="ide-title">BATCOMPUTER mainframe - tactical-node-04</div>
+          <div className="ide-title">DEVELOPER WORKSTATION - core-node-04</div>
           <div className="ide-spacer"></div>
         </div>
 
@@ -168,23 +168,23 @@ export default function SystemConsole() {
         <div className="ide-body">
           {/* Sidebar Explorer */}
           <div className="ide-sidebar">
-            <div className="ide-sidebar-title">HQ_DATABASE</div>
+            <div className="ide-sidebar-title">CORE_PROJECTS</div>
             <ul className="ide-file-list">
-              <li className="active"><span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> batmobile.ts</li>
-              <li><span className="file-icon">PY</span> batarang.py</li>
-              <li><span className="file-icon">SH</span> gotham-coms.sh</li>
-              <li><span className="file-icon">JSON</span> suit-config.json</li>
+              <li className="active"><span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> app-router.ts</li>
+              <li><span className="file-icon">PY</span> data-mesh.py</li>
+              <li><span className="file-icon">SH</span> secure-uplink.sh</li>
+              <li><span className="file-icon">JSON</span> developer-profile.json</li>
             </ul>
             
-            <div className="ide-sidebar-title mt-6">SUIT METRICS</div>
+            <div className="ide-sidebar-title mt-6">SYSTEM STATUS</div>
             <div className="ide-status-item" style={{ gap: '0.4rem', color: 'var(--accent)' }}>
-              <span className="status-dot"></span> COMS ONLINE
+              <span className="status-dot"></span> UPLINK ONLINE
             </div>
             <div className="ide-status-item" style={{ marginTop: '0.25rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
-              🔋 BAT-MOBILE: 100%
+              ⚡ COGNITIVE LEVEL: 100%
             </div>
             <div className="ide-status-item" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
-              🛡️ SHIELD: ACTIVE
+              🛡️ FIREWALL: ACTIVE
             </div>
           </div>
 
@@ -192,10 +192,10 @@ export default function SystemConsole() {
           <div className="ide-main">
             <div className="ide-tabs">
               <div className="ide-tab active">
-                <span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> batmobile.ts
+                <span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> app-router.ts
               </div>
               <div className="ide-tab">
-                <span className="file-icon">JSON</span> suit-config.json
+                <span className="file-icon">JSON</span> developer-profile.json
               </div>
             </div>
             
