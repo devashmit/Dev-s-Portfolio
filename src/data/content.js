@@ -23,3 +23,43 @@ export const floatingIcons = [
   'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg',
   'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg',
 ];
+
+export const projectsData = [
+  {
+    title: 'BerojgarCv',
+    year: '2024',
+    desc: 'A professional CV generator built with TypeScript. The irony is load-bearing structural code.',
+    tags: ['TypeScript', 'Web'],
+    github: 'https://github.com/devashmit/BerojgarCv',
+    category: 'web',
+    previewType: 'cv-flow'
+  },
+  {
+    title: 'Devs-bouquet',
+    year: '2024',
+    desc: 'Interactive canvas experience for creating soft, hand-drawn digital flower arrangements.',
+    tags: ['Canvas API', 'Creative Coding'],
+    github: 'https://github.com/devashmit/Devs-bouquet',
+    category: 'creative',
+    previewType: 'flower-bloom'
+  },
+  {
+    title: 'Virtual Petals',
+    year: '2024',
+    desc: 'A beautiful digital garden where users can plant, grow, and customize interactive virtual flower petals.',
+    tags: ['Canvas', 'Interactive'],
+    github: '#',
+    category: 'creative',
+    previewType: 'floating-petals'
+  },
+  {
+    title: 'Sahayogi',
+    year: '2025',
+    desc: 'A companion helper application. Still in active development.',
+    tags: ['WIP', 'Systems'],
+    github: 'https://github.com/devashmit/SYP',
+    category: 'systems',
+    previewType: 'node-network'
+  }
+];
+

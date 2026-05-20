@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
-const codeLines = [
+const appRouterCode = [
   { text: "const", type: "keyword" },
   { text: " developerProfile ", type: "variable" },
   { text: "= {", type: "punctuation" },
@@ -29,9 +29,90 @@ const codeLines = [
   { text: "};", type: "punctuation" }
 ];
 
+const dataMeshCode = [
+  { text: "import", type: "keyword" },
+  { text: " time, random\n\n", type: "variable" },
+  { text: "def", type: "keyword" },
+  { text: " run_pipeline", type: "variable" },
+  { text: "():", type: "punctuation" },
+  { text: "\n    print", type: "keyword" },
+  { text: "(", type: "punctuation" },
+  { text: '"Initializing data mesh scan..."', type: "string" },
+  { text: ")\n    time.sleep(", type: "punctuation" },
+  { text: "0.25", type: "property" },
+  { text: ")\n    ", type: "punctuation" },
+  { text: "active_nodes", type: "variable" },
+  { text: " = [", type: "punctuation" },
+  { text: '"KTM_04"', type: "string" },
+  { text: ", ", type: "punctuation" },
+  { text: '"SYS_01"', type: "string" },
+  { text: "]\n    ", type: "punctuation" },
+  { text: "for", type: "keyword" },
+  { text: " n ", type: "variable" },
+  { text: "in", type: "keyword" },
+  { text: " active_nodes:", type: "punctuation" },
+  { text: "\n        print", type: "keyword" },
+  { text: "(", type: "punctuation" },
+  { text: 'f"Connecting -> {n}... STATUS: OK"', type: "string" },
+  { text: ")\n\n", type: "punctuation" },
+  { text: "run_pipeline", type: "variable" },
+  { text: "()", type: "punctuation" }
+];
+
+const secureUplinkCode = [
+  { text: "#!/bin/bash\n\n", type: "punctuation" },
+  { text: "echo", type: "keyword" },
+  { text: " ", type: "punctuation" },
+  { text: '"Establishing secure tactical uplink..."', type: "string" },
+  { text: "\n", type: "punctuation" },
+  { text: "export", type: "keyword" },
+  { text: " UPLINK_LEVEL=", type: "variable" },
+  { text: "100", type: "property" },
+  { text: "\n", type: "punctuation" },
+  { text: "export", type: "keyword" },
+  { text: " SUMMON_TOY=", type: "variable" },
+  { text: "1", type: "property" },
+  { text: "\n\n", type: "punctuation" },
+  { text: "# SUMMONS THE CAT COMPANION BALL/RAT TOY!\n", type: "punctuation" },
+  { text: "echo", type: "keyword" },
+  { text: " ", type: "punctuation" },
+  { text: '"[SUCCESS] TACTICAL TOY SUMMON DEPLOYED!"', type: "string" },
+  { text: "\n", type: "punctuation" },
+  { text: "echo", type: "keyword" },
+  { text: " ", type: "punctuation" },
+  { text: '"--> Toy spawned! Click anywhere to make cat chase it!"', type: "string" }
+];
+
+const developerProfileCode = [
+  { text: "{\n", type: "punctuation" },
+  { text: '  "name"', type: "property" },
+  { text: ": ", type: "punctuation" },
+  { text: '"Abhishek Dev"', type: "string" },
+  { text: ",\n", type: "punctuation" },
+  { text: '  "alias"', type: "property" },
+  { text: ": ", type: "punctuation" },
+  { text: '"Ashmit Dev"', type: "string" },
+  { text: ",\n", type: "punctuation" },
+  { text: '  "location"', type: "property" },
+  { text: ": ", type: "punctuation" },
+  { text: '"Kathmandu, Nepal"', type: "string" },
+  { text: ",\n", type: "punctuation" },
+  { text: '  "security_pass"', type: "property" },
+  { text: ": ", type: "punctuation" },
+  { text: "true", type: "keyword" },
+  { text: ",\n", type: "punctuation" },
+  { text: '  "firewall"', type: "property" },
+  { text: ": ", type: "punctuation" },
+  { text: '"ACTIVE_SECURE"', type: "string" },
+  { text: "\n}", type: "punctuation" }
+];
+
 export default function SystemConsole() {
+  const [activeFile, setActiveFile] = useState('app-router.ts');
   const [typedCode, setTypedCode] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [diagnosticMode, setDiagnosticMode] = useState(false);
+  const [diagnosticLogs, setDiagnosticLogs] = useState([]);
 
   // 3D Tilt & Parallax Grid Logic
   const mouseX = useMotionValue(0);
@@ -54,15 +135,96 @@ export default function SystemConsole() {
     mouseY.set(0);
   };
 
+  const filesMap = useMemo(() => ({
+    'app-router.ts': {
+      code: appRouterCode,
+      linesCount: 11,
+      lang: 'TS',
+      color: 'var(--accent)',
+      ping: '12ms',
+      node: 'KTM_04',
+      status: 'ONLINE'
+    },
+    'data-mesh.py': {
+      code: dataMeshCode,
+      linesCount: 10,
+      lang: 'PY',
+      color: '#306998',
+      ping: '18ms',
+      node: 'SYS_01',
+      status: 'ONLINE'
+    },
+    'secure-uplink.sh': {
+      code: secureUplinkCode,
+      linesCount: 9,
+      lang: 'SH',
+      color: '#4EAA25',
+      ping: '8ms',
+      node: 'UPLINK_09',
+      status: 'ACTIVE_TOY'
+    },
+    'developer-profile.json': {
+      code: developerProfileCode,
+      linesCount: 8,
+      lang: 'JSON',
+      color: '#FACC15',
+      ping: '4ms',
+      node: 'PASS_00',
+      status: 'ONLINE'
+    }
+  }), []);
+
+  // Trigger typing simulation when active file changes
   useEffect(() => {
-    if (currentIndex < codeLines.length) {
+    setDiagnosticMode(false);
+    setTypedCode([]);
+    setCurrentIndex(0);
+    
+    // Dispatch Toy Summon Event to CatCompanion if secure-uplink is loaded!
+    if (activeFile === 'secure-uplink.sh') {
+      const event = new CustomEvent('cat:summon_toy', { detail: { active: true } });
+      document.dispatchEvent(event);
+    }
+  }, [activeFile]);
+
+  useEffect(() => {
+    if (diagnosticMode) return;
+    const currentCode = filesMap[activeFile].code;
+    if (currentIndex < currentCode.length) {
       const timer = setTimeout(() => {
-        setTypedCode(prev => [...prev, codeLines[currentIndex]]);
+        setTypedCode(prev => [...prev, currentCode[currentIndex]]);
         setCurrentIndex(prev => prev + 1);
-      }, 100 + Math.random() * 150); // Random typing delay
+      }, 35 + Math.random() * 50); // Faster, snappier coding flow
       return () => clearTimeout(timer);
     }
-  }, [currentIndex]);
+  }, [currentIndex, activeFile, diagnosticMode, filesMap]);
+
+  // Systems Diagnostics simulation
+  const runDiagnostics = () => {
+    setDiagnosticMode(true);
+    setDiagnosticLogs([]);
+    
+    // Trigger Toy Summon as a diagnostic reward!
+    const summonEvent = new CustomEvent('cat:summon_toy', { detail: { active: true } });
+    document.dispatchEvent(summonEvent);
+
+    const logs = [
+      "SYSTEM INITIATED: PORTFOLIO DIAGNOSTIC SCAN v5.02",
+      "CHECKING GATEWAY LINKS... KTM_04 -> CONNECTED",
+      "INSPECTING SECURE FIREWALL... ACTIVE [100% OK]",
+      "LOADING DYNAMIC CANVAS PREVIEWS... ALL NODES COMPILATION SUCCESS",
+      "SYNCING NEURAL SKILL GRAPH... UPLINK RADAR STABLE",
+      "CHECKING CAT COMPANION SENSORS... BALL/RAT TOYS CALIBRATED",
+      "COGNITIVE LEVEL SYNAPSE DETECTED: 100% SECURE_CORE",
+      "SYSTEM INSPECTION COMPLETED. ENJOY INTERACTIVE TOY EASTER EGG!"
+    ];
+
+    logs.forEach((log, index) => {
+      setTimeout(() => {
+        setDiagnosticLogs(prev => [...prev, log]);
+      }, index * 400);
+    });
+  };
 
   return (
     <div 
@@ -104,7 +266,7 @@ export default function SystemConsole() {
         >
           <div className="hud-status-node">
             <span className="hud-pulse-dot"></span>
-            <span className="hud-label">SYS_STATUS: ACTIVE</span>
+            <span className="hud-label">SYS_STATUS: {filesMap[activeFile].status}</span>
           </div>
           <span className="hud-divider">//</span>
           <div className="hud-metric">
@@ -114,12 +276,12 @@ export default function SystemConsole() {
           <span className="hud-divider">//</span>
           <div className="hud-metric">
             <span className="hud-metric-label">NODE:</span>
-            <span className="hud-metric-val">KTM_04</span>
+            <span className="hud-metric-val">{filesMap[activeFile].node}</span>
           </div>
           <span className="hud-divider">//</span>
           <div className="hud-metric hide-mobile">
             <span className="hud-metric-label">PING:</span>
-            <span className="hud-metric-val">12ms</span>
+            <span className="hud-metric-val">{filesMap[activeFile].ping}</span>
           </div>
         </motion.div>
 
@@ -170,20 +332,60 @@ export default function SystemConsole() {
           <div className="ide-sidebar">
             <div className="ide-sidebar-title">CORE_PROJECTS</div>
             <ul className="ide-file-list">
-              <li className="active"><span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> app-router.ts</li>
-              <li><span className="file-icon">PY</span> data-mesh.py</li>
-              <li><span className="file-icon">SH</span> secure-uplink.sh</li>
-              <li><span className="file-icon">JSON</span> developer-profile.json</li>
+              {Object.keys(filesMap).map((fileName) => {
+                const fileInfo = filesMap[fileName];
+                const isActive = activeFile === fileName;
+                return (
+                  <li 
+                    key={fileName} 
+                    className={isActive ? 'active' : ''} 
+                    onClick={() => setActiveFile(fileName)}
+                  >
+                    <span 
+                      className="file-icon" 
+                      style={{ 
+                        background: isActive ? 'rgba(250,204,21,0.15)' : 'rgba(255,255,255,0.05)', 
+                        color: fileInfo.color 
+                      }}
+                    >
+                      {fileInfo.lang}
+                    </span> 
+                    {fileName}
+                  </li>
+                );
+              })}
             </ul>
             
+            <div className="ide-sidebar-title mt-6">SYSTEM COMMANDS</div>
+            <button
+              className="btn btn-ghost"
+              onClick={runDiagnostics}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.68rem',
+                padding: '0.45rem',
+                border: '1px solid var(--border)',
+                borderColor: diagnosticMode ? 'var(--accent)' : 'var(--border)',
+                color: diagnosticMode ? 'var(--accent)' : 'var(--ink-mid)',
+                background: 'rgba(0,0,0,0.15)',
+                cursor: 'pointer',
+                textAlign: 'left',
+                width: '100%',
+                borderRadius: '6px',
+                display: 'block'
+              }}
+            >
+              ⚙️ RUN_DIAGNOSTIC
+            </button>
+
             <div className="ide-sidebar-title mt-6">SYSTEM STATUS</div>
             <div className="ide-status-item" style={{ gap: '0.4rem', color: 'var(--accent)' }}>
-              <span className="status-dot"></span> UPLINK ONLINE
+              <span className="status-dot"></span> UPLINK SECURE
             </div>
-            <div className="ide-status-item" style={{ marginTop: '0.25rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+            <div className="ide-status-item" style={{ marginTop: '0.25rem', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--ink-mid)' }}>
               ⚡ COGNITIVE LEVEL: 100%
             </div>
-            <div className="ide-status-item" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+            <div className="ide-status-item" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--ink-mid)' }}>
               🛡️ FIREWALL: ACTIVE
             </div>
           </div>
@@ -191,28 +393,60 @@ export default function SystemConsole() {
           {/* Main Editor */}
           <div className="ide-main">
             <div className="ide-tabs">
-              <div className="ide-tab active">
-                <span className="file-icon" style={{ background: 'rgba(250,204,21,0.15)', color: 'var(--accent)' }}>TS</span> app-router.ts
-              </div>
-              <div className="ide-tab">
-                <span className="file-icon">JSON</span> developer-profile.json
-              </div>
+              {Object.keys(filesMap).map((fileName) => {
+                const fileInfo = filesMap[fileName];
+                const isActive = activeFile === fileName;
+                // Only render active tab and profile tab to simulate open editor buffers
+                if (fileName !== 'developer-profile.json' && fileName !== activeFile) return null;
+                return (
+                  <div 
+                    key={fileName}
+                    className={`ide-tab ${isActive ? 'active' : ''}`}
+                    onClick={() => setActiveFile(fileName)}
+                  >
+                    <span 
+                      className="file-icon" 
+                      style={{ 
+                        background: isActive ? 'rgba(250,204,21,0.15)' : 'rgba(255,255,255,0.05)', 
+                        color: fileInfo.color 
+                      }}
+                    >
+                      {fileInfo.lang}
+                    </span> 
+                    {fileName}
+                  </div>
+                );
+              })}
             </div>
             
             <div className="ide-editor-content">
               <div className="ide-line-numbers">
-                {[1,2,3,4,5,6,7,8,9,10,11].map(num => <div key={num}>{num}</div>)}
+                {diagnosticMode 
+                  ? [1,2,3,4,5,6,7,8].map(num => <div key={num}>{num}</div>)
+                  : Array.from({ length: filesMap[activeFile].linesCount }, (_, i) => i + 1).map(num => <div key={num}>{num}</div>)
+                }
               </div>
               <div className="ide-code">
                 <pre>
-                  <code>
-                    {typedCode.map((segment, i) => (
-                      <span key={i} className={`token ${segment.type}`}>
-                        {segment.text}
-                      </span>
-                    ))}
-                    <span className="ide-cursor"></span>
-                  </code>
+                  {diagnosticMode ? (
+                    <code>
+                      {diagnosticLogs.map((log, i) => (
+                        <div key={i} className="token variable" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
+                          {log}
+                        </div>
+                      ))}
+                      <span className="ide-cursor"></span>
+                    </code>
+                  ) : (
+                    <code>
+                      {typedCode.map((segment, i) => (
+                        <span key={i} className={`token ${segment.type}`}>
+                          {segment.text}
+                        </span>
+                      ))}
+                      <span className="ide-cursor"></span>
+                    </code>
+                  )}
                 </pre>
               </div>
             </div>

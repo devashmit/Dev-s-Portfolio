@@ -1,5 +1,5 @@
-import { motion, useScroll, useTransform, useMotionValue, useSpring, useTime } from 'framer-motion';
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { motion, useTransform, useMotionValue, useSpring, useTime, AnimatePresence } from 'framer-motion';
+import { useRef, useState, useMemo } from 'react';
 import TextReveal from './TextReveal';
 
 const dossierData = [
@@ -22,8 +22,6 @@ const dossierData = [
 
 function NeuralCore({ activeEntry }) {
   const time = useTime();
-  const rotate = useTransform(time, [0, 10000], [0, 360], { clamp: false });
-  
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
@@ -35,7 +33,6 @@ function NeuralCore({ activeEntry }) {
     mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
-  // Generate random "shards" for the orbital
   const shards = useMemo(() => [...Array(12)].map((_, i) => ({
     id: i,
     size: Math.random() * 40 + 20,
@@ -99,7 +96,7 @@ function NeuralCore({ activeEntry }) {
           </motion.div>
         ))}
 
-        {/* Connection Lines (Procedural) */}
+        {/* Connection Lines */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
           <motion.line 
             x1="50%" y1="50%" 
@@ -114,15 +111,131 @@ function NeuralCore({ activeEntry }) {
       </motion.div>
 
       {/* Floating System Data */}
-      <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none font-mono text-[7px] opacity-30">
+      <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none font-mono text-[7px] opacity-35">
         <div className="flex justify-between items-start">
           <div className="space-y-1">
-             <div>CORE_TEMP: 32°C</div>
+             <div>CORE_TEMP: 34°C</div>
              <div>PROCESS_SYNC: OK</div>
           </div>
           <div className="text-right">
-             <div>MEM_USAGE: 1.2GB</div>
+             <div>MEM_USAGE: 1.1GB</div>
              <div>UPLINK: ACTIVE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UplinkRadar({ activeEntry }) {
+  // Coordinates representing specialties mapped to angles and radii
+  const targets = useMemo(() => [
+    { label: "SYS_ARCH::REACT_A11Y", r: 120, angle: 45, idx: 0 },
+    { label: "SYS_ARCH::DISTRIB_NODES", r: 160, angle: 135, idx: 0 },
+    { label: "CR_MOTION::FRAMER_THREE", r: 140, angle: 220, idx: 1 },
+    { label: "CR_MOTION::CANVAS_BLOOM", r: 95, angle: 190, idx: 1 },
+    { label: "ALG_EFF::PERF_OPTI", r: 150, angle: 310, idx: 2 },
+    { label: "ALG_EFF::RESILIENT_SEC", r: 105, angle: 280, idx: 2 }
+  ], []);
+
+  return (
+    <div className="radar-anchor" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="radar-container" style={{ position: 'relative' }}>
+        {/* Conic Sweep Scanline */}
+        <div className="radar-sweep"></div>
+        
+        {/* Concentric Coordinate Rings */}
+        <div className="radar-circle radar-circle--1"></div>
+        <div className="radar-circle radar-circle--2"></div>
+        <div className="radar-circle radar-circle--3"></div>
+        
+        {/* Crosshair Grids */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible opacity-30" style={{ color: 'var(--accent)' }}>
+          <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 5" />
+          <line x1="0" y1="50%" x2="100%" y2="50%" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 5" />
+          
+          {targets.map((t, idx) => {
+            const rad = (t.angle * Math.PI) / 180;
+            // Radius scaling factor (400 is total size, so dividing by 400 scales properly)
+            const cx = 50 + (t.r / 400) * 100 * Math.cos(rad);
+            const cy = 50 + (t.r / 400) * 100 * Math.sin(rad);
+            const isHighlighted = activeEntry === t.idx;
+
+            return (
+              <motion.line
+                key={idx}
+                x1="50%" y1="50%"
+                x2={`${cx}%`} y2={`${cy}%`}
+                stroke="currentColor"
+                strokeWidth={isHighlighted ? "0.75" : "0.25"}
+                className={isHighlighted ? "text-accent" : "text-ink-dim"}
+                animate={{ opacity: isHighlighted ? 0.65 : 0.15 }}
+                transition={{ duration: 0.3 }}
+              />
+            );
+          })}
+        </svg>
+
+        {/* Pulsing Radar Markers */}
+        {targets.map((t, idx) => {
+          const rad = (t.angle * Math.PI) / 180;
+          const cx = (t.r / 400) * 100 * Math.cos(rad);
+          const cy = (t.r / 400) * 100 * Math.sin(rad);
+          const isHighlighted = activeEntry === t.idx;
+
+          return (
+            <div
+              key={idx}
+              className="radar-dot"
+              style={{
+                top: `calc(50% + ${cy}% - 3px)`,
+                left: `calc(50% + ${cx}% - 3px)`,
+                background: isHighlighted ? 'var(--accent)' : 'var(--ink-dim)',
+                boxShadow: isHighlighted ? '0 0 15px var(--accent)' : 'none',
+                transform: isHighlighted ? 'scale(1.4)' : 'scale(1)',
+                transition: 'all 0.3s ease',
+                zIndex: 10
+              }}
+            >
+              {/* Radar Specialty HUD label */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-15px',
+                  left: '12px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '6px',
+                  color: isHighlighted ? 'var(--accent)' : 'var(--ink-dim)',
+                  fontWeight: isHighlighted ? 'bold' : 'normal',
+                  opacity: isHighlighted ? 1 : 0.45,
+                  letterSpacing: '0.05em',
+                  transition: 'all 0.3s ease',
+                  whiteSpace: 'nowrap',
+                  pointerEvents: 'none'
+                }}
+              >
+                {t.label}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Center Target cross */}
+        <div style={{ position: 'absolute', width: '20px', height: '20px', border: '1px dashed var(--accent)', borderRadius: '50%', opacity: 0.3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '4px', height: '4px', background: 'var(--accent)', borderRadius: '50%' }}></div>
+        </div>
+      </div>
+
+      {/* Telemetry indicators overlay */}
+      <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none font-mono text-[7px] opacity-35" style={{ color: 'var(--ink-mid)' }}>
+        <div className="flex justify-between items-start">
+          <div className="space-y-1">
+            <div>RADAR_LOCK: ACTIVE</div>
+            <div>SCAN_FREQ: 9.38GHz</div>
+          </div>
+          <div className="text-right">
+            <div>COORD_Y: 27.7172° N</div>
+            <div>COORD_X: 85.3240° E</div>
           </div>
         </div>
       </div>
@@ -132,12 +245,13 @@ function NeuralCore({ activeEntry }) {
 
 export default function About() {
   const [activeEntry, setActiveEntry] = useState(0);
+  const [viewMode, setViewMode] = useState('neural'); // 'neural' or 'radar'
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.2 }
+      transition: { staggerChildren: 0.15 }
     }
   };
 
@@ -163,9 +277,64 @@ export default function About() {
 
       <div className="dossier-layout relative-z">
         
-        {/* Left: Innovative Visual Anchor */}
-        <div className="flex items-center justify-center">
-          <NeuralCore activeEntry={activeEntry} />
+        {/* Left: Innovative Visual Anchor (Dual-Mode Viewport) */}
+        <div className="flex flex-col items-center justify-center gap-6" style={{ position: 'relative', width: '100%', minHeight: '480px' }}>
+          
+          {/* Tactical View Switcher Buttons */}
+          <div style={{ display: 'flex', gap: '0.75rem', zIndex: 10, fontFamily: 'var(--font-mono)', background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border)', padding: '0.35rem 0.75rem', borderRadius: '30px', backdropFilter: 'blur(8px)' }}>
+            <button
+              onClick={() => setViewMode('neural')}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: viewMode === 'neural' ? 'var(--accent)' : 'var(--ink-dim)',
+                fontSize: '0.7rem', fontWeight: 700, padding: '0.2rem 0.5rem',
+                textTransform: 'uppercase', letterSpacing: '0.1em', transition: 'color 0.2s'
+              }}
+            >
+              {viewMode === 'neural' ? '⌖ [ NEURAL_CORE ]' : '⌖ NEURAL_CORE'}
+            </button>
+            <span style={{ color: 'var(--border)', opacity: 0.3 }}>|</span>
+            <button
+              onClick={() => setViewMode('radar')}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: viewMode === 'radar' ? 'var(--accent)' : 'var(--ink-dim)',
+                fontSize: '0.7rem', fontWeight: 700, padding: '0.2rem 0.5rem',
+                textTransform: 'uppercase', letterSpacing: '0.1em', transition: 'color 0.2s'
+              }}
+            >
+              {viewMode === 'radar' ? '📡 [ UPLINK_RADAR ]' : '📡 UPLINK_RADAR'}
+            </button>
+          </div>
+
+          {/* Graphics Viewport */}
+          <div style={{ position: 'relative', width: '100%', height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <AnimatePresence mode="wait">
+              {viewMode === 'neural' ? (
+                <motion.div
+                  key="neural"
+                  initial={{ opacity: 0, scale: 0.94, rotate: -8 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.94, rotate: 8 }}
+                  transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
+                  style={{ position: 'absolute' }}
+                >
+                  <NeuralCore activeEntry={activeEntry} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="radar"
+                  initial={{ opacity: 0, scale: 0.94, rotate: 8 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.94, rotate: -8 }}
+                  transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
+                  style={{ position: 'absolute' }}
+                >
+                  <UplinkRadar activeEntry={activeEntry} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Right: Dossier Content */}
@@ -188,7 +357,6 @@ export default function About() {
               className="dossier-entry"
               variants={entryVariants}
               onMouseEnter={() => setActiveEntry(idx)}
-              onMouseLeave={() => setActiveEntry(null)}
             >
               <span className="dossier-entry-label">[ {entry.label} ]</span>
               <div className="dossier-entry-command">{entry.command}</div>
