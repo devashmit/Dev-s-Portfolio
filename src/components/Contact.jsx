@@ -1,115 +1,114 @@
 import { motion } from 'framer-motion';
 import Magnetic from './Magnetic';
-import BentoCard from './BentoCard';
 import { FaGithub, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
+import TextReveal from './TextReveal';
+
+const socials = [
+  {
+    icon: <FaGithub />,
+    label: 'GitHub',
+    handle: 'devashmit',
+    href: 'https://github.com/devashmit',
+  },
+  {
+    icon: <FaLinkedin />,
+    label: 'LinkedIn',
+    handle: 'Ashmit Dev',
+    href: 'https://www.linkedin.com/in/abhishek-dev-5b5148357',
+  },
+  {
+    icon: <FaWhatsapp />,
+    label: 'WhatsApp',
+    handle: 'Message Me',
+    href: 'https://wa.me/message/6VRRX2XZZ4UFO1',
+  },
+];
 
 export default function Contact() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  };
-
-  const textVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7 } }
-  };
-
   return (
     <section id="contact" aria-label="Contact">
-      <div className="contact-header">
-        <motion.p 
-          className="section-eyebrow" 
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={textVariants}
+      <div className="section-intro">
+        <motion.p
+          className="section-eyebrow"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
           04 / REACH ME
         </motion.p>
-        <motion.h2 
-          className="section-title"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={textVariants}
-        >
-          Let's connect.
-        </motion.h2>
-        <motion.p 
-          className="contact-subtitle"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={textVariants}
-        >
-          Open for new opportunities. Let's build something amazing together.
-        </motion.p>
+        <TextReveal text="Let's connect." className="section-title" tag="h2" delay={0.15} />
       </div>
-      
-      <motion.div 
-        className="contact-layout"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
-        <motion.div variants={itemVariants} className="contact-main">
-          <BentoCard className="contact-card-main">
-            <div className="contact-main-content">
-              <div>
-                <div className="contact-status">
-                  <span className="status-dot"></span>
-                  <span>Available for work</span>
-                </div>
-                <h3 className="contact-main-title">Have a project in mind?</h3>
-                <p className="contact-main-desc">I'm currently available for freelance work and full-time roles. If you're looking for a developer who can bring your ideas to life, let's talk.</p>
-              </div>
-              
-              <Magnetic>
-                <a href="mailto:devvv0264@gmail.com" className="contact-cta-btn">
-                  <MdEmail className="contact-icon-large" />
-                  <span>Drop me an email</span>
-                </a>
-              </Magnetic>
-            </div>
-          </BentoCard>
-        </motion.div>
 
-        <motion.div variants={itemVariants} className="contact-socials">
-          <div className="socials-grid">
-            <Magnetic>
-              <a href="https://github.com/devashmit" target="_blank" rel="noopener noreferrer" className="social-card">
-                <BentoCard className="social-bento">
-                  <FaGithub className="social-icon" />
-                  <span className="social-label">GitHub</span>
-                  <span className="social-value">devashmit &#8594;</span>
-                </BentoCard>
-              </a>
-            </Magnetic>
-            
-            <Magnetic>
-              <a href="https://www.linkedin.com/in/abhishek-dev-5b5148357" target="_blank" rel="noopener noreferrer" className="social-card">
-                <BentoCard className="social-bento">
-                  <FaLinkedin className="social-icon" />
-                  <span className="social-label">LinkedIn</span>
-                  <span className="social-value">Ashmit Dev &#8594;</span>
-                </BentoCard>
-              </a>
-            </Magnetic>
-            
-            <Magnetic>
-              <a href="https://wa.me/message/6VRRX2XZZ4UFO1" target="_blank" rel="noopener noreferrer" className="social-card">
-                <BentoCard className="social-bento">
-                  <FaWhatsapp className="social-icon" />
-                  <span className="social-label">WhatsApp</span>
-                  <span className="social-value">Message Me &#8594;</span>
-                </BentoCard>
-              </a>
-            </Magnetic>
-          </div>
-        </motion.div>
+      {/* Big email CTA */}
+      <motion.div
+        className="contact-email-strip"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="contact-avail">
+          <span className="status-dot" />
+          <span>Available for work</span>
+        </div>
+
+        <p className="contact-blurb">
+          Open for freelance contracts and full-time roles.<br />
+          If you have a project in mind — let's talk.
+        </p>
+
+        <Magnetic>
+          <a href="mailto:devvv0264@gmail.com" className="contact-email-btn" id="contact-email-link">
+            <span className="contact-email-icon"><MdEmail /></span>
+            <span>devvv0264@gmail.com</span>
+            <svg className="contact-email-arrow" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                 aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </Magnetic>
+      </motion.div>
+
+      {/* Social rows */}
+      <div className="contact-socials-list">
+        {socials.map((s, i) => (
+          <motion.a
+            key={s.label}
+            href={s.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-social-row"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="csr-icon">{s.icon}</span>
+            <span className="csr-label">{s.label}</span>
+            <span className="csr-divider" />
+            <span className="csr-handle">{s.handle}</span>
+            <svg className="csr-arrow" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                 aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </motion.a>
+        ))}
+      </div>
+
+      {/* Footer line */}
+      <motion.div
+        className="contact-footer-line"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+      >
+        <span>Ashmit Dev · {new Date().getFullYear()}</span>
+        <span>Kathmandu, Nepal</span>
       </motion.div>
     </section>
   );

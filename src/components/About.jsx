@@ -517,11 +517,11 @@ export default function About() {
             padding: '0.3rem 0.7rem', borderRadius: '30px', backdropFilter: 'blur(10px)',
             flexWrap: 'wrap', justifyContent: 'center',
           }}>
-            <ViewBtn id="neural" label="⌖ NEURAL_CORE" active={viewMode === 'neural'} onClick={() => setViewMode('neural')} />
+            <ViewBtn id="neural" label="NEURAL_CORE" active={viewMode === 'neural'} onClick={() => setViewMode('neural')} />
             {divider}
-            <ViewBtn id="radar"  label="📡 UPLINK_RADAR" active={viewMode === 'radar'}  onClick={() => setViewMode('radar')} />
+            <ViewBtn id="radar"  label="UPLINK_RADAR" active={viewMode === 'radar'}  onClick={() => setViewMode('radar')} />
             {divider}
-            <ViewBtn id="chrono" label="📟 CHRONO_LOG"  active={viewMode === 'chrono'} onClick={() => setViewMode('chrono')} />
+            <ViewBtn id="chrono" label="CHRONO_LOG"  active={viewMode === 'chrono'} onClick={() => setViewMode('chrono')} />
           </div>
 
           {/* Viewport Frame */}

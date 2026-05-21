@@ -1,41 +1,38 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import BentoCard from './BentoCard';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence, useSpring, useMotionValue } from 'framer-motion';
 import Magnetic from './Magnetic';
 import TextReveal from './TextReveal';
 import { projectsData } from '../data/content';
 
-function ProjectHUDPreview({ type, isHovered }) {
+/* ─── Canvas Previews (same draw logic, different container) ─────────── */
+function ProjectCanvasPreview({ type }) {
   const canvasRef = useRef(null);
+  const animRef  = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let animationId;
-    let width = (canvas.width = canvas.offsetWidth || 300);
-    let height = (canvas.height = canvas.offsetHeight || 170);
-
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = canvas.offsetWidth || 300;
-      height = canvas.height = canvas.offsetHeight || 170;
-    };
-    window.addEventListener('resize', handleResize);
-
     let frame = 0;
-    let bloomProgress = 0.35;
-    
-    // Floating petals setup
+    let bloomProgress = 0.45;
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth  || 360;
+      canvas.height = canvas.offsetHeight || 220;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Petals
     const petals = [];
     if (type === 'floating-petals') {
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < 18; i++) {
         petals.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
           r: Math.random() * 4 + 3,
           vx: Math.random() * 0.4 - 0.2,
-          vy: Math.random() * 0.4 + 0.15,
+          vy: Math.random() * 0.5 + 0.15,
           angle: Math.random() * 360,
           spin: Math.random() * 1.5 - 0.75,
           offset: Math.random() * 100,
@@ -43,450 +40,319 @@ function ProjectHUDPreview({ type, isHovered }) {
       }
     }
 
-    // Node network setup
-    const nodes = [];
-    const connections = [];
+    // Nodes
+    const nodes = [], connections = [];
     if (type === 'node-network') {
-      const nodeCount = 6;
-      for (let i = 0; i < nodeCount; i++) {
+      const count = 7;
+      for (let i = 0; i < count; i++) {
         nodes.push({
-          x: 40 + Math.random() * (width - 80),
-          y: 30 + Math.random() * (height - 60),
-          r: Math.random() * 2 + 1.5,
+          x: 50 + Math.random() * (canvas.width - 100),
+          y: 30 + Math.random() * (canvas.height - 60),
+          r: Math.random() * 2 + 2,
           pulse: Math.random() * 100,
         });
       }
-      // Connect nodes close to each other
-      for (let i = 0; i < nodeCount; i++) {
-        for (let j = i + 1; j < nodeCount; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 120 || Math.random() < 0.35) {
-            connections.push([i, j]);
-          }
+      for (let i = 0; i < count; i++) {
+        for (let j = i + 1; j < count; j++) {
+          const d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+          if (d < 130 || Math.random() < 0.3) connections.push([i, j]);
         }
       }
     }
 
-    // Color definitions respecting active theme mode
     const getColors = () => {
       const isLight = document.documentElement.classList.contains('light-mode');
       return {
-        accent: isLight ? '#D97706' : '#FACC15',
-        ink: isLight ? '#0F172A' : '#F8FAFC',
-        inkMid: isLight ? '#475569' : '#94A3B8',
-        border: isLight ? 'rgba(15, 23, 42, 0.05)' : 'rgba(250, 204, 21, 0.05)'
+        accent:  isLight ? '#D97706' : '#FACC15',
+        ink:     isLight ? '#0F172A' : '#F8FAFC',
+        inkMid:  isLight ? '#475569' : '#94A3B8',
       };
     };
 
-    const render = () => {
+    const draw = () => {
       frame++;
+      const { width, height } = canvas;
       ctx.clearRect(0, 0, width, height);
-
-      const colors = getColors();
+      const c = getColors();
 
       if (type === 'cv-flow') {
-        // Cybernetic Scanning Grid
-        ctx.strokeStyle = colors.accent + '0a';
-        ctx.lineWidth = 1;
-        const spacing = 14;
-        for (let x = 0; x < width; x += spacing) {
-          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
-        }
-        for (let y = 0; y < height; y += spacing) {
-          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
-        }
+        const spacing = 16;
+        ctx.strokeStyle = c.accent + '08'; ctx.lineWidth = 1;
+        for (let x = 0; x < width; x += spacing) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke(); }
+        for (let y = 0; y < height; y += spacing) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke(); }
 
-        // Animated scan sweep
-        const scanY = (frame * (isHovered ? 2.5 : 1.2)) % height;
-        ctx.strokeStyle = colors.accent + '33';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(0, scanY);
-        ctx.lineTo(width, scanY);
-        ctx.stroke();
+        const scanY = (frame * 1.6) % height;
+        ctx.strokeStyle = c.accent + '44'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(width, scanY); ctx.stroke();
 
-        // Scan reflection gradient
-        const grad = ctx.createLinearGradient(0, scanY - 30, 0, scanY);
-        grad.addColorStop(0, 'transparent');
-        grad.addColorStop(1, colors.accent + '08');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, Math.max(0, scanY - 30), width, 30);
+        const grad = ctx.createLinearGradient(0, scanY - 40, 0, scanY);
+        grad.addColorStop(0, 'transparent'); grad.addColorStop(1, c.accent + '0a');
+        ctx.fillStyle = grad; ctx.fillRect(0, Math.max(0, scanY - 40), width, 40);
 
-        // Terminal telemetry data
-        ctx.fillStyle = colors.inkMid + '99';
-        ctx.font = '700 8px var(--font-mono)';
-        ctx.fillText('CORE::SYS_CV_GEN', 15, 20);
-        ctx.fillText('UPLINK: ONLINE', width - 85, 20);
-
-        const statements = [
-          'whoami: ashmit_dev',
-          'compiler: typescript_v5',
-          'structural: load_bearing_irony',
-          'systems: cv_assembler_core',
-          'uplink: ok_node_04'
-        ];
-
+        const lines = ['> whoami: ashmit_dev','> compiler: typescript_v5','> status: BUILDING','> uplink: ONLINE'];
         ctx.font = '400 9px var(--font-mono)';
-        statements.forEach((stmt, idx) => {
-          const maxChars = Math.min(stmt.length, Math.floor(frame / 4) - idx * 4);
-          if (maxChars > 0) {
-            ctx.fillStyle = stmt.includes('ashmit_dev') ? colors.accent : colors.ink + 'bb';
-            ctx.fillText('> ' + stmt.slice(0, maxChars), 15, 45 + idx * 18);
+        lines.forEach((l, i) => {
+          const chars = Math.min(l.length, Math.floor(frame / 3) - i * 5);
+          if (chars > 0) {
+            ctx.fillStyle = l.includes('ashmit') ? c.accent : c.ink + 'bb';
+            ctx.fillText(l.slice(0, chars), 16, 32 + i * 20);
           }
         });
-
-        // Vertical glowing capacity visualizer
-        ctx.strokeStyle = colors.accent + '44';
-        ctx.strokeRect(width - 35, 40, 20, 80);
-        
-        ctx.fillStyle = colors.accent;
-        const capacityVal = isHovered ? 6 : Math.floor(4 + Math.sin(frame * 0.08) * 2);
-        for (let i = 0; i < capacityVal; i++) {
-          ctx.fillRect(width - 32, 112 - i * 11, 14, 8);
-        }
 
       } else if (type === 'flower-bloom') {
-        // Procedural blooming geometric matrix flower
-        const cx = width / 2;
-        const cy = height / 2;
-        ctx.translate(cx, cy);
-
-        const rotSpeed = isHovered ? 0.02 : 0.006;
-        ctx.rotate(frame * rotSpeed);
-
-        const targetProgress = isHovered ? 0.95 : 0.45;
-        bloomProgress += (targetProgress - bloomProgress) * 0.08;
-
-        ctx.shadowBlur = isHovered ? 20 : 8;
-        ctx.shadowColor = colors.accent;
-
-        const petalsCount = 8;
-        for (let i = 0; i < petalsCount; i++) {
-          ctx.rotate((Math.PI * 2) / petalsCount);
-          ctx.strokeStyle = colors.accent + (isHovered ? 'aa' : '3e');
-          ctx.lineWidth = 1.25;
+        const cx = width / 2, cy = height / 2;
+        ctx.save(); ctx.translate(cx, cy);
+        ctx.rotate(frame * 0.012);
+        bloomProgress += (0.9 - bloomProgress) * 0.05;
+        ctx.shadowBlur = 18; ctx.shadowColor = c.accent;
+        for (let i = 0; i < 8; i++) {
+          ctx.rotate(Math.PI / 4);
+          ctx.strokeStyle = c.accent + 'aa'; ctx.lineWidth = 1.2;
           ctx.beginPath();
           ctx.moveTo(0, 0);
-          ctx.bezierCurveTo(
-            -30 * bloomProgress, 
-            -30 * bloomProgress, 
-            -15 * bloomProgress, 
-            -70 * bloomProgress, 
-            0, 
-            -78 * bloomProgress
-          );
-          ctx.bezierCurveTo(
-            15 * bloomProgress, 
-            -70 * bloomProgress, 
-            30 * bloomProgress, 
-            -30 * bloomProgress, 
-            0, 
-            0
-          );
-          ctx.stroke();
-
-          // Internal vein line
-          ctx.strokeStyle = colors.accent + '15';
-          ctx.lineWidth = 0.5;
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.lineTo(0, -55 * bloomProgress);
+          ctx.bezierCurveTo(-30*bloomProgress,-30*bloomProgress,-15*bloomProgress,-70*bloomProgress,0,-78*bloomProgress);
+          ctx.bezierCurveTo(15*bloomProgress,-70*bloomProgress,30*bloomProgress,-30*bloomProgress,0,0);
           ctx.stroke();
         }
-
-        ctx.shadowBlur = 0;
-        ctx.translate(-cx, -cy);
-
-        // Core system metadata
-        ctx.fillStyle = colors.inkMid + '66';
-        ctx.font = '500 7px var(--font-mono)';
-        ctx.fillText(`ANGLE_SPIN: ${(rotSpeed * 1000).toFixed(0)}RAD/S`, 15, height - 12);
-        ctx.fillText(`GEOMETRIC_BLOOM: ${(bloomProgress * 100).toFixed(0)}%`, width - 110, height - 12);
+        ctx.shadowBlur = 0; ctx.restore();
+        ctx.fillStyle = c.inkMid + '55'; ctx.font = '500 7px var(--font-mono)';
+        ctx.fillText(`BLOOM: ${(bloomProgress*100).toFixed(0)}%`, 12, height - 12);
 
       } else if (type === 'floating-petals') {
-        // Drift and float system petals
-        ctx.fillStyle = colors.accent + (isHovered ? '25' : '0f');
-        ctx.strokeStyle = colors.accent + (isHovered ? '88' : '33');
-        ctx.lineWidth = 1;
-
-        petals.forEach((p) => {
-          p.y -= p.vy * (isHovered ? 2.2 : 0.9);
-          p.x += Math.sin(frame * 0.02 + p.offset) * 0.25 + p.vx * (isHovered ? 1.5 : 0.6);
-          p.angle += p.spin * (isHovered ? 1.8 : 0.6);
-
-          if (p.y < -10) {
-            p.y = height + 10;
-            p.x = Math.random() * width;
-          }
-          if (p.x < -10 || p.x > width + 10) {
-            p.x = p.x < 0 ? width : 0;
-          }
-
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate((p.angle * Math.PI) / 180);
-          
+        petals.forEach(p => {
+          p.y -= p.vy * 1.2;
+          p.x += Math.sin(frame * 0.02 + p.offset) * 0.3 + p.vx;
+          p.angle += p.spin;
+          if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
+          if (p.x < -10 || p.x > width + 10) p.x = p.x < 0 ? width : 0;
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate((p.angle * Math.PI) / 180);
+          ctx.fillStyle = c.accent + '22'; ctx.strokeStyle = c.accent + '88'; ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(0, -p.r);
-          ctx.quadraticCurveTo(p.r * 1.4, -p.r * 0.4, p.r, p.r);
-          ctx.quadraticCurveTo(-p.r * 0.4, p.r * 1.4, -p.r, 0);
+          ctx.quadraticCurveTo(p.r*1.4, -p.r*0.4, p.r, p.r);
+          ctx.quadraticCurveTo(-p.r*0.4, p.r*1.4, -p.r, 0);
           ctx.quadraticCurveTo(-p.r, -p.r, 0, -p.r);
-          ctx.fill();
-          ctx.stroke();
-
-          ctx.restore();
+          ctx.fill(); ctx.stroke(); ctx.restore();
         });
-
-        // Core system label
-        ctx.fillStyle = colors.inkMid + '88';
-        ctx.font = '700 8px var(--font-mono)';
-        ctx.fillText('CANVAS::PETALS_ECOSYSTEM', 15, 20);
+        ctx.fillStyle = c.inkMid + '77'; ctx.font = '700 8px var(--font-mono)';
+        ctx.fillText('PETAL_ECOSYSTEM', 12, 20);
 
       } else if (type === 'node-network') {
-        // Systems network interactive visualizer
-        ctx.lineWidth = 0.5;
-
-        // Draw node links
         connections.forEach(([i, j]) => {
-          const n1 = nodes[i];
-          const n2 = nodes[j];
-          if (!n1 || !n2) return;
-          ctx.strokeStyle = colors.accent + (isHovered ? '2f' : '12');
-          ctx.beginPath();
-          ctx.moveTo(n1.x, n1.y);
-          ctx.lineTo(n2.x, n2.y);
-          ctx.stroke();
-
-          // Data particle flow
-          if (isHovered && frame % 90 < 30) {
-            const step = (frame % 30) / 30;
-            const px = n1.x + (n2.x - n1.x) * step;
-            const py = n1.y + (n2.y - n1.y) * step;
-            ctx.fillStyle = colors.accent;
-            ctx.beginPath();
-            ctx.arc(px, py, 1.75, 0, Math.PI * 2);
-            ctx.fill();
+          ctx.strokeStyle = c.accent + '33'; ctx.lineWidth = 0.6;
+          ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+          if (frame % 60 < 20) {
+            const t = (frame % 20) / 20;
+            const px = nodes[i].x + (nodes[j].x - nodes[i].x) * t;
+            const py = nodes[i].y + (nodes[j].y - nodes[i].y) * t;
+            ctx.fillStyle = c.accent;
+            ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2); ctx.fill();
           }
         });
-
-        // Draw nodes
-        nodes.forEach((n, idx) => {
-          n.pulse += isHovered ? 0.07 : 0.035;
-          const pulsingRadius = n.r + Math.sin(n.pulse) * (isHovered ? 1.25 : 0.45);
-
-          // Glowing border ring
-          ctx.strokeStyle = colors.accent + (isHovered ? '66' : '1e');
-          ctx.lineWidth = 0.75;
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, pulsingRadius * 2.2, 0, Math.PI * 2);
-          ctx.stroke();
-
-          // Central solid node dot
-          ctx.fillStyle = isHovered ? colors.accent : colors.ink + 'cc';
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, pulsingRadius, 0, Math.PI * 2);
-          ctx.fill();
-
-          if (isHovered) {
-            ctx.fillStyle = colors.inkMid + 'aa';
-            ctx.font = '600 6px var(--font-mono)';
-            ctx.fillText(`NODE0${idx + 1}::ACTIVE`, n.x - 14, n.y - pulsingRadius * 3.2);
-          }
+        nodes.forEach(n => {
+          n.pulse += 0.06;
+          const r = n.r + Math.sin(n.pulse) * 1.2;
+          ctx.strokeStyle = c.accent + '55'; ctx.lineWidth = 0.75;
+          ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.5, 0, Math.PI * 2); ctx.stroke();
+          ctx.fillStyle = c.accent;
+          ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
         });
-
-        // Telemetry header
-        ctx.fillStyle = colors.inkMid + '88';
-        ctx.font = '700 8px var(--font-mono)';
-        ctx.fillText('SYSTEMS::SYNAPSE_GRID_ONLINE', 15, 20);
+        ctx.fillStyle = c.inkMid + '77'; ctx.font = '700 8px var(--font-mono)';
+        ctx.fillText('SYNAPSE_GRID::ONLINE', 12, 20);
       }
 
-      animationId = requestAnimationFrame(render);
+      animRef.current = requestAnimationFrame(draw);
     };
-
-    render();
+    draw();
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animRef.current);
     };
-  }, [type, isHovered]);
+  }, [type]);
 
   return (
-    <div className="project-preview-wrapper" style={{ width: '100%', height: '170px', marginBottom: '1.25rem', overflow: 'hidden', position: 'relative', borderRadius: '10px', background: 'rgba(0,0,0,0.18)', border: '1px solid var(--border)' }}>
-      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
-    </div>
+    <canvas
+      ref={canvasRef}
+      style={{ width: '100%', height: '100%', display: 'block' }}
+    />
   );
 }
 
+/* ─── Floating Preview Tooltip ───────────────────────────────────────── */
+function FloatingPreview({ project, visible }) {
+  const x = useMotionValue(-999);
+  const y = useMotionValue(-999);
+  const springX = useSpring(x, { stiffness: 220, damping: 28 });
+  const springY = useSpring(y, { stiffness: 220, damping: 28 });
+
+  useEffect(() => {
+    const onMove = (e) => {
+      x.set(e.clientX + 24);
+      y.set(e.clientY - 120);
+    };
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [x, y]);
+
+  return (
+    <AnimatePresence>
+      {visible && project && (
+        <motion.div
+          className="project-floating-preview"
+          style={{ left: springX, top: springY }}
+          initial={{ opacity: 0, scale: 0.88, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.88, y: 10 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="pfp-canvas-wrap">
+            <ProjectCanvasPreview type={project.previewType} />
+          </div>
+          <div className="pfp-meta">
+            <span className="pfp-tags">
+              {project.tags.map(t => <span key={t}>{t}</span>)}
+            </span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ─── Single Project Row ─────────────────────────────────────────────── */
+function ProjectRow({ project, index, onHover, onLeave, isHovered }) {
+  return (
+    <motion.div
+      className={`proj-row${isHovered ? ' proj-row--active' : ''}`}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.55, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      onMouseEnter={() => onHover(project)}
+      onMouseLeave={onLeave}
+    >
+      <span className="proj-index">
+        {String(index + 1).padStart(2, '0')}
+      </span>
+
+      <div className="proj-info">
+        <h3 className="proj-title">{project.title}</h3>
+        <p className="proj-desc">{project.desc}</p>
+      </div>
+
+      <div className="proj-tags-inline">
+        {project.tags.map(t => (
+          <span key={t} className="proj-tag-pill">{t}</span>
+        ))}
+      </div>
+
+      <span className="proj-year">{project.year}</span>
+
+      <Magnetic>
+        <a
+          href={project.github}
+          target={project.github !== '#' ? '_blank' : undefined}
+          rel="noopener noreferrer"
+          className="proj-link-btn"
+          aria-label={`View ${project.title}`}
+          onClick={e => project.github === '#' && e.preventDefault()}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+               strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </a>
+      </Magnetic>
+    </motion.div>
+  );
+}
+
+/* ─── Main Projects Section ──────────────────────────────────────────── */
 export default function Projects() {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [hoveredCard, setHoveredCard] = useState(null);
+  const [hoveredProject, setHoveredProject] = useState(null);
 
   const categories = [
-    { id: 'all', label: 'ALL_SYS' },
-    { id: 'web', label: 'WEB_APP' },
-    { id: 'systems', label: 'SYS_CORE' },
-    { id: 'creative', label: 'CREATIVE' }
+    { id: 'all',      label: 'ALL' },
+    { id: 'web',      label: 'WEB' },
+    { id: 'systems',  label: 'SYSTEMS' },
+    { id: 'creative', label: 'CREATIVE' },
   ];
 
-  const filteredProjects = selectedCategory === 'all'
+  const filtered = selectedCategory === 'all'
     ? projectsData
     : projectsData.filter(p => p.category === selectedCategory);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.95, y: 30, rotateX: 12 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0, 
-      rotateX: 0,
-      transition: { 
-        duration: 0.7, 
-        ease: [0.2, 0.65, 0.3, 0.9] 
-      } 
-    }
-  };
-
-  const textVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
-
   return (
     <section id="projects" aria-label="Selected projects">
+      {/* Floating preview portal — rendered outside the list flow */}
+      <FloatingPreview project={hoveredProject} visible={!!hoveredProject} />
+
       <div className="section-intro">
-        <motion.p 
-          className="section-eyebrow" 
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={textVariants}
+        <motion.p
+          className="section-eyebrow"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
           01 / SELECTED WORK
         </motion.p>
         <TextReveal text="Featured Projects" className="section-title" tag="h2" delay={0.2} />
-        
-        {/* Modern Interactive Cybernetic Tag Filters */}
-        <motion.div 
-          className="projects-filter-bar"
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '1.5rem', fontFamily: 'var(--font-mono)' }}
-        >
-          {categories.map((cat) => {
-            const isActive = selectedCategory === cat.id;
-            return (
-              <Magnetic key={cat.id}>
-                <button
-                  onClick={() => setSelectedCategory(cat.id)}
-                  style={{
-                    padding: '0.45rem 1.1rem',
-                    borderRadius: '8px',
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    background: isActive ? 'var(--accent)' : 'var(--glass-bg)',
-                    color: isActive ? 'var(--bg)' : 'var(--ink-mid)',
-                    border: '1px solid',
-                    borderColor: isActive ? 'var(--accent)' : 'var(--glass-border)',
-                    letterSpacing: '0.08em',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.target.style.borderColor = 'var(--accent)';
-                      e.target.style.color = 'var(--ink)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.target.style.borderColor = 'var(--glass-border)';
-                      e.target.style.color = 'var(--ink-mid)';
-                    }
-                  }}
-                >
-                  {isActive ? `[ ${cat.label} ]` : cat.label}
-                </button>
-              </Magnetic>
-            );
-          })}
-        </motion.div>
       </div>
 
-      <motion.div 
-        className="bento-grid projects-grid"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+      {/* Filter strip */}
+      <motion.div
+        className="proj-filters"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.25 }}
       >
-        <AnimatePresence mode="popLayout">
-          {filteredProjects.map((project, idx) => {
-            const isFeatured = project.title === 'Sahayogi';
-            const colClass = isFeatured ? 'project-col-12 project-card--featured-wrapper' : 'project-col-6';
-            
-            return (
-              <motion.article 
-                layout
-                key={project.title}
-                variants={itemVariants} 
-                className={colClass}
-                onMouseEnter={() => setHoveredCard(project.title)}
-                onMouseLeave={() => setHoveredCard(null)}
-                style={{ originY: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 15, transition: { duration: 0.3 } }}
-              >
-                <BentoCard className="project-card">
-                  <div className="project-card-inner">
-                    
-                    {/* Glowing Interactive Visual Previews */}
-                    <ProjectHUDPreview type={project.previewType} isHovered={hoveredCard === project.title} />
-
-                    <div className="project-header">
-                      <span className="project-year">{project.year}</span>
-                      <Magnetic>
-                        <a 
-                          href={project.github} 
-                          target={project.github !== '#' ? '_blank' : undefined} 
-                          rel="noopener noreferrer" 
-                          className="project-external-link" 
-                          aria-label="View Project Link"
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                          </svg>
-                        </a>
-                      </Magnetic>
-                    </div>
-
-                    <h3 className="project-title">{project.title}</h3>
-                    <p className="project-desc">{project.desc}</p>
-                    
-                    <div className="project-tags" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      {project.tags.map(tag => (
-                        <span key={tag}>{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </BentoCard>
-              </motion.article>
-            );
-          })}
-        </AnimatePresence>
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            className={`proj-filter-btn${selectedCategory === cat.id ? ' active' : ''}`}
+            onClick={() => setSelectedCategory(cat.id)}
+          >
+            {cat.label}
+          </button>
+        ))}
       </motion.div>
+
+      {/* Column header */}
+      <motion.div
+        className="proj-list-header"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.35 }}
+      >
+        <span>#</span>
+        <span>Project</span>
+        <span>Stack</span>
+        <span>Year</span>
+        <span />
+      </motion.div>
+
+      {/* Project rows */}
+      <div className="proj-list">
+        <AnimatePresence mode="popLayout">
+          {filtered.map((project, idx) => (
+            <ProjectRow
+              key={project.title}
+              project={project}
+              index={idx}
+              isHovered={hoveredProject?.title === project.title}
+              onHover={setHoveredProject}
+              onLeave={() => setHoveredProject(null)}
+            />
+          ))}
+        </AnimatePresence>
+      </div>
     </section>
   );
 }

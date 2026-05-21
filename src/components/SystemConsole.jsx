@@ -375,7 +375,7 @@ export default function SystemConsole() {
                 display: 'block'
               }}
             >
-              ⚙️ RUN_DIAGNOSTIC
+              &gt; RUN_DIAGNOSTIC
             </button>
 
             <div className="ide-sidebar-title mt-6">SYSTEM STATUS</div>
@@ -383,10 +383,10 @@ export default function SystemConsole() {
               <span className="status-dot"></span> UPLINK SECURE
             </div>
             <div className="ide-status-item" style={{ marginTop: '0.25rem', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--ink-mid)' }}>
-              ⚡ COGNITIVE LEVEL: 100%
+              // COGNITIVE LEVEL: 100%
             </div>
             <div className="ide-status-item" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--ink-mid)' }}>
-              🛡️ FIREWALL: ACTIVE
+              // FIREWALL: ACTIVE
             </div>
           </div>
 
