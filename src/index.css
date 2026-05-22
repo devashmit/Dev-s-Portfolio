@@ -1274,6 +1274,275 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
 }
 
 /* ==============================
+   CODE EDITOR INTRO (CEI)
+   ============================== */
+
+/* blink keyframe for typing cursor */
+@keyframes ceiBlink { 50% { opacity: 0; } }
+
+.cei-wrapper {
+  width: 100%;
+  margin-bottom: 5rem;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 0 0 1px rgba(250,204,21,0.06),
+    0 30px 80px rgba(0,0,0,0.55),
+    0 0 60px rgba(250,204,21,0.04);
+  background: #0D0F13;
+  font-family: var(--font-mono);
+  position: relative;
+}
+
+:root.light-mode .cei-wrapper {
+  background: #1a1d23;
+  border-color: rgba(15,23,42,0.12);
+  box-shadow: 0 30px 80px rgba(15,23,42,0.18);
+}
+
+/* ── Window chrome ── */
+.cei-chrome {
+  height: 42px;
+  background: rgba(0,0,0,0.35);
+  border-bottom: 1px solid rgba(250,204,21,0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 1rem;
+}
+
+.cei-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cei-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: block;
+}
+
+.cei-window-title {
+  font-size: 0.7rem;
+  color: #5C6370;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Telemetry bar (right side of chrome) ── */
+.cei-telemetry {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  color: #5C6370;
+  letter-spacing: 0.04em;
+}
+
+.cei-tele-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: pulse 2s infinite;
+  margin-right: 2px;
+}
+
+.cei-tele-label { color: #5C6370; }
+.cei-tele-val   { color: #ABB2BF; font-weight: 600; margin-left: 2px; }
+
+@media(max-width: 640px) {
+  .cei-telemetry { display: none; }
+  .cei-window-title { font-size: 0.6rem; }
+}
+
+/* ── Body layout ── */
+.cei-body {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: 420px;
+}
+
+@media(max-width: 768px) {
+  .cei-body { grid-template-columns: 1fr; }
+  .cei-sidebar { display: none !important; }
+}
+
+/* ── Sidebar ── */
+.cei-sidebar {
+  background: rgba(0,0,0,0.2);
+  border-right: 1px solid rgba(250,204,21,0.06);
+  padding: 1.25rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.cei-sidebar-section {
+  font-size: 0.62rem;
+  color: #5C6370;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cei-file-list,
+.cei-cmd-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cei-file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #5C6370;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cei-file-item:hover { background: rgba(255,255,255,0.04); color: #ABB2BF; }
+.cei-file-item.active { background: rgba(250,204,21,0.07); color: #F8FAFC; }
+
+.cei-file-ext {
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.cei-cmd-item {
+  font-size: 0.72rem;
+  color: #5C6370;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.cei-cmd-item:hover { color: #FACC15; background: rgba(250,204,21,0.05); }
+
+/* ── Editor panel ── */
+.cei-editor {
+  display: flex;
+  flex-direction: column;
+  background: #060709;
+  overflow: hidden;
+}
+
+/* Tabs */
+.cei-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(250,204,21,0.07);
+  background: rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.cei-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #5C6370;
+  border: none;
+  background: none;
+  border-right: 1px solid rgba(250,204,21,0.06);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+
+.cei-tab:hover { color: #ABB2BF; background: rgba(255,255,255,0.02); }
+
+.cei-tab.active {
+  color: #F8FAFC;
+  background: #060709;
+  border-top: 2px solid #FACC15;
+  padding-top: calc(0.65rem - 2px);
+  box-shadow: inset 0 -1px 0 #060709;
+}
+
+/* Code area (line-nums + code) */
+.cei-code-area {
+  display: flex;
+  flex: 1;
+  padding: 1.25rem 0;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.cei-line-nums {
+  padding: 0 1rem 0 1.25rem;
+  font-size: 0.82rem;
+  color: #3C4049;
+  text-align: right;
+  line-height: 1.7;
+  user-select: none;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(255,255,255,0.04);
+}
+
+.cei-code {
+  flex: 1;
+  padding: 0 1.5rem;
+  min-width: 0;
+}
+
+.cei-code-line {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  padding: 0 0.25rem;
+  border-radius: 3px;
+  transition: background 0.15s;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.cei-code-line.hovered {
+  background: rgba(250,204,21,0.04);
+}
+
+/* Status bar */
+.cei-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.3rem 1.25rem;
+  background: rgba(0,0,0,0.3);
+  border-top: 1px solid rgba(250,204,21,0.07);
+  font-size: 0.65rem;
+  color: #5C6370;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+@media(max-width: 480px) {
+  .cei-status-bar span:not(:first-child):not(:nth-child(2)) { display: none; }
+}
+
+/* ==============================
    TERMINAL DOSSIER & RADAR
    ============================== */
 .dossier-layout {

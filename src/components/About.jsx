@@ -1,6 +1,7 @@
 import { motion, useTransform, useMotionValue, useSpring, useTime, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useMemo, useEffect } from 'react';
 import TextReveal from './TextReveal';
+import CodeEditorIntro from './CodeEditorIntro';
 
 /* ─── Data ─────────────────────────────────────────────────────────── */
 const dossierData = [
@@ -503,6 +504,11 @@ export default function About() {
           03 / BACKGROUND
         </motion.p>
         <TextReveal text="Journey" className="section-title" tag="h2" delay={0.1} />
+      </div>
+
+      {/* ── Code Editor Intro ── */}
+      <div className="relative-z">
+        <CodeEditorIntro />
       </div>
 
       <div className="dossier-layout relative-z">
