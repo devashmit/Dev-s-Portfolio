@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { Terminal, MapPin, Cpu, Clock, GitBranch, Shield } from 'lucide-react';
 
 const appRouterCode = [
   { text: "const", type: "keyword" },
@@ -113,6 +114,45 @@ export default function SystemConsole() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [diagnosticMode, setDiagnosticMode] = useState(false);
   const [diagnosticLogs, setDiagnosticLogs] = useState([]);
+
+  // Dynamic metrics for the professional HUD
+  const [uptime, setUptime] = useState('00:00');
+  const [cpuLoad, setCpuLoad] = useState('4.2%');
+  const [liveTime, setLiveTime] = useState('');
+
+  // 1. Live Uptime tracker (elapsed time since page load)
+  useEffect(() => {
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const seconds = String(elapsed % 60).padStart(2, '0');
+      setUptime(`${minutes}:${seconds}`);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 2. Simulated real-time CPU fluctuations (feels alive!)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const base = 3.5;
+      const variation = Math.random() * 2.8;
+      setCpuLoad(`${(base + variation).toFixed(1)}%`);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 3. Real-time local clock
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      setLiveTime(now.toTimeString().split(' ')[0]);
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
 
   // 3D Tilt & Parallax Grid Logic
   const mouseX = useMotionValue(0);
@@ -264,26 +304,75 @@ export default function SystemConsole() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="hud-status-node">
-            <span className="hud-pulse-dot"></span>
-            <span className="hud-label">SYS_STATUS: {filesMap[activeFile].status}</span>
+          {/* Module 1: System Status */}
+          <div className="hud-metric-card" title="Host cluster status. Changes based on active workspace file.">
+            <div className="hud-status-node">
+              <span 
+                className="hud-pulse-dot" 
+                style={{ 
+                  color: activeFile === 'secure-uplink.sh' ? '#ef4444' : (activeFile === 'developer-profile.json' ? '#eab308' : '#10b981') 
+                }}
+              ></span>
+              <Terminal className="hud-icon accent" size={13} />
+              <span className="hud-label">SYS_STATUS:</span>
+              <span className="hud-metric-val">{filesMap[activeFile].status}</span>
+            </div>
+            <div className="hud-tooltip">Host cluster status. Dynamic state change.</div>
           </div>
+          
           <span className="hud-divider">//</span>
-          <div className="hud-metric">
+
+          {/* Module 2: Security Firewall */}
+          <div className="hud-metric-card" title="Sandboxed local environment. Hardware firewall active.">
+            <Shield className="hud-icon green" size={13} />
+            <span className="hud-metric-label">SECURE:</span>
+            <span className="hud-metric-val">AES-256</span>
+            <div className="hud-tooltip">Sandboxed core environment. Hardware firewall.</div>
+          </div>
+
+          <span className="hud-divider">//</span>
+
+          {/* Module 3: Geolocation Coordinates */}
+          <div className="hud-metric-card" title="Developer local coordinates. GMT +5:45 timezone.">
+            <MapPin className="hud-icon accent" size={13} />
             <span className="hud-metric-label">LOC:</span>
             <span className="hud-metric-val">27.7172° N, 85.3240° E</span>
+            <div className="hud-tooltip">Kathmandu, Nepal (Workstation standard timezone)</div>
           </div>
+
           <span className="hud-divider">//</span>
-          <div className="hud-metric">
-            <span className="hud-metric-label">NODE:</span>
-            <span className="hud-metric-val">{filesMap[activeFile].node}</span>
+
+          {/* Module 4: Live Simulated Engine Performance */}
+          <div className="hud-metric-card" title="Live CPU engine load. Dyn-resource allocation.">
+            <Cpu className="hud-icon yellow" size={13} />
+            <span className="hud-metric-label">CPU:</span>
+            <span className="hud-metric-val">{cpuLoad}</span>
+            <div className="hud-tooltip">Live engine load balancer. CPU resources stable.</div>
           </div>
+
           <span className="hud-divider">//</span>
-          <div className="hud-metric hide-mobile">
-            <span className="hud-metric-label">PING:</span>
-            <span className="hud-metric-val">{filesMap[activeFile].ping}</span>
+
+          {/* Module 5: Repository Branch */}
+          <div className="hud-metric-card hide-mobile" title="Current git version control node.">
+            <GitBranch className="hud-icon blue" size={13} />
+            <span className="hud-metric-label">BRANCH:</span>
+            <span className="hud-metric-val">main@v2.4.0</span>
+            <div className="hud-tooltip">Git version control. Encrypted production branch.</div>
+          </div>
+
+          <span className="hud-divider hide-mobile">//</span>
+
+          {/* Module 6: Live clock and elapsed time */}
+          <div className="hud-metric-card hide-mobile" title="System session uptime & real-time clock.">
+            <Clock className="hud-icon purple" size={13} />
+            <span className="hud-metric-label">UPTIME:</span>
+            <span className="hud-metric-val">{uptime}</span>
+            <span className="hud-metric-sep">/</span>
+            <span className="hud-metric-val text-dim">{liveTime}</span>
+            <div className="hud-tooltip">Session elapsed uptime & active local workstation clock.</div>
           </div>
         </motion.div>
+
 
         {/* Rebuilt Typographic Heading */}
         <motion.h2

@@ -732,61 +732,107 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
   width: 100%;
 }
 
-/* Cybernetic HUD Diagnostics Bar Styles */
+/* Premium Glassmorphic HUD Workstation Bar Styles */
 .hud-status-bar {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  padding: 0.45rem 1.25rem;
-  background: rgba(13, 15, 19, 0.65);
-  border: 1px solid rgba(250, 204, 21, 0.15);
-  border-radius: 999px;
+  gap: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  background: rgba(10, 11, 14, 0.75);
+  border: 1px solid rgba(250, 204, 21, 0.2);
+  border-radius: 14px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--ink-mid);
-  backdrop-filter: blur(12px);
-  margin-bottom: 1rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  z-index: 2;
+  backdrop-filter: blur(20px) saturate(180%);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  z-index: 10;
   letter-spacing: 0.05em;
-  will-change: transform;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.hud-status-bar:hover {
+  border-color: rgba(250, 204, 21, 0.35);
+  box-shadow: 0 15px 45px rgba(250, 204, 21, 0.08), 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
 :root.light-mode .hud-status-bar {
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(217, 119, 6, 0.12);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(217, 119, 6, 0.18);
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
+
+:root.light-mode .hud-status-bar:hover {
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: 0 15px 45px rgba(217, 119, 6, 0.06), 0 12px 35px rgba(15, 23, 42, 0.06);
+}
+
+.hud-metric-card {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  position: relative;
+  cursor: help;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+.hud-metric-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-1px);
+}
+
+:root.light-mode .hud-metric-card:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.hud-icon {
+  color: var(--ink-dim);
+  opacity: 0.85;
+  transition: transform 0.3s ease;
+}
+
+.hud-metric-card:hover .hud-icon {
+  transform: scale(1.1);
+}
+
+.hud-icon.accent { color: var(--accent); }
+.hud-icon.green { color: #10b981; }
+.hud-icon.yellow { color: #f59e0b; }
+.hud-icon.blue { color: #3b82f6; }
+.hud-icon.purple { color: #a855f7; }
 
 .hud-status-node {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  color: var(--accent);
-  font-weight: 700;
 }
 
 .hud-pulse-dot {
   width: 6px;
   height: 6px;
-  background: #10b981;
   border-radius: 50%;
-  box-shadow: 0 0 8px #10b981;
-  animation: pulse 1.8s infinite;
+  background-color: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: hudPulse 2s infinite ease-in-out;
+  display: inline-block;
+}
+
+@keyframes hudPulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.7; }
 }
 
 .hud-divider {
   color: var(--ink-dim);
-  opacity: 0.4;
+  opacity: 0.2;
   user-select: none;
-}
-
-.hud-metric {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+  font-size: 0.85rem;
 }
 
 .hud-metric-label {
@@ -798,6 +844,62 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
   color: var(--ink);
   font-weight: 600;
 }
+
+.hud-metric-val.text-dim {
+  color: var(--ink-dim);
+  opacity: 0.75;
+}
+
+.hud-metric-sep {
+  color: var(--ink-dim);
+  opacity: 0.3;
+  margin: 0 0.1rem;
+}
+
+/* Beautiful Tooltips */
+.hud-tooltip {
+  position: absolute;
+  bottom: 135%;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(13, 15, 19, 0.95);
+  border: 1px solid rgba(250, 204, 21, 0.25);
+  color: #f8fafc;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1), transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hud-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(13, 15, 19, 0.95) transparent transparent transparent;
+}
+
+.hud-metric-card:hover .hud-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+:root.light-mode .hud-tooltip {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+}
+
 
 /* Premium Hollow & Solid Typography Styles */
 .console-spotlight-text {
