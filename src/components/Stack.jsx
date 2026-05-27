@@ -1,110 +1,115 @@
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
-import { useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
 import TextReveal from './TextReveal';
-import { stackItems, floatingIcons } from '../data/content';
+import { stackItems } from '../data/content';
 import SystemConsole from './SystemConsole';
 
-function StackCard({ item, index }) {
-  const cardRef = useRef(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+function Keycap({ item, index, onHover, onLeave, isActive }) {
+  // Mechanical keypress spring configuration
+  const springConfig = { type: "spring", stiffness: 400, damping: 20 };
 
-  // Smooth springs for tilt and magnetic effect
-  const springConfig = { stiffness: 150, damping: 15 };
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [15, -15]), springConfig);
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-15, 15]), springConfig);
-  const translateX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-10, 10]), springConfig);
-  const translateY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-10, 10]), springConfig);
-
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    
-    mouseX.set(x);
-    mouseY.set(y);
-
-    // Set CSS variables for the glow effect
-    cardRef.current.style.setProperty('--glow-x', `${(x + 0.5) * 100}%`);
-    cardRef.current.style.setProperty('--glow-y', `${(y + 0.5) * 100}%`);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.8, y: 30 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0, 
-      transition: { 
-        type: "spring", 
-        stiffness: 100, 
-        damping: 12,
-        delay: index * 0.05 
-      } 
+  // Audio click generator for physical realism
+  const playClick = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(isActive ? 120 : 150, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.08);
+      
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+    } catch (e) {
+      // AudioContext blocked or not supported
     }
   };
 
   return (
     <motion.div
-      ref={cardRef}
-      variants={itemVariants}
-      className="stack-icon-card"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ 
-        '--brand-color': item.color,
-        rotateX,
-        rotateY,
-        x: translateX,
-        y: translateY,
+      className={`keycap-container ${isActive ? 'active' : ''}`}
+      onMouseEnter={() => {
+        onHover(item);
+        playClick();
       }}
+      onMouseLeave={onLeave}
+      style={{
+        '--key-color': item.color,
+      }}
+      initial={{ opacity: 0, scale: 0.3, z: -100 }}
+      whileInView={{ 
+        opacity: 1, 
+        scale: 1, 
+        z: 0,
+        transition: { 
+          type: "spring",
+          stiffness: 120,
+          damping: 14,
+          delay: index * 0.03
+        }
+      }}
+      viewport={{ once: true }}
     >
-      <div className="stack-icon-glow"></div>
-      <div className="stack-icon-inner">
-        <img src={item.icon} alt={item.name} className={item.invertInDark ? 'invert-in-dark' : ''} />
-      </div>
-      <span className="stack-icon-name">{item.name}</span>
+      {/* 3D Keycap Body */}
+      <motion.div 
+        className="keycap-3d"
+        animate={isActive ? {
+          y: 7, // Push keycap down along isometric vertical direction
+          scale: 0.96,
+        } : {
+          y: 0,
+          scale: 1,
+        }}
+        transition={springConfig}
+      >
+        {/* Top Face */}
+        <div className="keycap-face">
+          <div className="keycap-icon-wrapper">
+            <img 
+              src={item.icon} 
+              alt={item.name} 
+              className={`keycap-icon ${item.invertInDark ? 'invert-in-dark' : ''}`} 
+            />
+          </div>
+        </div>
+        {/* Extruded Sides */}
+        <div className="keycap-side front"></div>
+        <div className="keycap-side right"></div>
+      </motion.div>
+
+      {/* Brand Colored Underglow LED */}
+      <div className={`key-led-glow ${isActive ? 'active' : ''}`}></div>
     </motion.div>
   );
 }
 
 export default function Stack() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
+  const [activeItem, setActiveItem] = useState(null);
+  const leaveTimeout = useRef(null);
 
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, -150]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const y3 = useTransform(scrollYProgress, [0, 1], [0, -250]);
+  const handleHover = (item) => {
+    if (leaveTimeout.current) clearTimeout(leaveTimeout.current);
+    setActiveItem(item);
+  };
+
+  const handleLeave = () => {
+    // Soft delay to prevent quick flickering between key selections
+    leaveTimeout.current = setTimeout(() => {
+      setActiveItem(null);
+    }, 400);
+  };
 
   return (
-    <section id="stack" aria-label="Technical skills" ref={containerRef} style={{ position: 'relative', overflow: 'hidden' }}>
+    <section id="stack" aria-label="Technical skills" style={{ position: 'relative', overflow: 'hidden' }}>
       
-      {/* Dynamic Background Elements */}
-      <div className="floating-icons-container">
-        {floatingIcons.map((icon, idx) => (
-          <motion.img 
-            key={idx}
-            src={icon} 
-            className={`floating-icon float-${idx}`}
-            style={{ 
-              y: idx % 2 === 0 ? y1 : idx % 3 === 0 ? y2 : y3,
-              filter: 'grayscale(100%) brightness(0.5)',
-              opacity: 0.03
-            }}
-            alt=""
-            aria-hidden="true"
-          />
-        ))}
-      </div>
+      {/* HUD Scanline & Grid overlay */}
+      <div className="hud-scanline"></div>
 
       <div className="section-intro relative-z">
         <motion.p 
@@ -116,15 +121,104 @@ export default function Stack() {
           02 / THE ARSENAL
         </motion.p>
         <TextReveal text="Tech Stack" className="section-title" tag="h2" delay={0.1} />
+        <p className="keyboard-hint">(hint: hover over a key to type)</p>
       </div>
 
-      <div className="stack-icon-grid relative-z">
-        {stackItems.map((item, idx) => (
-          <StackCard key={idx} item={item} index={idx} />
-        ))}
+      <div className="stack-keyboard-workspace relative-z">
+        
+        {/* Telemetry Display Terminal */}
+        <div className="stack-telemetry-panel">
+          <div className="telemetry-chrome">
+            <div className="chrome-dots">
+              <span className="dot red"></span>
+              <span className="dot yellow"></span>
+              <span className="dot green"></span>
+            </div>
+            <span className="telemetry-title">Skill_Telemetry.sh</span>
+          </div>
+          
+          <div className="telemetry-body">
+            <AnimatePresence mode="wait">
+              {activeItem ? (
+                <motion.div 
+                  key={activeItem.name}
+                  initial={{ opacity: 0, x: -15 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 15 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  className="telemetry-content"
+                >
+                  <div className="telemetry-header">
+                    <span className="telemetry-label" style={{ color: activeItem.color }}>
+                      {activeItem.name.toUpperCase()}
+                    </span>
+                    <span className="telemetry-badge" style={{ borderColor: activeItem.color, color: activeItem.color }}>
+                      {activeItem.status}
+                    </span>
+                  </div>
+                  
+                  {/* Glowing custom description */}
+                  <motion.h3 
+                    className="telemetry-description"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1, duration: 0.3 }}
+                  >
+                    {activeItem.desc}
+                  </motion.h3>
+
+                  <div className="telemetry-stats">
+                    <div className="stat-row">
+                      <span className="stat-lbl">CONNECTION:</span>
+                      <span className="stat-val text-green">SECURE</span>
+                    </div>
+                    <div className="stat-row">
+                      <span className="stat-lbl">LATENCY:</span>
+                      <span className="stat-val">1.2ms</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="default"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.7 }}
+                  exit={{ opacity: 0 }}
+                  className="telemetry-content-empty"
+                >
+                  <div className="pulse-prompt-line">
+                    <span className="prompt-cursor">&gt;</span> Awaiting input...
+                  </div>
+                  <p className="prompt-subtext">Hover or tap on any mechanical keycap on the board to review systemic diagnostic details and competency levels.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* 3D Isometric Mechanical Keyboard Deck */}
+        <div className="keyboard-chassis-wrapper">
+          <div className="keyboard-isometric-deck">
+            {/* Base Bevel Frame */}
+            <div className="keyboard-base-plate">
+              <div className="keyboard-inner-tray">
+                {stackItems.map((item, idx) => (
+                  <Keycap 
+                    key={item.name} 
+                    item={item} 
+                    index={idx}
+                    isActive={activeItem?.name === item.name}
+                    onHover={handleHover}
+                    onLeave={handleLeave}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      {/* Replacement for Infinite Marquee */}
       <SystemConsole />
     </section>
   );
