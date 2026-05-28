@@ -3219,7 +3219,7 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
   .keyboard-isometric-deck {
     transform: none !important;
     width: 100%;
-    height: auto;
+    height: 320px !important;
   }
   .keyboard-chassis-wrapper {
     flex: none !important;
@@ -3232,7 +3232,6 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
     background: transparent;
     border: none;
     padding: 0;
-    position: relative !important;
   }
   .keyboard-base-plate::before,
   .keyboard-base-plate::after,
