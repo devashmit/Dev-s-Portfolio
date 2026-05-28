@@ -1000,13 +1000,41 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
 }
 
 @media(max-width: 600px) {
+  .console-container {
+    padding: 3rem 1.25rem;
+    margin-top: 4rem;
+  }
+  .console-spotlight {
+    margin-bottom: 2rem;
+    gap: 1rem;
+  }
   .hud-status-bar {
-    gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    border-radius: 12px;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+    padding: 0.8rem 1rem !important;
+    border-radius: 14px !important;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+  }
+  .hud-divider {
+    display: none !important;
   }
   .hud-status-bar .hide-mobile {
     display: none !important;
+  }
+  .hud-metric-card {
+    justify-content: flex-start;
+    padding: 0.15rem 0.25rem;
+  }
+  .console-spotlight-text {
+    font-size: clamp(2.2rem, 9vw, 3.2rem) !important;
+    line-height: 1.0;
+  }
+  .console-spotlight-sub {
+    font-size: 0.95rem;
+    padding: 0 0.5rem;
   }
 }
 
