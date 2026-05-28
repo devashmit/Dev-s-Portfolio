@@ -3221,12 +3221,18 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
     width: 100%;
     height: auto;
   }
+  .keyboard-chassis-wrapper {
+    flex: none !important;
+    height: auto !important;
+    padding: 1rem 0 !important;
+  }
   .keyboard-base-plate {
     transform: none !important;
     box-shadow: none;
     background: transparent;
     border: none;
     padding: 0;
+    position: relative !important;
   }
   .keyboard-base-plate::before,
   .keyboard-base-plate::after,
