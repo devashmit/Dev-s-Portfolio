@@ -3216,60 +3216,98 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
 }
 
 @media (max-width: 520px) {
-  .keyboard-isometric-deck {
-    transform: none !important;
-    width: 100%;
-    height: 320px !important;
+  /* Stack workspace vertically: telemetry panel top, keys below */
+  .stack-keyboard-workspace {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1.5rem !important;
   }
+  .stack-telemetry-panel {
+    flex: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  /* Chassis wrapper becomes a simple block container */
   .keyboard-chassis-wrapper {
     flex: none !important;
-    height: auto !important;
-    padding: 1rem 0 !important;
+    perspective: none !important;
+    width: 100% !important;
+    padding: 0 !important;
   }
-  .keyboard-base-plate {
+  /* Deck loses all 3D, just flows height naturally */
+  .keyboard-isometric-deck {
     transform: none !important;
-    box-shadow: none;
-    background: transparent;
-    border: none;
-    padding: 0;
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+  }
+  /* Base plate becomes a normal block so its children determine its size */
+  .keyboard-base-plate {
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background: var(--bg-raised) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    padding: 1rem !important;
   }
   .keyboard-base-plate::before,
   .keyboard-base-plate::after,
   .keycap-side {
     display: none !important;
   }
+  /* Inner tray becomes a flat 4-column grid */
   .keyboard-inner-tray {
+    position: relative !important;
+    inset: auto !important;
     transform: none !important;
-    background: transparent;
-    border: none;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: auto;
-    gap: 0.75rem;
-    padding: 0;
+    width: 100% !important;
+    height: auto !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-rows: auto !important;
+    gap: 0.65rem !important;
+    padding: 0 !important;
   }
+  /* Each keycap cell */
   .keycap-container {
     transform: none !important;
+    width: auto !important;
+    height: auto !important;
   }
+  /* Flat 2D keycap */
   .keycap-3d {
     transform: none !important;
-    width: 100%;
-    height: 64px;
+    width: 100% !important;
+    height: 58px !important;
+    position: relative !important;
   }
   .keycap-face {
     transform: none !important;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
+    box-shadow: none !important;
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 10px !important;
+    position: relative !important;
+  }
+  .keycap-icon-wrapper {
+    transform: none !important;
+    width: 26px !important;
+    height: 26px !important;
   }
   :root.light-mode .keycap-face {
-    background: #ffffff;
+    background: #ffffff !important;
   }
   .keycap-container.active .keycap-face {
-    border-color: var(--key-color);
-    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--key-color) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    box-shadow: 0 0 12px var(--key-color) !important;
   }
   .key-led-glow {
-    display: none;
+    display: none !important;
   }
 }
 
