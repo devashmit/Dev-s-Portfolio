@@ -186,30 +186,57 @@ function FloatingPreview({ project, visible }) {
   const springX = useSpring(x, { stiffness: 220, damping: 28 });
   const springY = useSpring(y, { stiffness: 220, damping: 28 });
 
+  // Add parallax variables based on relative cursor offset inside the preview window
+  const mouseRelX = useMotionValue(0);
+  const mouseRelY = useMotionValue(0);
+  const springRelX = useSpring(mouseRelX, { stiffness: 100, damping: 20 });
+  const springRelY = useSpring(mouseRelY, { stiffness: 100, damping: 20 });
+
   useEffect(() => {
     const onMove = (e) => {
-      x.set(e.clientX + 24);
-      y.set(e.clientY - 120);
+      const px = e.clientX + 24;
+      const py = e.clientY - 120;
+      x.set(px);
+      y.set(py);
+
+      // Map dynamic tilt relative to viewport center or mouse coordinates
+      const dx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+      const dy = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+      mouseRelX.set(dx * 12); // Max 12 degrees tilt
+      mouseRelY.set(dy * -12); // Max 12 degrees tilt
     };
     window.addEventListener('mousemove', onMove);
     return () => window.removeEventListener('mousemove', onMove);
-  }, [x, y]);
+  }, [x, y, mouseRelX, mouseRelY]);
 
   return (
     <AnimatePresence>
       {visible && project && (
         <motion.div
           className="project-floating-preview"
-          style={{ left: springX, top: springY }}
-          initial={{ opacity: 0, scale: 0.88, y: 10 }}
+          style={{ 
+            left: springX, 
+            top: springY,
+            rotateX: springRelY,
+            rotateY: springRelX,
+            transformStyle: 'preserve-3d',
+            perspective: 800
+          }}
+          initial={{ opacity: 0, scale: 0.88, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.88, y: 10 }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          exit={{ opacity: 0, scale: 0.88, y: 15 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="pfp-canvas-wrap">
+          <div 
+            className="pfp-canvas-wrap" 
+            style={{ 
+              transform: 'translateZ(25px)',
+              transition: 'transform 0.1s ease'
+            }}
+          >
             <ProjectCanvasPreview type={project.previewType} />
           </div>
-          <div className="pfp-meta">
+          <div className="pfp-meta" style={{ transform: 'translateZ(10px)' }}>
             <span className="pfp-tags">
               {project.tags.map(t => <span key={t}>{t}</span>)}
             </span>
@@ -221,16 +248,21 @@ function FloatingPreview({ project, visible }) {
 }
 
 /* ─── Single Project Row ─────────────────────────────────────────────── */
-function ProjectRow({ project, index, onHover, onLeave, isHovered }) {
+function ProjectRow({ project, index, onHover, onLeave, isHovered, isAnyHovered }) {
+  const isDimmed = isAnyHovered && !isHovered;
   return (
     <motion.div
-      className={`proj-row${isHovered ? ' proj-row--active' : ''}`}
+      className={`proj-row${isHovered ? ' proj-row--active' : ''}${isDimmed ? ' proj-row--dimmed' : ''}`}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.55, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
       onMouseEnter={() => onHover(project)}
       onMouseLeave={onLeave}
+      style={{
+        transformStyle: 'preserve-3d',
+        perspective: 1000
+      }}
     >
       <span className="proj-index">
         {String(index + 1).padStart(2, '0')}
@@ -285,6 +317,8 @@ export default function Projects() {
   const filtered = selectedCategory === 'all'
     ? projectsData
     : projectsData.filter(p => p.category === selectedCategory);
+
+  const isAnyHovered = hoveredProject !== null;
 
   return (
     <section id="projects" aria-label="Selected projects">
@@ -347,6 +381,7 @@ export default function Projects() {
               project={project}
               index={idx}
               isHovered={hoveredProject?.title === project.title}
+              isAnyHovered={isAnyHovered}
               onHover={setHoveredProject}
               onLeave={() => setHoveredProject(null)}
             />
