@@ -2613,20 +2613,11 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
   padding: 1.1rem 0.5rem;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
-  transition: background 0.2s ease, padding-left 0.3s ease;
   border-radius: 8px;
   position: relative;
 }
 .contact-social-row:hover {
-  background: var(--spotlight-color);
-  padding-left: 1rem;
-}
-.contact-social-row:hover .csr-arrow {
-  opacity: 1;
-  transform: translateX(0);
-}
-.contact-social-row:hover .csr-handle {
-  color: var(--accent);
+  /* Handled dynamically by Framer Motion springs */
 }
 
 .csr-icon {
