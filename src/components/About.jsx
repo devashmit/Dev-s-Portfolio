@@ -102,19 +102,20 @@ export default function About() {
       <div className="workstation-header">
         <motion.p
           className="section-eyebrow"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -18 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
         >
           // CORE LOGIC INTERFACE
         </motion.p>
         <TextReveal text="About Me" className="section-title" tag="h2" delay={0.1} />
         <motion.p
           className="workstation-tagline"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, filter: 'blur(0px)' }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }}
         >
           An interactive, high-fidelity developer workstation displaying biological logs, engineering philosophies, and performance metrics.
         </motion.p>
@@ -154,10 +155,10 @@ export default function About() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
               className="screen-content"
             >
               {/* TAB 1: BIO & MISSION */}

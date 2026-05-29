@@ -227,10 +227,10 @@ function FloatingPreview({ project, visible }) {
             transformStyle: 'preserve-3d',
             perspective: 800
           }}
-          initial={{ opacity: 0, scale: 0.88, y: 15 }}
+          initial={{ opacity: 0, scale: 0.9, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.88, y: 15 }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          exit={{ opacity: 0, scale: 0.9, y: 12 }}
+          transition={{ type: 'spring', stiffness: 340, damping: 26 }}
         >
           <div 
             className="pfp-canvas-wrap" 
@@ -258,10 +258,10 @@ function ProjectRow({ project, index, onHover, onLeave, isHovered, isAnyHovered 
   return (
     <motion.div
       className={`proj-row${isHovered ? ' proj-row--active' : ''}${isDimmed ? ' proj-row--dimmed' : ''}`}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: -36 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.55, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ type: 'spring', stiffness: 160, damping: 22, delay: index * 0.06 }}
       onMouseEnter={() => onHover(project)}
       onMouseLeave={onLeave}
       style={{
@@ -333,10 +333,10 @@ export default function Projects() {
       <div className="section-intro">
         <motion.p
           className="section-eyebrow"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -18 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
         >
           01 / SELECTED WORK
         </motion.p>
@@ -346,10 +346,10 @@ export default function Projects() {
       {/* Filter strip */}
       <motion.div
         className="proj-filters"
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.25 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.18 }}
       >
         {categories.map(cat => (
           <button
@@ -368,7 +368,7 @@ export default function Projects() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.4, delay: 0.35 }}
+        transition={{ duration: 0.6, delay: 0.28, ease: 'easeOut' }}
       >
         <span>#</span>
         <span>Project</span>

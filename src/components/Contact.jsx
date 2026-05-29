@@ -31,23 +31,23 @@ export default function Contact() {
       <div className="section-intro">
         <motion.p
           className="section-eyebrow"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -18 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
         >
           04 / REACH ME
         </motion.p>
         <TextReveal text="Let's connect." className="section-title" tag="h2" delay={0.15} />
       </div>
 
-      {/* Big email CTA */}
+      {/* Big email CTA — wipe reveal from top (clipPath curtain) */}
       <motion.div
         className="contact-email-strip"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)', y: 20 }}
+        whileInView={{ opacity: 1, clipPath: 'inset(0 0 0% 0)', y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="contact-avail">
           <span className="status-dot" />
@@ -99,13 +99,13 @@ export default function Contact() {
         ))}
       </div>
 
-      {/* Footer line */}
+      {/* Footer line — slow pure fade, grounded at bottom */}
       <motion.div
         className="contact-footer-line"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.4 }}
+        transition={{ duration: 1.0, delay: 0.5, ease: 'easeOut' }}
       >
         <span>Ashmit Dev · {new Date().getFullYear()}</span>
         <span>Kathmandu, Nepal</span>

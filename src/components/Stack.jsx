@@ -114,9 +114,10 @@ export default function Stack() {
       <div className="section-intro relative-z">
         <motion.p 
           className="section-eyebrow" 
-          initial={{ opacity: 0, y: 10 }} 
-          whileInView={{ opacity: 1, y: 0 }} 
+          initial={{ opacity: 0, x: -18 }} 
+          whileInView={{ opacity: 1, x: 0 }} 
           viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
         >
           02 / THE ARSENAL
         </motion.p>
@@ -126,8 +127,14 @@ export default function Stack() {
 
       <div className="stack-keyboard-workspace relative-z">
         
-        {/* Telemetry Display Terminal */}
-        <div className="stack-telemetry-panel">
+        {/* Telemetry Display Terminal — slides in from right */}
+        <motion.div
+          className="stack-telemetry-panel"
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ type: 'spring', stiffness: 140, damping: 22, delay: 0.1 }}
+        >
           <div className="telemetry-chrome">
             <div className="chrome-dots">
               <span className="dot red"></span>
@@ -142,10 +149,10 @@ export default function Stack() {
               {activeItem ? (
                 <motion.div 
                   key={activeItem.name}
-                  initial={{ opacity: 0, x: -15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 15 }}
-                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  initial={{ opacity: 0, filter: 'blur(4px)', x: -10 }}
+                  animate={{ opacity: 1, filter: 'blur(0px)', x: 0 }}
+                  exit={{ opacity: 0, filter: 'blur(4px)', x: 10 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
                   className="telemetry-content"
                 >
                   <div className="telemetry-header">
@@ -157,12 +164,12 @@ export default function Stack() {
                     </span>
                   </div>
                   
-                  {/* Glowing custom description */}
+                  {/* Glowing custom description — blurs in after the header */}
                   <motion.h3 
                     className="telemetry-description"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1, duration: 0.3 }}
+                    initial={{ opacity: 0, filter: 'blur(5px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    transition={{ delay: 0.08, duration: 0.35, ease: 'easeOut' }}
                   >
                     {activeItem.desc}
                   </motion.h3>
@@ -194,7 +201,7 @@ export default function Stack() {
               )}
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
 
         {/* 3D Isometric Mechanical Keyboard Deck */}
         <div className="keyboard-chassis-wrapper">

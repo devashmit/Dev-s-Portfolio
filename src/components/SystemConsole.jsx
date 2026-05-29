@@ -354,26 +354,26 @@ export default function SystemConsole() {
         </motion.div>
 
 
-        {/* Rebuilt Typographic Heading */}
+        {/* Rebuilt Typographic Heading — clipPath mask reveal */}
         <motion.h2
           className="console-spotlight-text"
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
+          whileInView={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.75, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <span className="text-hollow">FULL STACK</span>
           <br/>
           <span className="text-solid">DEVELOPER</span>
         </motion.h2>
 
-        {/* Enhanced Readable Sub-Headline */}
+        {/* Enhanced Readable Sub-Headline — blur fade-in */}
         <motion.p
           className="console-spotlight-sub"
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, filter: 'blur(0px)' }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1.0, delay: 0.35, ease: 'easeOut' }}
         >
           Building <span className="text-highlight">immersive digital experiences</span> through <span className="text-highlight-accent">engineering + motion design</span>.
         </motion.p>
