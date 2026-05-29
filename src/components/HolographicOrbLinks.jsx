@@ -18,6 +18,8 @@ const mainNodesConfig = [
     themeRGB: '220, 60, 60',  // used for canvas overlay & border
     theta: 0,
     phi: Math.PI / 2,
+    orbitFactor: 0.22,
+    speedFactor: 1.5,
   },
   {
     id: 'linkedin',
@@ -30,6 +32,8 @@ const mainNodesConfig = [
     themeRGB: '10, 102, 194',
     theta: (2 * Math.PI) / 3,
     phi: Math.PI / 2,
+    orbitFactor: 0.31,
+    speedFactor: 1.1,
   },
   {
     id: 'whatsapp',
@@ -42,6 +46,8 @@ const mainNodesConfig = [
     themeRGB: '37, 211, 102',
     theta: (4 * Math.PI) / 3,
     phi: Math.PI / 2,
+    orbitFactor: 0.40,
+    speedFactor: 0.8,
   },
   {
     id: 'email',
@@ -54,17 +60,19 @@ const mainNodesConfig = [
     themeRGB: '251, 146, 60',
     theta: Math.PI,
     phi: Math.PI / 2,
+    orbitFactor: 0.49,
+    speedFactor: 0.5,
   },
 ];
 
 // Constellation filler nodes
 const fillerNodesConfig = [
-  { id: 'f1', theta: Math.PI / 4, phi: Math.PI / 4, baseHue: 180 },
-  { id: 'f2', theta: Math.PI / 3, phi: 3 * Math.PI / 4, baseHue: 214 },
-  { id: 'f3', theta: 5 * Math.PI / 4, phi: Math.PI / 3, baseHue: 142 },
-  { id: 'f4', theta: 7 * Math.PI / 6, phi: 2 * Math.PI / 3, baseHue: 35 },
-  { id: 'f5', theta: 3 * Math.PI / 2, phi: Math.PI / 4, baseHue: 180 },
-  { id: 'f6', theta: Math.PI / 6, phi: 5 * Math.PI / 6, baseHue: 142 },
+  { id: 'f1', theta: Math.PI / 4, phi: Math.PI / 4, baseHue: 180, orbitFactor: 0.26, speedFactor: 1.3 },
+  { id: 'f2', theta: Math.PI / 3, phi: 3 * Math.PI / 4, baseHue: 214, orbitFactor: 0.35, speedFactor: 0.95 },
+  { id: 'f3', theta: 5 * Math.PI / 4, phi: Math.PI / 3, baseHue: 142, orbitFactor: 0.44, speedFactor: 0.65 },
+  { id: 'f4', theta: 7 * Math.PI / 6, phi: 2 * Math.PI / 3, baseHue: 35, orbitFactor: 0.28, speedFactor: 1.25 },
+  { id: 'f5', theta: 3 * Math.PI / 2, phi: Math.PI / 4, baseHue: 180, orbitFactor: 0.37, speedFactor: 0.85 },
+  { id: 'f6', theta: Math.PI / 6, phi: 5 * Math.PI / 6, baseHue: 142, orbitFactor: 0.47, speedFactor: 0.55 },
 ];
 
 // Initialize particles with a size so they don't show "undefined"
@@ -88,6 +96,7 @@ export default function HolographicOrbLinks() {
   const hoveredNodeRef = useRef(null); // sync ref so canvas loop reads latest
   const [isDragging, setIsDragging] = useState(false);
 
+  const velocity = useRef({ x: 0.002, y: 0.005 });
   const dragStart = useRef({ x: 0, y: 0 });
   const rotation = useRef({ x: 0, y: 0.8 });
   const mousePos = useRef({ x: 300, y: 200 });
@@ -139,16 +148,40 @@ export default function HolographicOrbLinks() {
       const parallaxX = (mousePos.current.x - cx) * 0.06;
       const parallaxY = (mousePos.current.y - cy) * 0.06;
 
-      if (!isDragging) {
-        const slow = hoveredNodeRef.current ? 0.04 : 1;
-        rotation.current.y += 0.005 * slow;
-        rotation.current.x += 0.002 * slow;
+      if (isDragging) {
+        // Decay velocity if mouse is held still
+        velocity.current.x *= 0.85;
+        velocity.current.y *= 0.85;
+      } else {
+        const isHovered = hoveredNodeRef.current !== null;
+        
+        // Orbit around the vertical axis (Y-axis rotation = orbital motion)
+        const targetAmbientY = isHovered ? 0.0005 : 0.003;
+        const targetAmbientX = 0; // No tumbleweed rotation
+        
+        // Friction coefficient
+        const friction = isHovered ? 0.85 : 0.96;
+        
+        // Apply friction
+        velocity.current.x *= friction;
+        velocity.current.y *= friction;
+        
+        // Gently pull velocity towards target orbital speed
+        velocity.current.x += (targetAmbientX - velocity.current.x) * 0.04;
+        velocity.current.y += (targetAmbientY - velocity.current.y) * 0.04;
+
+        // Gently restore the view's tilt (rotation.x) to a premium tilted perspective
+        const targetTilt = 0.45; // ~25 degrees tilt
+        rotation.current.x += (targetTilt - rotation.current.x) * 0.03;
       }
 
-      const radius = Math.min(width, height) * 0.37;
+      // Apply velocity to rotation
+      rotation.current.x += velocity.current.x;
+      rotation.current.y += velocity.current.y;
+
+      const baseRadius = Math.min(width, height);
       const cam = 380;
       const cosX = Math.cos(rotation.current.x), sinX = Math.sin(rotation.current.x);
-      const cosY = Math.cos(rotation.current.y), sinY = Math.sin(rotation.current.y);
       const time = Date.now() / 3000;
 
       // Project nodes
@@ -158,21 +191,28 @@ export default function HolographicOrbLinks() {
       ];
 
       const projected = allNodes.map(node => {
-        let x = radius * Math.sin(node.phi) * Math.cos(node.theta);
-        let y = radius * Math.sin(node.phi) * Math.sin(node.theta);
-        let z = radius * Math.cos(node.phi);
-        let x1 = x * cosY - z * sinY, z1 = x * sinY + z * cosY;
-        let y2 = y * cosX - z1 * sinX, z2 = y * sinX + z1 * cosX;
+        const nodeRadius = baseRadius * node.orbitFactor;
+        const currentTheta = node.theta + rotation.current.y * node.speedFactor;
+        
+        let x = nodeRadius * Math.sin(node.phi) * Math.cos(currentTheta);
+        let y = nodeRadius * Math.sin(node.phi) * Math.sin(currentTheta);
+        let z = nodeRadius * Math.cos(node.phi);
+        
+        // Tilt rotation (around horizontal X-axis only)
+        let x1 = x;
+        let y2 = y * cosX - z * sinX;
+        let z2 = y * sinX + z * cosX;
+        
         const scale = cam / (cam + z2);
-        const depthBias = (z2 + radius) / (radius * 2);
+        const depthBias = (z2 + nodeRadius) / (nodeRadius * 2);
         const sx = cx + x1 * scale + parallaxX * (depthBias - 0.5);
         const sy = cy + y2 * scale + parallaxY * (depthBias - 0.5);
-        const hue = (node.baseHue + Math.sin(time * 1.5 + node.theta) * 12) % 360;
+        const hue = (node.baseHue + Math.sin(time * 1.5 + currentTheta) * 12) % 360;
         const color = `hsla(${hue}, 95%, 60%, 1)`;
         const glow = `hsla(${hue}, 95%, 60%, 0.38)`;
         const dist = Math.hypot(mousePos.current.x - sx, mousePos.current.y - sy);
         const prox = Math.max(0, 1 - dist / 160);
-        return { ...node, x: sx, y: sy, z: z2, scale, opacity: (z2 + radius * 1.5) / (radius * 2.5), color, glow, prox };
+        return { ...node, x: sx, y: sy, z: z2, scale, opacity: (z2 + nodeRadius * 1.5) / (nodeRadius * 2.5), color, glow, prox };
       });
       projected.sort((a, b) => b.z - a.z);
       setNodes(projected);
@@ -203,12 +243,17 @@ export default function HolographicOrbLinks() {
         ctx.beginPath(); ctx.moveTo(0, gy + parallaxY * 0.05); ctx.lineTo(width, gy + parallaxY * 0.05); ctx.stroke();
       }
 
-      // ── Orbit ring ──
-      ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+      // ── Concentric Orbit Rings ──
       ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(cx - parallaxX * 0.1, cy - parallaxY * 0.1, radius * 1.22, 0, Math.PI * 2);
-      ctx.stroke();
+      mainNodesConfig.forEach(node => {
+        const isHov = activeId === node.id;
+        const r = baseRadius * node.orbitFactor;
+        ctx.strokeStyle = isHov ? `rgba(${node.themeRGB}, 0.12)` : 'rgba(0, 240, 255, 0.025)';
+        ctx.beginPath();
+        // Draw orbital track tilted around the X-axis
+        ctx.ellipse(cx - parallaxX * 0.06, cy - parallaxY * 0.06, r, r * Math.abs(cosX), 0, 0, Math.PI * 2);
+        ctx.stroke();
+      });
 
       // ── Ambient shimmer particles ──
       pulse = (pulse + 0.015) % 1;
@@ -283,14 +328,26 @@ export default function HolographicOrbLinks() {
     return () => cancelAnimationFrame(animId);
   }, [dimensions, isDragging]);
 
-  const handlePointerDown = (e) => { setIsDragging(true); dragStart.current = { x: e.clientX, y: e.clientY }; };
-  const handlePointerMove = (e) => {
-    if (!isDragging) return;
-    rotation.current.y += (e.clientX - dragStart.current.x) * 0.005;
-    rotation.current.x += (e.clientY - dragStart.current.y) * 0.005;
+  const handlePointerDown = (e) => {
+    setIsDragging(true);
     dragStart.current = { x: e.clientX, y: e.clientY };
   };
-  const handlePointerUp = () => setIsDragging(false);
+  const handlePointerMove = (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
+    rotation.current.y += dx * 0.005;
+    rotation.current.x += dy * 0.005;
+    
+    // smooth velocity response
+    velocity.current.y = velocity.current.y * 0.15 + (dx * 0.005) * 0.85;
+    velocity.current.x = velocity.current.x * 0.15 + (dy * 0.005) * 0.85;
+    
+    dragStart.current = { x: e.clientX, y: e.clientY };
+  };
+  const handlePointerUp = () => {
+    setIsDragging(false);
+  };
 
   // Derive active theme for container border
   const activeCfg = hoveredNode ? mainNodesConfig.find(n => n.id === hoveredNode) : null;
@@ -318,7 +375,7 @@ export default function HolographicOrbLinks() {
         background: 'rgba(10, 12, 16, 0.5)',
         border: `1px solid ${borderColor}`,
         borderRadius: '16px',
-        overflow: 'hidden',
+        overflow: 'visible',
         cursor: isDragging ? 'grabbing' : 'grab',
         backdropFilter: 'blur(14px)',
         boxShadow: containerGlow,
