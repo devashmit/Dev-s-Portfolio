@@ -21,51 +21,28 @@ function ProjectCanvasPreview({ type }) {
       canvas.height = canvas.offsetHeight || 220;
     };
     resize();
-    window.addEventListener('resize', resize);
-
-    // Petals
-    const petals = [];
-    if (type === 'floating-petals') {
-      for (let i = 0; i < 18; i++) {
-        petals.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 4 + 3,
-          vx: Math.random() * 0.4 - 0.2,
-          vy: Math.random() * 0.5 + 0.15,
-          angle: Math.random() * 360,
-          spin: Math.random() * 1.5 - 0.75,
-          offset: Math.random() * 100,
-        });
-      }
-    }
-
-    // Nodes
-    const nodes = [], connections = [];
-    if (type === 'node-network') {
-      const count = 7;
-      for (let i = 0; i < count; i++) {
-        nodes.push({
-          x: 50 + Math.random() * (canvas.width - 100),
-          y: 30 + Math.random() * (canvas.height - 60),
-          r: Math.random() * 2 + 2,
-          pulse: Math.random() * 100,
-        });
-      }
-      for (let i = 0; i < count; i++) {
-        for (let j = i + 1; j < count; j++) {
-          const d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
-          if (d < 130 || Math.random() < 0.3) connections.push([i, j]);
-        }
-      }
+    window.addEventL    // 3D particles & dynamic telemetry grid
+    const particles = [];
+    const count = 35;
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * 300 - 150,
+        y: Math.random() * 200 - 100,
+        z: Math.random() * 200 - 100,
+        vx: Math.random() * 0.6 - 0.3,
+        vy: Math.random() * 0.6 - 0.3,
+        vz: Math.random() * 0.8 - 0.4,
+        size: Math.random() * 1.5 + 0.8
+      });
     }
 
     const getColors = () => {
       const isLight = document.documentElement.classList.contains('light-mode');
       return {
-        accent:  isLight ? '#D97706' : '#FACC15',
-        ink:     isLight ? '#0F172A' : '#F8FAFC',
-        inkMid:  isLight ? '#475569' : '#94A3B8',
+        accent:  isLight ? '#0284c7' : '#06b6d4',
+        accentGlow: isLight ? 'rgba(2, 132, 199, 0.2)' : 'rgba(6, 182, 212, 0.3)',
+        ink:     isLight ? '#09090b' : '#fafafa',
+        inkMid:  isLight ? '#52525b' : '#a1a1aa'
       };
     };
 
@@ -75,91 +52,119 @@ function ProjectCanvasPreview({ type }) {
       ctx.clearRect(0, 0, width, height);
       const c = getColors();
 
-      if (type === 'cv-flow') {
-        const spacing = 16;
-        ctx.strokeStyle = c.accent + '08'; ctx.lineWidth = 1;
-        for (let x = 0; x < width; x += spacing) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke(); }
-        for (let y = 0; y < height; y += spacing) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke(); }
-
-        const scanY = (frame * 1.6) % height;
-        ctx.strokeStyle = c.accent + '44'; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(width, scanY); ctx.stroke();
-
-        const grad = ctx.createLinearGradient(0, scanY - 40, 0, scanY);
-        grad.addColorStop(0, 'transparent'); grad.addColorStop(1, c.accent + '0a');
-        ctx.fillStyle = grad; ctx.fillRect(0, Math.max(0, scanY - 40), width, 40);
-
-        const lines = ['> whoami: ashmit_dev','> compiler: typescript_v5','> status: BUILDING','> uplink: ONLINE'];
-        ctx.font = '400 9px var(--font-mono)';
-        lines.forEach((l, i) => {
-          const chars = Math.min(l.length, Math.floor(frame / 3) - i * 5);
-          if (chars > 0) {
-            ctx.fillStyle = l.includes('ashmit') ? c.accent : c.ink + 'bb';
-            ctx.fillText(l.slice(0, chars), 16, 32 + i * 20);
-          }
-        });
-
-      } else if (type === 'flower-bloom') {
-        const cx = width / 2, cy = height / 2;
-        ctx.save(); ctx.translate(cx, cy);
-        ctx.rotate(frame * 0.012);
-        bloomProgress += (0.9 - bloomProgress) * 0.05;
-        ctx.shadowBlur = 18; ctx.shadowColor = c.accent;
-        for (let i = 0; i < 8; i++) {
-          ctx.rotate(Math.PI / 4);
-          ctx.strokeStyle = c.accent + 'aa'; ctx.lineWidth = 1.2;
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.bezierCurveTo(-30*bloomProgress,-30*bloomProgress,-15*bloomProgress,-70*bloomProgress,0,-78*bloomProgress);
-          ctx.bezierCurveTo(15*bloomProgress,-70*bloomProgress,30*bloomProgress,-30*bloomProgress,0,0);
-          ctx.stroke();
-        }
-        ctx.shadowBlur = 0; ctx.restore();
-        ctx.fillStyle = c.inkMid + '55'; ctx.font = '500 7px var(--font-mono)';
-        ctx.fillText(`BLOOM: ${(bloomProgress*100).toFixed(0)}%`, 12, height - 12);
-
-      } else if (type === 'floating-petals') {
-        petals.forEach(p => {
-          p.y -= p.vy * 1.2;
-          p.x += Math.sin(frame * 0.02 + p.offset) * 0.3 + p.vx;
-          p.angle += p.spin;
-          if (p.y < -10) { p.y = height + 10; p.x = Math.random() * width; }
-          if (p.x < -10 || p.x > width + 10) p.x = p.x < 0 ? width : 0;
-          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate((p.angle * Math.PI) / 180);
-          ctx.fillStyle = c.accent + '22'; ctx.strokeStyle = c.accent + '88'; ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(0, -p.r);
-          ctx.quadraticCurveTo(p.r*1.4, -p.r*0.4, p.r, p.r);
-          ctx.quadraticCurveTo(-p.r*0.4, p.r*1.4, -p.r, 0);
-          ctx.quadraticCurveTo(-p.r, -p.r, 0, -p.r);
-          ctx.fill(); ctx.stroke(); ctx.restore();
-        });
-        ctx.fillStyle = c.inkMid + '77'; ctx.font = '700 8px var(--font-mono)';
-        ctx.fillText('PETAL_ECOSYSTEM', 12, 20);
-
-      } else if (type === 'node-network') {
-        connections.forEach(([i, j]) => {
-          ctx.strokeStyle = c.accent + '33'; ctx.lineWidth = 0.6;
-          ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
-          if (frame % 60 < 20) {
-            const t = (frame % 20) / 20;
-            const px = nodes[i].x + (nodes[j].x - nodes[i].x) * t;
-            const py = nodes[i].y + (nodes[j].y - nodes[i].y) * t;
-            ctx.fillStyle = c.accent;
-            ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2); ctx.fill();
-          }
-        });
-        nodes.forEach(n => {
-          n.pulse += 0.06;
-          const r = n.r + Math.sin(n.pulse) * 1.2;
-          ctx.strokeStyle = c.accent + '55'; ctx.lineWidth = 0.75;
-          ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.5, 0, Math.PI * 2); ctx.stroke();
-          ctx.fillStyle = c.accent;
-          ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2); ctx.fill();
-        });
-        ctx.fillStyle = c.inkMid + '77'; ctx.font = '700 8px var(--font-mono)';
-        ctx.fillText('SYNAPSE_GRID::ONLINE', 12, 20);
+      // Premium technical background grids
+      const spacing = 18;
+      ctx.strokeStyle = c.accent + '05';
+      ctx.lineWidth = 0.5;
+      for (let x = 0; x < width; x += spacing) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
       }
+      for (let y = 0; y < height; y += spacing) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+      }
+
+      // Advanced matrix scan-line
+      const scanY = (frame * 1.4) % height;
+      ctx.strokeStyle = c.accent + '33';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(0, scanY);
+      ctx.lineTo(width, scanY);
+      ctx.stroke();
+
+      const grad = ctx.createLinearGradient(0, scanY - 30, 0, scanY);
+      grad.addColorStop(0, 'transparent');
+      grad.addColorStop(1, c.accentGlow);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, Math.max(0, scanY - 30), width, 30);
+
+      // Rendering beautiful 3D particle cloud projections with parallax and depth rotation
+      const cx = width / 2;
+      const cy = height / 2;
+      const fov = 150;
+
+      // Dynamic rotation matrices based on elapsed frames
+      const angleY = frame * 0.007;
+      const angleX = frame * 0.005;
+
+      const cosY = Math.cos(angleY), sinY = Math.sin(angleY);
+      const cosX = Math.cos(angleX), sinX = Math.sin(angleX);
+
+      const projected = [];
+
+      particles.forEach(p => {
+        // Step velocities
+        p.x += p.vx;
+        p.y += p.vy;
+        p.z += p.vz;
+
+        // Bounce inside volume bounds
+        if (Math.abs(p.x) > 130) p.vx *= -1;
+        if (Math.abs(p.y) > 90) p.vy *= -1;
+        if (Math.abs(p.z) > 90) p.vz *= -1;
+
+        // Rotate Y
+        let x1 = p.x * cosY - p.z * sinY;
+        let z1 = p.z * cosY + p.x * sinY;
+
+        // Rotate X
+        let y2 = p.y * cosX - z1 * sinX;
+        let z2 = z1 * cosX + p.y * sinX;
+
+        // Projection physics
+        const scale = fov / (fov + z2);
+        const px = cx + x1 * scale;
+        const py = cy + y2 * scale;
+
+        if (px >= 0 && px <= width && py >= 0 && py <= height) {
+          projected.push({ x: px, y: py, size: p.size * scale, z: z2 });
+        }
+      });
+
+      // Draw connection vectors (Quantum entanglement networking representation)
+      ctx.lineWidth = 0.45;
+      for (let i = 0; i < projected.length; i++) {
+        for (let j = i + 1; j < projected.length; j++) {
+          const dist = Math.hypot(projected[i].x - projected[j].x, projected[i].y - projected[j].y);
+          if (dist < 45) {
+            const alpha = ((45 - dist) / 45) * 0.35;
+            ctx.strokeStyle = c.accent + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+            ctx.beginPath();
+            ctx.moveTo(projected[i].x, projected[i].y);
+            ctx.lineTo(projected[j].x, projected[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes
+      projected.forEach(p => {
+        const opacity = (200 - p.z) / 300; // Depth fading
+        ctx.fillStyle = c.accent + Math.floor(Math.min(1, Math.max(0, opacity)) * 255).toString(16).padStart(2, '0');
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Glowing core nodes
+        if (p.z < -30) {
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = c.accent;
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * 0.8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      });
+
+      // Overlay dynamic diagnostic telemetry
+      ctx.fillStyle = c.inkMid + '44';
+      ctx.font = '700 7.5px var(--font-mono)';
+      ctx.fillText(`VECTOR_MATRIX: [x: ${Math.sin(frame*0.01).toFixed(4)}, y: ${Math.cos(frame*0.015).toFixed(4)}]`, 16, 26);
+      ctx.fillText(`GRAVITY_CONSTANT: -9.80665 m/s²`, 16, 38);
+      ctx.fillText(`QUANTUM_STATES: ENTANGLED_35_NODES`, 16, 50);
+      ctx.fillText(`RENDER_MODE: CORE_VECTOR_3D_ACCEL`, 16, height - 16);
+      ctx.fillText(`UPLINK_STATUS: SECURE_CHANNEL_PASS`, width - 150, height - 16);
 
       animRef.current = requestAnimationFrame(draw);
     };
