@@ -26,7 +26,7 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.08);
-    } catch (e) {
+    } catch {
       // AudioContext blocked or not supported
     }
   };

@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import TextReveal from './TextReveal';
 import TextScramble from './TextScramble';
 import Magnetic from './Magnetic';
 import RoleCycler from './RoleCycler';

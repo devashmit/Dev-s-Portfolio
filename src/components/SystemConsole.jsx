@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Terminal, MapPin, Cpu, Clock, GitBranch, Shield } from 'lucide-react';
 
 const appRouterCode = [
@@ -216,10 +216,6 @@ export default function SystemConsole() {
 
   // Trigger typing simulation when active file changes
   useEffect(() => {
-    setDiagnosticMode(false);
-    setTypedCode([]);
-    setCurrentIndex(0);
-    
     // Dispatch Toy Summon Event to CatCompanion if secure-uplink is loaded!
     if (activeFile === 'secure-uplink.sh') {
       const event = new CustomEvent('cat:summon_toy', { detail: { active: true } });
@@ -428,7 +424,12 @@ export default function SystemConsole() {
                   <li 
                     key={fileName} 
                     className={isActive ? 'active' : ''} 
-                    onClick={() => setActiveFile(fileName)}
+                    onClick={() => {
+                      setActiveFile(fileName);
+                      setDiagnosticMode(false);
+                      setTypedCode([]);
+                      setCurrentIndex(0);
+                    }}
                   >
                     <span 
                       className="file-icon" 
@@ -491,7 +492,12 @@ export default function SystemConsole() {
                   <div 
                     key={fileName}
                     className={`ide-tab ${isActive ? 'active' : ''}`}
-                    onClick={() => setActiveFile(fileName)}
+                    onClick={() => {
+                      setActiveFile(fileName);
+                      setDiagnosticMode(false);
+                      setTypedCode([]);
+                      setCurrentIndex(0);
+                    }}
                   >
                     <span 
                       className="file-icon" 

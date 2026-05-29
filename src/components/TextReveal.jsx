@@ -26,7 +26,7 @@ export default function TextReveal({ text, className = "", delay = 0, tag = "p",
     }
   };
 
-  const Tag = motion(tag);
+  const Tag = motion[tag] || motion.div;
 
   return (
     <Tag

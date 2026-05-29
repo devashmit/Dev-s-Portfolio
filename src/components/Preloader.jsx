@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, useAnimation, useMotionValue } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 
 export default function Preloader() {
   const [isComplete, setIsComplete] = useState(false);
@@ -9,7 +9,7 @@ export default function Preloader() {
   useEffect(() => {
     // Reduced motion check
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setIsComplete(true);
+      setTimeout(() => setIsComplete(true), 0);
       document.dispatchEvent(new CustomEvent('preloader:complete'));
       return;
     }

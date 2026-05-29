@@ -15,7 +15,6 @@ export default function CustomCursor() {
     let mouseY = window.innerHeight / 2;
     let ringX = mouseX;
     let ringY = mouseY;
-    let isHovering = false;
 
     const onPointerMove = (e) => {
       mouseX = e.clientX;
@@ -44,11 +43,9 @@ export default function CustomCursor() {
     const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .bento-card, .btn');
     
     const handleHoverEnter = () => {
-      isHovering = true;
       ring.classList.add('hover');
     };
     const handleHoverLeave = () => {
-      isHovering = false;
       ring.classList.remove('hover');
     };
 

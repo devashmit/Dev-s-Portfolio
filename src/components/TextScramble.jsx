@@ -48,8 +48,8 @@ export default function TextScramble({ text, className = '', delay = 0 }) {
     setIsHovered(false);
   };
 
-  // Generate random character references for scrambling letters
-  const getRandomChar = () => CHARS[Math.floor(Math.random() * CHARS.length)];
+  // Generate deterministic character for scrambling letters based on index and progress
+  const getScrambleChar = (index) => CHARS[Math.floor((index * 7 + scrambleProgress * 13) % CHARS.length)] || CHARS[0];
 
   return (
     <span 
@@ -77,7 +77,7 @@ export default function TextScramble({ text, className = '', delay = 0 }) {
           } else {
             return (
               <span key={index} className="scramble-char active-scramble">
-                {getRandomChar()}
+                {getScrambleChar(index)}
               </span>
             );
           }

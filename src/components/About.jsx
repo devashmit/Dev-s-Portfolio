@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import TextReveal from './TextReveal';
 
 /* ─── DATA & METRICS ─────────────────────────────────────────────── */
@@ -47,7 +47,6 @@ function TerminalWriter({ logText, details, title, tagline }) {
   
   useEffect(() => {
     let index = 0;
-    setTypedText('');
     const timer = setInterval(() => {
       if (index < logText.length) {
         setTypedText((prev) => prev + logText.charAt(index));
@@ -232,6 +231,7 @@ export default function About() {
 
                   <div className="timeline-terminal-wrap">
                     <TerminalWriter
+                      key={selectedMilestone}
                       logText={milestones[selectedMilestone].systemLog}
                       title={milestones[selectedMilestone].title}
                       tagline={milestones[selectedMilestone].tagline}
