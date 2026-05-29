@@ -53,20 +53,9 @@ export default function Contact() {
 
       {/* 3D Holographic Network Orb links */}
       <HolographicOrbLinks />
-
-      {/* Footer line — slow pure fade, grounded at bottom */}
-      <motion.div
-        className="contact-footer-line"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.0, delay: 0.5, ease: 'easeOut' }}
-      >
-        <span>Ashmit Dev · {new Date().getFullYear()}</span>
-        <span>Kathmandu, Nepal</span>
-      </motion.div>
     </section>
   );
 }
+
 
 
