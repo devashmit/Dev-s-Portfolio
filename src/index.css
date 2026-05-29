@@ -136,12 +136,12 @@ ul,ol{list-style:none}
 .nav-open .nav-hamburger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
 /* Shared Utilities */
-.section-intro{margin-bottom:2rem}
+.section-intro{margin-bottom:1.5rem}
 .section-eyebrow{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin-bottom:1rem}
-.section-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);font-weight:700;color:var(--ink);line-height:1.1;letter-spacing:-0.02em}
+.section-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,4rem);font-weight:700;color:var(--ink);line-height:1.1;letter-spacing:-0.02em}
 
 /* Bento Grid System */
-.bento-grid{display:grid;gap:1rem;grid-template-columns:repeat(12, 1fr)}
+.bento-grid{display:grid;gap:0.85rem;grid-template-columns:repeat(12, 1fr)}
 .bento-card{
   background:var(--glass-bg);
   border:1px solid var(--glass-border);
@@ -305,7 +305,7 @@ ul,ol{list-style:none}
 /* ==============================
    SECTIONS GLOBAL
    ============================== */
-section:not(#hero){padding:min(8vh,4.5rem) min(5vw,4rem)}
+section:not(#hero){padding:min(6vh,3.5rem) min(5vw,4rem)}
 
 /* ==============================
    PROJECTS
@@ -530,7 +530,7 @@ section:not(#hero){padding:min(8vh,4.5rem) min(5vw,4rem)}
 /* ==============================
    FOOTER
    ============================== */
-footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);margin-top:4rem}
+footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);margin-top:2rem}
 .footer-l1{font-family:var(--font-mono);font-size:.75rem;color:var(--ink-mid);margin-bottom:.5rem}
 .footer-l2{font-family:var(--font-mono);font-size:.7rem;color:var(--ink-dim);letter-spacing:0.1em}
 
@@ -548,7 +548,7 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
   body{cursor:auto}
   #cursor-dot,#cursor-ring{display:none}
   
-  section:not(#hero){padding:3rem 1.25rem}
+  section:not(#hero){padding:2rem 1rem}
   .bento-card{padding:1.25rem}
   
   .hero-cta{flex-direction:column;width:100%;align-items:stretch}
@@ -2527,7 +2527,7 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
 
 /* Big email strip */
 .contact-email-strip {
-  margin-top: 3rem;
+  margin-top: 1.5rem;
   padding: 2.5rem 2rem;
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -2689,12 +2689,28 @@ footer{padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);ma
 }
 
 @media (max-width: 640px) {
-  .contact-email-strip { padding: 1.75rem 1.25rem; }
-  .contact-email-btn { font-size: 0.82rem; padding: 0.75rem 1.2rem; }
-  .contact-blurb { font-size: 0.9rem; }
+  .contact-email-strip { padding: 1.5rem 1rem; }
+  .contact-email-btn { font-size: 0.82rem; padding: 0.75rem 1rem; }
+  .contact-blurb { font-size: 0.88rem; }
   .csr-divider { display: none; }
   .csr-handle { font-size: 0.85rem; }
+
+  /* Make holographic orb fill the full section width on mobile */
+  .holographic-orb-container {
+    width: calc(100vw - 2rem) !important;
+    border-radius: 12px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
 }
+
+@media (max-width: 768px) {
+  /* Holographic orb – near-full width on tablet */
+  .holographic-orb-container {
+    width: calc(100vw - 2rem) !important;
+  }
+}
+
 
 /* =====================================================
    3D ISOMETRIC KEYBOARD & TELEMETRY STYLES
