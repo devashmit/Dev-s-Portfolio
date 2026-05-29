@@ -194,8 +194,8 @@ function FloatingPreview({ project, visible }) {
 
   useEffect(() => {
     const onMove = (e) => {
-      const px = e.clientX + 24;
-      const py = e.clientY - 120;
+      const px = e.clientX - 160;
+      const py = e.clientY - 210;
       x.set(px);
       y.set(py);
 
