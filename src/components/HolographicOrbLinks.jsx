@@ -1,386 +1,308 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
+
+const SYMBOLS = ['0', '1', '</>', '[]', '{}', 'TS', 'JS', '⚛', 'fn', '()'];
 
 // Main interactive nodes
 const mainNodesConfig = [
-  { 
-    id: 'github', 
-    label: 'GitHub', 
-    icon: <FaGithub />, 
-    href: 'https://github.com/devashmit', 
-    handle: 'devashmit', 
-    detail: '5.2k Followers', 
-    baseHue: 180, // Cyan
-    theta: 0, 
-    phi: Math.PI / 2 
+  {
+    id: 'github',
+    label: 'GitHub',
+    icon: <FaGithub />,
+    href: 'https://github.com/devashmit',
+    handle: 'devashmit',
+    detail: '5.2k Followers',
+    baseHue: 355,             // Red-ish for GitHub
+    themeRGB: '220, 60, 60',  // used for canvas overlay & border
+    theta: 0,
+    phi: Math.PI / 2,
   },
-  { 
-    id: 'linkedin', 
-    label: 'LinkedIn', 
-    icon: <FaLinkedin />, 
-    href: 'https://www.linkedin.com/in/abhishek-dev-5b5148357', 
-    handle: 'Ashmit Dev', 
-    detail: '2.1k Connections', 
-    baseHue: 210, // Blue
-    theta: (2 * Math.PI) / 3, 
-    phi: Math.PI / 2 
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    icon: <FaLinkedin />,
+    href: 'https://www.linkedin.com/in/abhishek-dev-5b5148357',
+    handle: 'Ashmit Dev',
+    detail: '2.1k Connections',
+    baseHue: 214,
+    themeRGB: '10, 102, 194',
+    theta: (2 * Math.PI) / 3,
+    phi: Math.PI / 2,
   },
-  { 
-    id: 'whatsapp', 
-    label: 'WhatsApp', 
-    icon: <FaWhatsapp />, 
-    href: 'https://wa.me/message/6VRRX2XZZ4UFO1', 
-    handle: 'Whatsapp', 
-    detail: 'Online Now', 
-    baseHue: 140, // Emerald Green
-    theta: (4 * Math.PI) / 3, 
-    phi: Math.PI / 2 
+  {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    icon: <FaWhatsapp />,
+    href: 'https://wa.me/message/6VRRX2XZZ4UFO1',
+    handle: 'Whatsapp',
+    detail: 'Online Now',
+    baseHue: 142,
+    themeRGB: '37, 211, 102',
+    theta: (4 * Math.PI) / 3,
+    phi: Math.PI / 2,
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    icon: <MdEmail />,
+    href: 'mailto:devvv0264@gmail.com',
+    handle: 'devvv0264@gmail.com',
+    detail: 'Send a message',
+    baseHue: 35,
+    themeRGB: '251, 146, 60',
+    theta: Math.PI,
+    phi: Math.PI / 2,
   },
 ];
 
-// Constellation filler nodes to form a full sphere network
+// Constellation filler nodes
 const fillerNodesConfig = [
   { id: 'f1', theta: Math.PI / 4, phi: Math.PI / 4, baseHue: 180 },
-  { id: 'f2', theta: Math.PI / 3, phi: 3 * Math.PI / 4, baseHue: 210 },
-  { id: 'f3', theta: 5 * Math.PI / 4, phi: Math.PI / 3, baseHue: 140 },
+  { id: 'f2', theta: Math.PI / 3, phi: 3 * Math.PI / 4, baseHue: 214 },
+  { id: 'f3', theta: 5 * Math.PI / 4, phi: Math.PI / 3, baseHue: 142 },
   { id: 'f4', theta: 7 * Math.PI / 6, phi: 2 * Math.PI / 3, baseHue: 35 },
   { id: 'f5', theta: 3 * Math.PI / 2, phi: Math.PI / 4, baseHue: 180 },
-  { id: 'f6', theta: Math.PI / 6, phi: 5 * Math.PI / 6, baseHue: 140 },
+  { id: 'f6', theta: Math.PI / 6, phi: 5 * Math.PI / 6, baseHue: 142 },
 ];
+
+// Initialize particles with a size so they don't show "undefined"
+function makeParticles(width, height) {
+  return Array.from({ length: 30 }, () => ({
+    x: Math.random() * (width || 600),
+    y: Math.random() * (height || 380),
+    char: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+    size: Math.random() * 7 + 6,
+    speedY: Math.random() * 0.15 + 0.05,
+    phase: Math.random() * Math.PI * 2,
+    driftPhase: Math.random() * Math.PI * 2,
+  }));
+}
 
 export default function HolographicOrbLinks() {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
+  const hoveredNodeRef = useRef(null); // sync ref so canvas loop reads latest
   const [isDragging, setIsDragging] = useState(false);
-  
-  // Interaction & Parallax states
+
   const dragStart = useRef({ x: 0, y: 0 });
   const rotation = useRef({ x: 0, y: 0.8 });
-  const rotationSpeed = useRef({ x: 0.002, y: 0.005 });
-  const mousePos = useRef({ x: 300, y: 200 }); 
-  const [dimensions, setDimensions] = useState({ width: 600, height: 400 });
+  const mousePos = useRef({ x: 300, y: 200 });
+  const [dimensions, setDimensions] = useState({ width: 680, height: 420 });
 
-  // Floating code fragments/binary particles for background network depth
-  const ambientParticles = useRef([]);
+  // keep ref in sync with state
+  useEffect(() => { hoveredNodeRef.current = hoveredNode; }, [hoveredNode]);
 
-  // Responsive initialization
+  // Ambient particles – initialise immediately so no undefined text on first frame
+  const ambientParticles = useRef(makeParticles(680, 420));
+
+  // Responsive resize
   useEffect(() => {
     const handleResize = () => {
-      if (containerRef.current) {
-        const width = Math.min(window.innerWidth - 32, 850);
-        const height = window.innerWidth < 640 ? 300 : 380;
-        setDimensions({ width, height });
-
-        // Generate custom network particles (mix of binary codes and tiny code symbols)
-        const particles = [];
-        const symbols = ['0', '1', '</>', '[]', '{}', 'TS', 'JS', '⚛'];
-        for (let i = 0; i < 30; i++) {
-          particles.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            char: symbols[Math.floor(Math.random() * symbols.length)],
-            size: Math.random() * 8 + 6,
-            speedY: Math.random() * 0.15 + 0.05,
-            phase: Math.random() * Math.PI * 2,
-            driftPhase: Math.random() * Math.PI * 2,
-          });
-        }
-        ambientParticles.current = particles;
-      }
+      const width = Math.min(window.innerWidth - 32, 880);
+      const height = window.innerWidth < 640 ? 320 : 420;
+      setDimensions({ width, height });
+      ambientParticles.current = makeParticles(width, height);
     };
-    
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handlePointerMoveGlobal = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    mousePos.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    };
-  };
-
+  // Track cursor inside container for parallax & dynamic lighting
   useEffect(() => {
-    window.addEventListener('pointermove', handlePointerMoveGlobal);
-    return () => window.removeEventListener('pointermove', handlePointerMoveGlobal);
+    const handleMove = (e) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      mousePos.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    };
+    window.addEventListener('pointermove', handleMove);
+    return () => window.removeEventListener('pointermove', handleMove);
   }, []);
 
-  // Compute 3D Projection & Run Canvas Drawing loop
+  // Canvas render loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let animationFrameId;
+    let animId;
+    let pulse = 0;
 
-    let pulseProgress = 0;
-    let scanlineOffset = 0;
+    const loop = () => {
+      const { width, height } = dimensions;
+      const cx = width / 2;
+      const cy = height / 2;
 
-    const renderLoop = () => {
-      const cx = dimensions.width / 2;
-      const cy = dimensions.height / 2;
-
-      // Parallax effect responsive to cursor position
-      const targetParallaxX = (mousePos.current.x - cx) * 0.06;
-      const targetParallaxY = (mousePos.current.y - cy) * 0.06;
+      const parallaxX = (mousePos.current.x - cx) * 0.06;
+      const parallaxY = (mousePos.current.y - cy) * 0.06;
 
       if (!isDragging) {
-        const dragFactor = hoveredNode ? 0.04 : 1;
-        rotation.current.y += rotationSpeed.current.y * dragFactor;
-        rotation.current.x += rotationSpeed.current.x * dragFactor;
+        const slow = hoveredNodeRef.current ? 0.04 : 1;
+        rotation.current.y += 0.005 * slow;
+        rotation.current.x += 0.002 * slow;
       }
 
-      const radius = Math.min(dimensions.width, dimensions.height) * 0.38;
-      const cameraDistance = 380;
-
-      const cosX = Math.cos(rotation.current.x);
-      const sinX = Math.sin(rotation.current.x);
-      const cosY = Math.cos(rotation.current.y);
-      const sinY = Math.sin(rotation.current.y);
-
+      const radius = Math.min(width, height) * 0.37;
+      const cam = 380;
+      const cosX = Math.cos(rotation.current.x), sinX = Math.sin(rotation.current.x);
+      const cosY = Math.cos(rotation.current.y), sinY = Math.sin(rotation.current.y);
       const time = Date.now() / 3000;
 
-      const allNodesToProject = [
+      // Project nodes
+      const allNodes = [
         ...mainNodesConfig.map(n => ({ ...n, isFiller: false })),
-        ...fillerNodesConfig.map(f => ({ ...f, isFiller: true }))
+        ...fillerNodesConfig.map(n => ({ ...n, isFiller: true })),
       ];
 
-      const projectedNodes = allNodesToProject.map((node) => {
-        // Cartesian spherical coordinates
+      const projected = allNodes.map(node => {
         let x = radius * Math.sin(node.phi) * Math.cos(node.theta);
         let y = radius * Math.sin(node.phi) * Math.sin(node.theta);
         let z = radius * Math.cos(node.phi);
-
-        // Spherical rotation on Y
-        let x1 = x * cosY - z * sinY;
-        let z1 = x * sinY + z * cosY;
-
-        // Spherical rotation on X
-        let y2 = y * cosX - z1 * sinX;
-        let z2 = y * sinX + z1 * cosX;
-
-        const scale = cameraDistance / (cameraDistance + z2);
-        
-        // Perspective Depth Parallax offset calculation
-        const depthBias = (z2 + radius) / (radius * 2); 
-        const parallaxOffsetX = targetParallaxX * (depthBias - 0.5);
-        const parallaxOffsetY = targetParallaxY * (depthBias - 0.5);
-
-        const screenX = cx + x1 * scale + parallaxOffsetX;
-        const screenY = cy + y2 * scale + parallaxOffsetY;
-
-        // Subtle HSL hue shifts over time
-        const currentHue = (node.baseHue + Math.sin(time * 1.5 + node.theta) * 15) % 360;
-        const color = `hsla(${currentHue}, 95%, 55%, 1)`;
-        const glow = `hsla(${currentHue}, 95%, 55%, 0.38)`;
-
-        // Proximity calculation for dynamic light reactivity
-        const distanceToCursor = Math.hypot(mousePos.current.x - screenX, mousePos.current.y - screenY);
-        const proximityIntensity = Math.max(0, 1 - distanceToCursor / 160);
-        const activeGlowScale = 1 + proximityIntensity * 0.9;
-
-        return {
-          ...node,
-          x: screenX,
-          y: screenY,
-          z: z2,
-          scale,
-          opacity: (z2 + radius * 1.5) / (radius * 2.5),
-          color,
-          glow,
-          activeGlowScale,
-          proximityIntensity,
-        };
+        let x1 = x * cosY - z * sinY, z1 = x * sinY + z * cosY;
+        let y2 = y * cosX - z1 * sinX, z2 = y * sinX + z1 * cosX;
+        const scale = cam / (cam + z2);
+        const depthBias = (z2 + radius) / (radius * 2);
+        const sx = cx + x1 * scale + parallaxX * (depthBias - 0.5);
+        const sy = cy + y2 * scale + parallaxY * (depthBias - 0.5);
+        const hue = (node.baseHue + Math.sin(time * 1.5 + node.theta) * 12) % 360;
+        const color = `hsla(${hue}, 95%, 60%, 1)`;
+        const glow = `hsla(${hue}, 95%, 60%, 0.38)`;
+        const dist = Math.hypot(mousePos.current.x - sx, mousePos.current.y - sy);
+        const prox = Math.max(0, 1 - dist / 160);
+        return { ...node, x: sx, y: sy, z: z2, scale, opacity: (z2 + radius * 1.5) / (radius * 2.5), color, glow, prox };
       });
+      projected.sort((a, b) => b.z - a.z);
+      setNodes(projected);
 
-      // Z-sort
-      projectedNodes.sort((a, b) => b.z - a.z);
-      setNodes(projectedNodes);
+      // ── Clear ──
+      ctx.clearRect(0, 0, width, height);
 
-      // Clear Canvas
-      ctx.clearRect(0, 0, dimensions.width, dimensions.height);
+      // ── Theme hover overlay – entire canvas glows in node's brand color ──
+      const activeId = hoveredNodeRef.current;
+      const activeCfg = activeId ? mainNodesConfig.find(n => n.id === activeId) : null;
+      if (activeCfg) {
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(width, height) * 0.8);
+        grad.addColorStop(0, `rgba(${activeCfg.themeRGB}, 0.18)`);
+        grad.addColorStop(0.5, `rgba(${activeCfg.themeRGB}, 0.07)`);
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+      }
 
-      // Draw subtle holographic background grid
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.015)';
+      // ── Background grid ──
+      ctx.strokeStyle = 'rgba(0,240,255,0.015)';
       ctx.lineWidth = 0.5;
-      const gridSize = 40;
-      for (let x = 0; x < dimensions.width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x + targetParallaxX * 0.05, 0);
-        ctx.lineTo(x + targetParallaxX * 0.05, dimensions.height);
-        ctx.stroke();
+      const gs = 40;
+      for (let gx = 0; gx < width; gx += gs) {
+        ctx.beginPath(); ctx.moveTo(gx + parallaxX * 0.05, 0); ctx.lineTo(gx + parallaxX * 0.05, height); ctx.stroke();
       }
-      for (let y = 0; y < dimensions.height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y + targetParallaxY * 0.05);
-        ctx.lineTo(dimensions.width, y + targetParallaxY * 0.05);
-        ctx.stroke();
+      for (let gy = 0; gy < height; gy += gs) {
+        ctx.beginPath(); ctx.moveTo(0, gy + parallaxY * 0.05); ctx.lineTo(width, gy + parallaxY * 0.05); ctx.stroke();
       }
 
-      // Shimmer ambient particle hum
-      pulseProgress = (pulseProgress + 0.015) % 1;
-      const waveSync = Math.sin(pulseProgress * Math.PI * 2);
-      const pulseMultiplier = 1 + Math.max(0, waveSync) * 0.5;
+      // ── Orbit ring ──
+      ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx - parallaxX * 0.1, cy - parallaxY * 0.1, radius * 1.22, 0, Math.PI * 2);
+      ctx.stroke();
 
-      ambientParticles.current.forEach((p) => {
+      // ── Ambient shimmer particles ──
+      pulse = (pulse + 0.015) % 1;
+      const wave = Math.sin(pulse * Math.PI * 2);
+      const pm = 1 + Math.max(0, wave) * 0.5;
+      ambientParticles.current.forEach(p => {
         p.y -= p.speedY;
-        if (p.y < 0) p.y = dimensions.height;
-
+        if (p.y < 0) p.y = height;
         p.driftPhase += 0.008;
         p.x += Math.sin(p.driftPhase) * 0.12;
-
-        const shimmerOpacity = (0.12 + Math.sin(time * 2 + p.phase) * 0.08) * pulseMultiplier;
-        
-        ctx.font = `bold ${p.size * (0.85 + Math.max(0, waveSync) * 0.3)}px var(--font-mono)`;
-        ctx.fillStyle = `rgba(0, 240, 255, ${shimmerOpacity})`;
+        const opac = (0.11 + Math.sin(time * 2 + p.phase) * 0.07) * pm;
+        ctx.font = `bold ${p.size * (0.85 + Math.max(0, wave) * 0.3)}px monospace`;
+        ctx.fillStyle = `rgba(0,240,255,${opac})`;
         ctx.fillText(p.char, p.x, p.y);
       });
 
-      // Central core coordinates
-      const coreX = cx - targetParallaxX * 0.06;
-      const coreY = cy - targetParallaxY * 0.06;
-
-      // Pulse waves emanating from Core
-      ctx.strokeStyle = `rgba(0, 240, 255, ${(0.15 * (1 - pulseProgress))})`;
+      // ── Core pulse ring ──
+      ctx.strokeStyle = `rgba(0,240,255,${0.18 * (1 - pulse)})`;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(coreX, coreY, 30 + pulseProgress * 70, 0, Math.PI * 2);
+      ctx.arc(cx - parallaxX * 0.06, cy - parallaxY * 0.06, 30 + pulse * 72, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Draw Center HUD core
-      ctx.fillStyle = 'rgba(0, 240, 255, 0.03)';
-      ctx.beginPath();
-      ctx.arc(coreX, coreY, 26, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Core details
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(coreX, coreY, 12, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.arc(coreX, coreY, 40 + Math.sin(Date.now() / 200) * 2, 0, Math.PI * 2);
-      ctx.stroke();
+      // ── Core ──
+      const coreX = cx - parallaxX * 0.06, coreY = cy - parallaxY * 0.06;
+      ctx.fillStyle = 'rgba(0,240,255,0.04)';
+      ctx.beginPath(); ctx.arc(coreX, coreY, 28, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,240,255,0.45)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(coreX, coreY, 12, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(0,240,255,0.22)';
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.arc(coreX, coreY, 42 + Math.sin(Date.now() / 200) * 2, 0, Math.PI * 2); ctx.stroke();
       ctx.setLineDash([]);
 
-      // Draw printed circuit board (PCB) style orthogonal traces
-      projectedNodes.forEach((node) => {
-        const isInteractive = !node.isFiller;
-        const lineAlpha = isInteractive
-          ? (hoveredNode === node.id ? 0.9 : 0.28 + node.proximityIntensity * 0.22) * node.opacity
-          : 0.06 * node.opacity;
+      // ── PCB circuit traces + photon pulses ──
+      projected.forEach(node => {
+        const isMain = !node.isFiller;
+        const isHov = activeId === node.id;
+        const alpha = isMain ? (isHov ? 0.9 : 0.3 + node.prox * 0.2) * node.opacity : 0.06 * node.opacity;
+        ctx.strokeStyle = isMain ? node.color : 'rgba(255,255,255,0.1)';
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = isMain ? 1.8 + node.prox * 0.6 : 0.75;
 
-        ctx.strokeStyle = isInteractive ? node.color : 'rgba(255, 255, 255, 0.12)';
-        ctx.globalAlpha = lineAlpha;
-        ctx.lineWidth = isInteractive ? 1.8 + node.proximityIntensity * 0.6 : 0.8;
-
-        // Orthogonal 45/90 degree bends for realistic circuit wires
-        ctx.beginPath();
-        ctx.moveTo(coreX, coreY);
-
-        const midX = (coreX + node.x) / 2;
-        const midY = (coreY + node.y) / 2;
-
-        // Dynamic PCB bend formula
         const bendX = coreX + (node.x - coreX) * 0.45;
         const bendY = coreY;
+        ctx.beginPath(); ctx.moveTo(coreX, coreY); ctx.lineTo(bendX, bendY); ctx.lineTo(node.x, node.y); ctx.stroke();
 
-        ctx.lineTo(bendX, bendY);
-        ctx.lineTo(node.x, node.y);
-        ctx.stroke();
-
-        // Draw solder joints/junctions along the circuit lines
-        if (isInteractive) {
+        if (isMain) {
+          // solder joint
           ctx.fillStyle = node.color;
-          ctx.beginPath();
-          ctx.arc(bendX, bendY, 2.2, 0, Math.PI * 2);
-          ctx.fill();
-        }
+          ctx.beginPath(); ctx.arc(bendX, bendY, 2.5, 0, Math.PI * 2); ctx.fill();
 
-        // Draw pulsing photon beam (glowing comet trail)
-        if (isInteractive) {
+          // photon
           ctx.globalAlpha = node.opacity;
           ctx.fillStyle = node.color;
           ctx.shadowColor = node.color;
-          ctx.shadowBlur = 8 + node.proximityIntensity * 6;
-
-          const t = (pulseProgress + node.theta / (Math.PI * 2)) % 1;
-          
-          // Interpolate along the segmented path
+          ctx.shadowBlur = 9 + node.prox * 7;
+          const t = (pulse + node.theta / (Math.PI * 2)) % 1;
           let px, py;
-          if (t < 0.45) {
-            const nt = t / 0.45;
-            px = coreX + (bendX - coreX) * nt;
-            py = coreY;
-          } else {
-            const nt = (t - 0.45) / 0.55;
-            px = bendX + (node.x - bendX) * nt;
-            py = bendY + (node.y - bendY) * nt;
-          }
-
-          // Main photon head
-          ctx.beginPath();
-          ctx.arc(px, py, 3 + node.proximityIntensity * 1.5, 0, Math.PI * 2);
-          ctx.fill();
-          
-          // Draw comet tail trail
-          ctx.strokeStyle = node.color;
-          ctx.lineWidth = 2 + node.proximityIntensity;
-          ctx.beginPath();
-          ctx.moveTo(px, py);
-          
-          // Simple reverse tail
-          const tailSize = 15;
-          let tx = px - (node.x - coreX) * 0.05;
-          let ty = py - (node.y - coreY) * 0.05;
-          ctx.lineTo(tx, ty);
-          ctx.stroke();
-          
+          if (t < 0.45) { const nt = t / 0.45; px = coreX + (bendX - coreX) * nt; py = coreY; }
+          else { const nt = (t - 0.45) / 0.55; px = bendX + (node.x - bendX) * nt; py = bendY + (node.y - bendY) * nt; }
+          ctx.beginPath(); ctx.arc(px, py, 3 + node.prox * 1.5, 0, Math.PI * 2); ctx.fill();
           ctx.shadowBlur = 0;
         }
       });
-
       ctx.globalAlpha = 1;
-      animationFrameId = requestAnimationFrame(renderLoop);
+      animId = requestAnimationFrame(loop);
     };
 
-    renderLoop();
+    loop();
+    return () => cancelAnimationFrame(animId);
+  }, [dimensions, isDragging]);
 
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [dimensions, isDragging, hoveredNode]);
-
-  // Drag handles
-  const handlePointerDown = (e) => {
-    setIsDragging(true);
-    dragStart.current = { x: e.clientX, y: e.clientY };
-  };
-
+  const handlePointerDown = (e) => { setIsDragging(true); dragStart.current = { x: e.clientX, y: e.clientY }; };
   const handlePointerMove = (e) => {
     if (!isDragging) return;
-    const dx = e.clientX - dragStart.current.x;
-    const dy = e.clientY - dragStart.current.y;
-    rotation.current.y += dx * 0.005;
-    rotation.current.x += dy * 0.005;
+    rotation.current.y += (e.clientX - dragStart.current.x) * 0.005;
+    rotation.current.x += (e.clientY - dragStart.current.y) * 0.005;
     dragStart.current = { x: e.clientX, y: e.clientY };
   };
+  const handlePointerUp = () => setIsDragging(false);
 
-  const handlePointerUp = () => {
-    setIsDragging(false);
-  };
+  // Derive active theme for container border
+  const activeCfg = hoveredNode ? mainNodesConfig.find(n => n.id === hoveredNode) : null;
+  const borderColor = activeCfg
+    ? `rgba(${activeCfg.themeRGB}, 0.7)`
+    : 'rgba(0, 240, 255, 0.06)';
+  const containerGlow = activeCfg
+    ? `0 0 40px rgba(${activeCfg.themeRGB}, 0.2), inset 0 0 30px rgba(${activeCfg.themeRGB}, 0.05)`
+    : 'inset 0 0 25px rgba(0, 240, 255, 0.03)';
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="holographic-orb-container"
       style={{
@@ -393,146 +315,127 @@ export default function HolographicOrbLinks() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'rgba(10, 12, 16, 0.45)',
-        border: '1px solid rgba(0, 240, 255, 0.06)',
+        background: 'rgba(10, 12, 16, 0.5)',
+        border: `1px solid ${borderColor}`,
         borderRadius: '16px',
         overflow: 'hidden',
         cursor: isDragging ? 'grabbing' : 'grab',
-        backdropFilter: 'blur(12px)',
-        boxShadow: 'inset 0 0 25px rgba(0, 240, 255, 0.03)',
+        backdropFilter: 'blur(14px)',
+        boxShadow: containerGlow,
+        transition: 'border-color 0.5s ease, box-shadow 0.5s ease',
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
     >
-      {/* Corner UI brackets (sci-fi HUD overlay style) */}
-      <div style={{ position: 'absolute', top: 12, left: 12, width: 8, height: 8, borderTop: '2px solid rgba(0, 240, 255, 0.3)', borderLeft: '2px solid rgba(0, 240, 255, 0.3)' }} />
-      <div style={{ position: 'absolute', top: 12, right: 12, width: 8, height: 8, borderTop: '2px solid rgba(0, 240, 255, 0.3)', borderRight: '2px solid rgba(0, 240, 255, 0.3)' }} />
-      <div style={{ position: 'absolute', bottom: 12, left: 12, width: 8, height: 8, borderBottom: '2px solid rgba(0, 240, 255, 0.3)', borderLeft: '2px solid rgba(0, 240, 255, 0.3)' }} />
-      <div style={{ position: 'absolute', bottom: 12, right: 12, width: 8, height: 8, borderBottom: '2px solid rgba(0, 240, 255, 0.3)', borderRight: '2px solid rgba(0, 240, 255, 0.3)' }} />
+      {/* HUD corner brackets */}
+      {[['top','left'],['top','right'],['bottom','left'],['bottom','right']].map(([v, h]) => (
+        <div key={`${v}-${h}`} style={{
+          position: 'absolute', [v]: 12, [h]: 12,
+          width: 10, height: 10,
+          borderTop: v === 'top' ? `2px solid rgba(0,240,255,0.35)` : 'none',
+          borderBottom: v === 'bottom' ? `2px solid rgba(0,240,255,0.35)` : 'none',
+          borderLeft: h === 'left' ? `2px solid rgba(0,240,255,0.35)` : 'none',
+          borderRight: h === 'right' ? `2px solid rgba(0,240,255,0.35)` : 'none',
+          pointerEvents: 'none',
+        }} />
+      ))}
 
-      {/* Floating System coordinates */}
-      <div style={{ position: 'absolute', top: 12, left: 28, fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(0, 240, 255, 0.35)', letterSpacing: '0.1em' }}>
+      {/* HUD status text */}
+      <div style={{ position:'absolute', top:14, left:28, fontFamily:'var(--font-mono)', fontSize:'0.5rem', color:'rgba(0,240,255,0.38)', letterSpacing:'0.1em', pointerEvents:'none' }}>
         SYS_STATUS // CONST_ACTIVE
       </div>
-
-      <div style={{ position: 'absolute', top: 12, right: 28, fontFamily: 'var(--font-mono)', fontSize: '0.52rem', color: 'rgba(0, 240, 255, 0.35)', letterSpacing: '0.1em' }}>
+      <div style={{ position:'absolute', top:14, right:28, fontFamily:'var(--font-mono)', fontSize:'0.5rem', color:'rgba(0,240,255,0.38)', letterSpacing:'0.1em', pointerEvents:'none' }}>
         LAT: 27.7172 / LNG: 85.3240
       </div>
 
-      {/* HUD background spinning circle */}
-      <div 
-        style={{
-          position: 'absolute',
-          width: '76%',
-          height: '76%',
-          border: '1.2px dashed rgba(0, 240, 255, 0.05)',
-          borderRadius: '50%',
-          pointerEvents: 'none',
-          animation: 'spin 180s linear infinite',
-        }}
-      />
-      
-      {/* 3D background canvas layer */}
-      <canvas 
-        ref={canvasRef} 
-        width={dimensions.width} 
-        height={dimensions.height}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          pointerEvents: 'none',
-        }}
-      />
+      {/* Spinning HUD ring */}
+      <div style={{ position:'absolute', width:'76%', height:'76%', border:'1.2px dashed rgba(0,240,255,0.05)', borderRadius:'50%', pointerEvents:'none', animation:'spin 180s linear infinite' }} />
 
-      {/* HTML interactive layer projected in 3D */}
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        {nodes.map((node) => {
-          if (node.isFiller) {
-            return (
-              <div
-                key={node.id}
-                style={{
-                  position: 'absolute',
-                  left: node.x,
-                  top: node.y,
-                  width: '4px',
-                  height: '4px',
-                  borderRadius: '50%',
-                  background: node.color,
-                  transform: `translate(-50%, -50%) scale(${node.scale})`,
-                  opacity: node.opacity * 0.45,
-                  pointerEvents: 'none',
-                  boxShadow: `0 0 6px ${node.color}`,
-                }}
-              />
-            );
-          }
+      {/* Canvas */}
+      <canvas ref={canvasRef} width={dimensions.width} height={dimensions.height}
+        style={{ position:'absolute', top:0, left:0, pointerEvents:'none' }} />
 
-          const isHovered = hoveredNode === node.id;
+      {/* Projected HTML nodes */}
+      <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
+        {nodes.map(node => {
+          if (node.isFiller) return (
+            <div key={node.id} style={{
+              position:'absolute', left:node.x, top:node.y,
+              width:5, height:5, borderRadius:'50%',
+              background:node.color,
+              transform:`translate(-50%,-50%) scale(${node.scale})`,
+              opacity:node.opacity * 0.4,
+              boxShadow:`0 0 6px ${node.color}`,
+              pointerEvents:'none',
+            }} />
+          );
 
-          // Glowing shadow calculation with interactive proximity boost
-          const shadowBlurRadius = (isHovered ? 34 : 12 + node.proximityIntensity * 16) * node.activeGlowScale;
+          const isHov = hoveredNode === node.id;
+          const activeCfgNode = mainNodesConfig.find(n => n.id === node.id);
+          const shadowBlur = isHov ? 40 : 14 + node.prox * 18;
+          const shadowColor = isHov && activeCfgNode
+            ? `rgba(${activeCfgNode.themeRGB}, 0.7)`
+            : node.glow;
+          const borderColorNode = isHov && activeCfgNode
+            ? `rgba(${activeCfgNode.themeRGB}, 1)`
+            : 'rgba(255,255,255,0.12)';
+          const iconColor = isHov && activeCfgNode
+            ? `rgba(${activeCfgNode.themeRGB}, 1)`
+            : 'var(--ink-mid)';
 
           return (
-            <div
-              key={node.id}
-              style={{
-                position: 'absolute',
-                left: node.x,
-                top: node.y,
-                transform: `translate(-50%, -50%) scale(${node.scale * (isHovered ? 1.25 : 1)})`,
-                opacity: node.opacity,
-                zIndex: Math.round(100 + node.z),
-                pointerEvents: 'auto',
-                transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-              }}
-            >
+            <div key={node.id} style={{
+              position:'absolute', left:node.x, top:node.y,
+              transform:`translate(-50%,-50%) scale(${node.scale * (isHov ? 1.22 : 1)})`,
+              opacity:node.opacity,
+              zIndex:Math.round(100 + node.z),
+              pointerEvents:'auto',
+              transition:'transform 0.25s cubic-bezier(0.16,1,0.3,1)',
+            }}>
               <a
                 href={node.href}
-                target="_blank"
+                target={node.id === 'email' ? undefined : '_blank'}
                 rel="noopener noreferrer"
                 onMouseEnter={() => setHoveredNode(node.id)}
                 onMouseLeave={() => setHoveredNode(null)}
-                className="holographic-orb-node"
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '54px',
-                  height: '54px',
-                  borderRadius: '50%',
-                  background: 'rgba(8, 10, 14, 0.95)',
-                  border: `2px solid ${isHovered ? node.color : 'rgba(255, 255, 255, 0.12)'}`,
-                  color: isHovered ? node.color : 'var(--ink-mid)',
-                  boxShadow: `0 0 ${shadowBlurRadius}px ${node.glow}, inset 0 0 12px ${node.glow}`,
-                  cursor: 'pointer',
-                  fontSize: '1.4rem',
-                  position: 'relative',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'border-color 0.25s, color 0.25s, box-shadow 0.25s',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  width:'78px', height:'78px',
+                  borderRadius:'50%',
+                  background: isHov && activeCfgNode
+                    ? `rgba(${activeCfgNode.themeRGB}, 0.12)`
+                    : 'rgba(8,10,14,0.95)',
+                  border:`2px solid ${borderColorNode}`,
+                  color:iconColor,
+                  boxShadow:`0 0 ${shadowBlur}px ${shadowColor}, inset 0 0 14px ${shadowColor}`,
+                  cursor:'pointer',
+                  fontSize:'2.2rem',
+                  position:'relative',
+                  backdropFilter:'blur(8px)',
+                  transition:'border-color 0.3s, color 0.3s, box-shadow 0.3s, background 0.3s',
                 }}
               >
                 {node.icon}
 
-                {/* Target reticle ticks inside node */}
-                <div style={{ position: 'absolute', top: '10%', left: '50%', width: '1px', height: '4px', background: isHovered ? node.color : 'rgba(255,255,255,0.1)', transform: 'translateX(-50%)' }} />
-                <div style={{ position: 'absolute', bottom: '10%', left: '50%', width: '1px', height: '4px', background: isHovered ? node.color : 'rgba(255,255,255,0.1)', transform: 'translateX(-50%)' }} />
-                <div style={{ position: 'absolute', left: '10%', top: '50%', height: '1px', width: '4px', background: isHovered ? node.color : 'rgba(255,255,255,0.1)', transform: 'translateY(-50%)' }} />
-                <div style={{ position: 'absolute', right: '10%', top: '50%', height: '1px', width: '4px', background: isHovered ? node.color : 'rgba(255,255,255,0.1)', transform: 'translateY(-50%)' }} />
+                {/* Cross-hair ticks */}
+                {[{top:'8%',left:'50%',w:'1px',h:'5px',tx:'-50%'},{bottom:'8%',left:'50%',w:'1px',h:'5px',tx:'-50%'},{left:'8%',top:'50%',w:'5px',h:'1px',ty:'-50%'},{right:'8%',top:'50%',w:'5px',h:'1px',ty:'-50%'}].map((s,i) => (
+                  <div key={i} style={{
+                    position:'absolute', ...s,
+                    width:s.w, height:s.h,
+                    background: isHov && activeCfgNode ? `rgba(${activeCfgNode.themeRGB}, 0.8)` : 'rgba(255,255,255,0.1)',
+                    transform: s.tx ? `translateX(${s.tx})` : s.ty ? `translateY(${s.ty})` : undefined,
+                    transition:'background 0.3s',
+                  }} />
+                ))}
 
-                {/* Rotating HUD circle rings */}
-                {isHovered && (
+                {/* Spinning ring on hover */}
+                {isHov && activeCfgNode && (
                   <motion.div
-                    layoutId={`hud-ring-${node.id}`}
                     style={{
-                      position: 'absolute',
-                      inset: -6,
-                      borderRadius: '50%',
-                      border: `1.2px dashed ${node.color}`,
-                      opacity: 0.85,
+                      position:'absolute', inset:-8, borderRadius:'50%',
+                      border:`1.5px dashed rgba(${activeCfgNode.themeRGB}, 0.85)`,
                     }}
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
@@ -540,49 +443,32 @@ export default function HolographicOrbLinks() {
                 )}
               </a>
 
-              {/* Hologram details card */}
+              {/* Hologram tooltip */}
               <AnimatePresence>
-                {isHovered && (
+                {isHov && activeCfgNode && (
                   <motion.div
-                    initial={{ opacity: 0, y: 15, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    initial={{ opacity:0, y:15, scale:0.9 }}
+                    animate={{ opacity:1, y:0, scale:1 }}
+                    exit={{ opacity:0, y:10, scale:0.9 }}
+                    transition={{ duration:0.2, ease:'easeOut' }}
                     style={{
-                      position: 'absolute',
-                      bottom: '66px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: '154px',
-                      background: 'rgba(6, 8, 12, 0.97)',
-                      border: `1px solid ${node.color}`,
-                      borderRadius: '8px',
-                      padding: '8px 12px',
-                      boxShadow: `0 8px 24px rgba(0,0,0,0.7), 0 0 16px ${node.glow}`,
-                      pointerEvents: 'none',
-                      textAlign: 'center',
-                      zIndex: 200,
+                      position:'absolute', bottom:'88px', left:'50%',
+                      transform:'translateX(-50%)',
+                      width:'162px',
+                      background:'rgba(6,8,12,0.97)',
+                      border:`1px solid rgba(${activeCfgNode.themeRGB}, 0.8)`,
+                      borderRadius:'8px',
+                      padding:'8px 12px',
+                      boxShadow:`0 8px 24px rgba(0,0,0,0.7), 0 0 20px rgba(${activeCfgNode.themeRGB}, 0.3)`,
+                      pointerEvents:'none',
+                      textAlign:'center',
+                      zIndex:200,
                     }}
                   >
-                    <div 
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: `linear-gradient(to bottom, transparent 50%, ${node.glow} 50%)`,
-                        backgroundSize: '100% 4px',
-                        opacity: 0.12,
-                        borderRadius: '7px',
-                      }}
-                    />
-                    <div style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                      {node.label}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
-                      {node.handle}
-                    </div>
-                    <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: node.color, marginTop: '4px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '4px' }}>
-                      {node.detail}
-                    </div>
+                    <div style={{ position:'absolute', inset:0, background:`linear-gradient(to bottom, transparent 50%, rgba(${activeCfgNode.themeRGB},0.08) 50%)`, backgroundSize:'100% 4px', opacity:0.4, borderRadius:'7px' }} />
+                    <div style={{ fontSize:'0.6rem', fontFamily:'var(--font-mono)', color:'rgba(255,255,255,0.45)', textTransform:'uppercase', letterSpacing:'0.08em' }}>{node.label}</div>
+                    <div style={{ fontSize:'0.82rem', fontFamily:'var(--font-display)', fontWeight:700, color:'var(--ink)', marginTop:'2px' }}>{node.handle}</div>
+                    <div style={{ fontSize:'0.65rem', fontFamily:'var(--font-mono)', color:`rgba(${activeCfgNode.themeRGB},1)`, marginTop:'4px', borderTop:'1px solid rgba(255,255,255,0.08)', paddingTop:'4px' }}>{node.detail}</div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -591,24 +477,15 @@ export default function HolographicOrbLinks() {
         })}
       </div>
 
-      {/* Interactive HUD drag prompt */}
-      <div 
-        style={{
-          position: 'absolute',
-          bottom: '10px',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.58rem',
-          color: 'rgba(0, 240, 255, 0.3)',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          pointerEvents: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '5px',
-        }}
-      >
-        <span style={{ display: 'inline-block', width: '5px', height: '5px', borderRadius: '50%', background: 'rgba(0, 240, 255, 0.5)', animation: 'pulse 1.5s infinite' }} />
-        Hold & Drag to Rotate Hologram
+      {/* Drag prompt */}
+      <div style={{
+        position:'absolute', bottom:10, fontFamily:'var(--font-mono)',
+        fontSize:'0.58rem', color:'rgba(0,240,255,0.3)',
+        letterSpacing:'0.12em', textTransform:'uppercase',
+        pointerEvents:'none', display:'flex', alignItems:'center', gap:5,
+      }}>
+        <span style={{ display:'inline-block', width:5, height:5, borderRadius:'50%', background:'rgba(0,240,255,0.55)', animation:'pulse 1.5s infinite' }} />
+        Hold &amp; Drag to Rotate Hologram
       </div>
     </div>
   );
