@@ -67,6 +67,9 @@ export default function Hero() {
               <a className="btn btn-primary" href="#projects">View Work</a>
             </Magnetic>
             <Magnetic>
+              <a className="btn btn-accent" href="/Ashmit_Dev_CV.pdf" download="Ashmit_Dev_CV.pdf">Download CV &#8595;</a>
+            </Magnetic>
+            <Magnetic>
               <a className="btn btn-ghost" href="https://github.com/devashmit" target="_blank" rel="noopener noreferrer">GitHub &#8594;</a>
             </Magnetic>
           </motion.div>

@@ -207,7 +207,7 @@ export default function SystemConsole() {
       code: developerProfileCode,
       linesCount: 8,
       lang: 'JSON',
-      color: '#FACC15',
+      color: 'var(--accent)',
       ping: '4ms',
       node: 'PASS_00',
       status: 'ONLINE'
@@ -245,14 +245,13 @@ export default function SystemConsole() {
     document.dispatchEvent(summonEvent);
 
     const logs = [
-      "SYSTEM INITIATED: PORTFOLIO DIAGNOSTIC SCAN v5.02",
-      "CHECKING GATEWAY LINKS... KTM_04 -> CONNECTED",
-      "INSPECTING SECURE FIREWALL... ACTIVE [100% OK]",
-      "LOADING DYNAMIC CANVAS PREVIEWS... ALL NODES COMPILATION SUCCESS",
-      "SYNCING NEURAL SKILL GRAPH... UPLINK RADAR STABLE",
-      "CHECKING CAT COMPANION SENSORS... BALL/RAT TOYS CALIBRATED",
-      "COGNITIVE LEVEL SYNAPSE DETECTED: 100% SECURE_CORE",
-      "SYSTEM INSPECTION COMPLETED. ENJOY INTERACTIVE TOY EASTER EGG!"
+      "SYSTEM INITIATED: KERNEL DIAGNOSTIC BUILD v2.4.0",
+      "ESTABLISHING SECURE CONNECTION... NODE [KTM_04] RESPONDING",
+      "VERIFYING ENCRYPTION PROTOCOLS... AES-256 ACTIVE",
+      "COMPILING DYNAMIC BUNDLES... 100% SUCCESS",
+      "SYNCING NEURAL GRAPH... LATENCY < 10ms",
+      "INITIALIZING INTERACTIVE MODULES... READY",
+      "ALL SYSTEMS NOMINAL. DEVELOPMENT ENVIRONMENT ONLINE."
     ];
 
     logs.forEach((log, index) => {
@@ -268,27 +267,12 @@ export default function SystemConsole() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Concentric Sonar Grid Background */}
-      <div className="sonar-grid-overlay">
+      {/* Modern Grid Background */}
+      <div className="modern-grid-overlay">
         <motion.div 
           style={{ x: gridX, y: gridY }}
-          className="sonar-grid-inner"
-        >
-          <svg width="100%" height="100%" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="400" cy="400" r="100" stroke="currentColor" strokeWidth="1" strokeDasharray="4 8" className="sonar-ring ring-1" />
-            <circle cx="400" cy="400" r="200" stroke="currentColor" strokeWidth="1" strokeDasharray="2 4" className="sonar-ring ring-2" />
-            <circle cx="400" cy="400" r="300" stroke="currentColor" strokeWidth="1" className="sonar-ring ring-3" />
-            <circle cx="400" cy="400" r="380" stroke="currentColor" strokeWidth="0.5" strokeDasharray="10 15" className="sonar-ring ring-4" />
-            
-            <line x1="400" y1="0" x2="400" y2="800" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 5" />
-            <line x1="0" y1="400" x2="800" y2="400" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 5" />
-            
-            <line x1="117" y1="117" x2="683" y2="683" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 8" />
-            <line x1="117" y1="683" x2="683" y2="117" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 8" />
-            
-            <circle cx="400" cy="400" r="4" fill="var(--accent)" className="sonar-center-dot" />
-          </svg>
-        </motion.div>
+          className="modern-grid-inner"
+        />
       </div>
       
       <div className="console-spotlight">
@@ -306,7 +290,7 @@ export default function SystemConsole() {
               <span 
                 className="hud-pulse-dot" 
                 style={{ 
-                  color: activeFile === 'secure-uplink.sh' ? '#ef4444' : (activeFile === 'developer-profile.json' ? '#eab308' : '#10b981') 
+                  color: activeFile === 'secure-uplink.sh' ? '#ef4444' : (activeFile === 'developer-profile.json' ? 'var(--accent)' : '#10b981') 
                 }}
               ></span>
               <Terminal className="hud-icon accent" size={13} />
@@ -434,7 +418,7 @@ export default function SystemConsole() {
                     <span 
                       className="file-icon" 
                       style={{ 
-                        background: isActive ? 'rgba(250,204,21,0.15)' : 'rgba(255,255,255,0.05)', 
+                        background: isActive ? 'rgba(6,182,212,0.15)' : 'rgba(255,255,255,0.05)', 
                         color: fileInfo.color 
                       }}
                     >
@@ -502,7 +486,7 @@ export default function SystemConsole() {
                     <span 
                       className="file-icon" 
                       style={{ 
-                        background: isActive ? 'rgba(250,204,21,0.15)' : 'rgba(255,255,255,0.05)', 
+                        background: isActive ? 'rgba(6,182,212,0.15)' : 'rgba(255,255,255,0.05)', 
                         color: fileInfo.color 
                       }}
                     >
