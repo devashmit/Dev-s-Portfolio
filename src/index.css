@@ -3930,5 +3930,463 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
   }
 }
 
+/* =====================================================
+   REDESIGNED BENTO CONTACT HERO SECTION
+   ===================================================== */
+#contact {
+  padding: 6rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  background-color: #08090a; /* Matte Black/Charcoal */
+  color: #f3f4f6;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-layout-split {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+/* Left side styling */
+.contact-left-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.contact-left-content .contact-eyebrow-accent {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: #06b6d4; /* cyan accent */
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.contact-left-content .contact-huge-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.contact-left-content .contact-short-desc {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #9ca3af;
+  max-width: 520px;
+}
+
+.contact-left-content .contact-cta-wrapper {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.contact-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #f3f4f6;
+  color: #0a0a0c;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #f3f4f6;
+  cursor: pointer;
+}
+
+.contact-cta-primary:hover {
+  background-color: transparent;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.contact-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: transparent;
+  color: #f3f4f6;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.contact-cta-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Availability & Time panel */
+.contact-status-panel {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  max-width: 520px;
+}
+
+.status-panel-col {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-panel-col:first-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.status-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #06b6d4;
+}
+
+.status-dot-blink {
+  width: 6px;
+  height: 6px;
+  background-color: #06b6d4;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #06b6d4;
+  animation: statusPulse 2s infinite ease-in-out;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.status-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.status-info-row svg {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.time-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  color: #6b7280;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.time-display {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.time-zone {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-left: 0.35rem;
+}
+
+.time-date {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+/* Right side bento-grid */
+.contact-bento-container {
+  display: flex;
+  align-items: stretch;
+  gap: 2rem;
+}
+
+.contact-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  flex-grow: 1;
+}
+
+.contact-bento-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3.5rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.05);
+}
+
+.contact-bento-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(400px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(var(--card-accent-rgb, "6, 182, 212"), 0.08), transparent 80%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.contact-bento-card:hover::after {
+  opacity: 1;
+}
+
+.contact-bento-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--card-accent-rgb, "6, 182, 212"), 0.3);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(var(--card-accent-rgb, "6, 182, 212"), 0.05);
+}
+
+.bento-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.bento-card-icon-box {
+  width: 3.25rem;
+  height: 3.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 1.4rem;
+  color: #f3f4f6;
+  transition: all 0.3s ease;
+}
+
+.contact-bento-card:hover .bento-card-icon-box {
+  border-color: rgba(var(--card-accent-rgb, "6, 182, 212"), 0.4);
+  color: var(--card-accent, #06b6d4);
+  background: rgba(var(--card-accent-rgb, "6, 182, 212"), 0.05);
+}
+
+.bento-card-number {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.bento-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bento-card-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bento-card-value {
+  font-size: 0.88rem;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+.bento-card-action {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.bento-card-action svg {
+  transition: transform 0.3s ease;
+}
+
+.contact-bento-card:hover .bento-card-action {
+  color: #ffffff;
+}
+
+.contact-bento-card:hover .bento-card-action svg {
+  transform: translateX(4px);
+  color: var(--card-accent, #06b6d4);
+}
+
+/* Vertical text bar on right of grid */
+.contact-side-vertical-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  width: 2rem;
+}
+
+.side-dot-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.side-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+
+.side-dot.active {
+  background: #06b6d4;
+  box-shadow: 0 0 6px #06b6d4;
+}
+
+.side-vertical-text {
+  writing-mode: vertical-rl;
+  text-transform: uppercase;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: #6b7280;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+
+/* Bottom status bar */
+.contact-system-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 2rem;
+}
+
+.system-bar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.system-bar-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.system-bar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.system-bar-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.system-bar-desc {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* Media Queries for responsive styling */
+@media (max-width: 1200px) {
+  .contact-layout-split {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  #contact {
+    padding: 4rem 1.25rem;
+    gap: 3rem;
+  }
+  .contact-bento-container {
+    flex-direction: column;
+  }
+  .contact-bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .contact-side-vertical-bar {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0;
+  }
+  .side-dot-group {
+    flex-direction: row;
+  }
+  .side-vertical-text {
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+  .contact-system-bar {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .contact-status-panel {
+    grid-template-columns: 1fr;
+  }
+  .status-panel-col:first-child {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+
 
 
