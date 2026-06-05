@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TextReveal from './TextReveal';
 
 /* ─── DATA & METRICS ─────────────────────────────────────────────── */
@@ -86,6 +86,16 @@ function TerminalWriter({ logText, details, title, tagline }) {
 export default function About() {
   const [activeTab, setActiveTab] = useState('bio');
   const [selectedMilestone, setSelectedMilestone] = useState(0);
+  const creativeWorkspaceRef = useRef(null);
+  const [activeCreativeCard, setActiveCreativeCard] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Tab configurations
   const tabs = [
@@ -244,38 +254,110 @@ export default function About() {
 
               {/* TAB 3: CREATIVE SANDBOX */}
               {activeTab === 'creative' && (
-                <div className="workspace-creative-tab">
-                  <div className="creative-card glass-panel bento-large">
-                    <div className="card-hud-overlay">// GENERATIVE CANVAS PHYSICS</div>
-                    <div className="sandbox-canvas-placeholder">
-                      <svg viewBox="0 0 100 100" className="generative-flower-svg">
-                        <motion.path
-                          d="M 50 50 C 30 20, 70 20, 50 50 C 20 30, 20 70, 50 50 C 70 80, 30 80, 50 50 C 80 70, 80 30, 50 50"
-                          fill="none" stroke="var(--accent)" strokeWidth="0.8"
-                          initial={{ pathLength: 0 }}
-                          animate={{ pathLength: 1 }}
-                          transition={{ duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-                        />
-                        <circle cx="50" cy="50" r="5" fill="var(--accent)" />
-                      </svg>
+                <div className="workspace-creative-tab" ref={creativeWorkspaceRef}>
+                  {/* Card 1: Generative Canvas Physics */}
+                  <motion.div
+                    className={`creative-os-card ${activeCreativeCard === 0 ? 'active-focus' : ''}`}
+                    drag={!isMobile}
+                    dragConstraints={creativeWorkspaceRef}
+                    dragElastic={0.08}
+                    dragMomentum={false}
+                    onPointerDown={() => setActiveCreativeCard(0)}
+                    style={{
+                      width: isMobile ? '100%' : '350px',
+                      ...(isMobile ? {} : { left: '4%', top: '6%' })
+                    }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <div className="creative-os-bar">
+                      <div className="creative-os-dots">
+                        <span className="dot red" />
+                        <span className="dot yellow" />
+                        <span className="dot green" />
+                      </div>
+                      <span className="creative-os-title font-mono">flower_bloom_engine.sh</span>
                     </div>
-                    <h4>Devs-Bouquet & Soft Mathematics</h4>
-                    <p>Building procedurally computed curves using organic math algorithms. Making code flower on the screen with hand-drawn physics vectors.</p>
-                  </div>
+                    <div className="creative-os-body">
+                      <div className="sandbox-canvas-placeholder">
+                        <svg viewBox="0 0 100 100" className="generative-flower-svg">
+                          <motion.path
+                            d="M 50 50 C 30 20, 70 20, 50 50 C 20 30, 20 70, 50 50 C 70 80, 30 80, 50 50 C 80 70, 80 30, 50 50"
+                            fill="none" stroke="var(--accent)" strokeWidth="0.8"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+                          />
+                          <circle cx="50" cy="50" r="5" fill="var(--accent)" />
+                        </svg>
+                      </div>
+                      <h4>Devs-Bouquet & Soft Mathematics</h4>
+                      <p>Building procedurally computed curves using organic math algorithms. Making code flower on the screen with hand-drawn physics vectors.</p>
+                    </div>
+                  </motion.div>
 
-                  <div className="creative-card glass-panel bento-small">
-                    <div className="card-hud-overlay">// CORE DRIVER</div>
-                    <h4>Extreme Precision</h4>
-                    <p>We are obsessed with smooth framerates, zero design-compromises, and ultra-fluid responsiveness.</p>
-                    <span className="aesthetic-badge">// FPS: 60 / HIGH_HZ</span>
-                  </div>
+                  {/* Card 2: Extreme Precision */}
+                  <motion.div
+                    className={`creative-os-card ${activeCreativeCard === 1 ? 'active-focus' : ''}`}
+                    drag={!isMobile}
+                    dragConstraints={creativeWorkspaceRef}
+                    dragElastic={0.08}
+                    dragMomentum={false}
+                    onPointerDown={() => setActiveCreativeCard(1)}
+                    style={{
+                      width: isMobile ? '100%' : '270px',
+                      ...(isMobile ? {} : { right: '6%', top: '10%' })
+                    }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                  >
+                    <div className="creative-os-bar">
+                      <div className="creative-os-dots">
+                        <span className="dot red" />
+                        <span className="dot yellow" />
+                        <span className="dot green" />
+                      </div>
+                      <span className="creative-os-title font-mono">precision_calibrator.cfg</span>
+                    </div>
+                    <div className="creative-os-body">
+                      <h4>Extreme Precision</h4>
+                      <p>We are obsessed with smooth framerates, zero design-compromises, and ultra-fluid responsiveness.</p>
+                      <span className="aesthetic-badge">// FPS: 60 / HIGH_HZ</span>
+                    </div>
+                  </motion.div>
 
-                  <div className="creative-card glass-panel bento-small">
-                    <div className="card-hud-overlay">// TECHNICAL DIVERSITY</div>
-                    <h4>Full Stack Orbit</h4>
-                    <p>Blending Node engines with React layers. Deploying optimized schemas with atomic WebSockets.</p>
-                    <span className="aesthetic-badge">// ACTIVE STACK</span>
-                  </div>
+                  {/* Card 3: Technical Diversity */}
+                  <motion.div
+                    className={`creative-os-card ${activeCreativeCard === 2 ? 'active-focus' : ''}`}
+                    drag={!isMobile}
+                    dragConstraints={creativeWorkspaceRef}
+                    dragElastic={0.08}
+                    dragMomentum={false}
+                    onPointerDown={() => setActiveCreativeCard(2)}
+                    style={{
+                      width: isMobile ? '100%' : '300px',
+                      ...(isMobile ? {} : { left: '26%', bottom: '8%' })
+                    }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                  >
+                    <div className="creative-os-bar">
+                      <div className="creative-os-dots">
+                        <span className="dot red" />
+                        <span className="dot yellow" />
+                        <span className="dot green" />
+                      </div>
+                      <span className="creative-os-title font-mono">stack_orbit.bin</span>
+                    </div>
+                    <div className="creative-os-body">
+                      <h4>Full Stack Orbit</h4>
+                      <p>Blending Node engines with React layers. Deploying optimized schemas with atomic WebSockets.</p>
+                      <span className="aesthetic-badge">// ACTIVE STACK</span>
+                    </div>
+                  </motion.div>
                 </div>
               )}
 
