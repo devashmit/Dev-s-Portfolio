@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Magnetic from './Magnetic';
 import TextReveal from './TextReveal';
@@ -17,6 +17,16 @@ import {
 export default function Contact() {
   const [time, setTime] = useState('');
   const [dateStr, setDateStr] = useState('');
+  const workspaceRef = useRef(null);
+  const [activeCard, setActiveCard] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -62,7 +72,9 @@ export default function Contact() {
       href: 'mailto:devvv0264@gmail.com',
       icon: <Mail className="w-5 h-5" />,
       accent: '#ea4335',
-      accentRgb: '234, 67, 53'
+      accentRgb: '234, 67, 53',
+      filename: 'email_sync.sh',
+      defaultPos: { left: '4%', top: '6%' }
     },
     {
       num: '02',
@@ -72,17 +84,21 @@ export default function Contact() {
       href: 'https://www.linkedin.com/in/abhishek-dev-5b5148357',
       icon: <FaLinkedin className="w-5 h-5" />,
       accent: '#0a66c2',
-      accentRgb: '10, 102, 194'
+      accentRgb: '10, 102, 194',
+      filename: 'linkedin_dossier.lnk',
+      defaultPos: { right: '6%', top: '4%' }
     },
     {
       num: '03',
       title: 'GitHub',
-      value: 'Open source projects and experiments',
+      value: 'Open source repos',
       action: 'View my work',
       href: 'https://github.com/devashmit',
       icon: <FaGithub className="w-5 h-5" />,
       accent: '#a855f7',
-      accentRgb: '168, 85, 247'
+      accentRgb: '168, 85, 247',
+      filename: 'repo_analyzer.cfg',
+      defaultPos: { left: '8%', bottom: '6%' }
     },
     {
       num: '04',
@@ -92,7 +108,9 @@ export default function Contact() {
       href: 'https://wa.me/9779829306607',
       icon: <FaWhatsapp className="w-5 h-5" />,
       accent: '#25d366',
-      accentRgb: '37, 211, 102'
+      accentRgb: '37, 211, 102',
+      filename: 'comms_uplink.bin',
+      defaultPos: { right: '4%', bottom: '8%' }
     }
   ];
 
@@ -157,39 +175,59 @@ export default function Contact() {
 
         {/* Right Side Column */}
         <div className="contact-bento-container">
-          <div className="contact-bento-grid">
+          <div className="contact-os-workspace" ref={workspaceRef}>
             {cards.map((card, idx) => (
-              <motion.a
+              <motion.div
                 key={idx}
-                href={card.href}
-                target={card.href.startsWith('http') ? '_blank' : '_self'}
-                rel={card.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                className="contact-bento-card"
-                onMouseMove={handleMouseMove}
+                className={`os-window-card ${activeCard === idx ? 'active-focus' : ''}`}
+                drag={!isMobile}
+                dragConstraints={workspaceRef}
+                dragElastic={0.08}
+                dragMomentum={false}
+                onPointerDown={() => setActiveCard(idx)}
                 style={{
                   '--card-accent': card.accent,
-                  '--card-accent-rgb': card.accentRgb
+                  '--card-accent-rgb': card.accentRgb,
+                  ...(isMobile ? {} : card.defaultPos)
                 }}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
               >
-                <div className="bento-card-header">
-                  <div className="bento-card-icon-box">
-                    {card.icon}
+                {/* OS Window Chrome Bar */}
+                <div className="os-window-bar">
+                  <div className="os-window-dots">
+                    <span className="dot red" />
+                    <span className="dot yellow" />
+                    <span className="dot green" />
                   </div>
-                  <span className="bento-card-number">{card.num}</span>
+                  <span className="os-window-title font-mono">{card.filename}</span>
+                  <span className="os-window-number">{card.num}</span>
                 </div>
-                <div className="bento-card-body">
-                  <h3 className="bento-card-title">{card.title}</h3>
-                  <p className="bento-card-value">{card.value}</p>
-                  <div className="bento-card-action">
+
+                {/* OS Window Content Body */}
+                <div className="os-window-body" onMouseMove={handleMouseMove}>
+                  <div className="os-window-header">
+                    <div className="os-window-icon-box">
+                      {card.icon}
+                    </div>
+                  </div>
+                  <div className="os-window-details">
+                    <h3>{card.title}</h3>
+                    <p>{card.value}</p>
+                  </div>
+                  <a
+                    href={card.href}
+                    target={card.href.startsWith('http') ? '_blank' : '_self'}
+                    rel={card.href.startsWith('http') ? 'noopener noreferrer' : ''}
+                    className="os-window-action"
+                  >
                     <span>{card.action}</span>
                     <ArrowRight className="w-4 h-4" />
-                  </div>
+                  </a>
                 </div>
-              </motion.a>
+              </motion.div>
             ))}
           </div>
 
