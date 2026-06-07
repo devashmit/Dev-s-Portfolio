@@ -180,15 +180,10 @@ export default function Contact() {
               <motion.div
                 key={idx}
                 className={`os-window-card ${activeCard === idx ? 'active-focus' : ''}`}
-                drag={!isMobile}
-                dragConstraints={workspaceRef}
-                dragElastic={0.08}
-                dragMomentum={false}
                 onPointerDown={() => setActiveCard(idx)}
                 style={{
                   '--card-accent': card.accent,
-                  '--card-accent-rgb': card.accentRgb,
-                  ...(isMobile ? {} : card.defaultPos)
+                  '--card-accent-rgb': card.accentRgb
                 }}
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 whileInView={{ opacity: 1, scale: 1, y: 0 }}
