@@ -258,15 +258,7 @@ export default function About() {
                   {/* Card 1: Generative Canvas Physics */}
                   <motion.div
                     className={`creative-os-card ${activeCreativeCard === 0 ? 'active-focus' : ''}`}
-                    drag={!isMobile}
-                    dragConstraints={creativeWorkspaceRef}
-                    dragElastic={0.08}
-                    dragMomentum={false}
                     onPointerDown={() => setActiveCreativeCard(0)}
-                    style={{
-                      width: isMobile ? '100%' : '350px',
-                      ...(isMobile ? {} : { left: '4%', top: '6%' })
-                    }}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4 }}
@@ -300,15 +292,7 @@ export default function About() {
                   {/* Card 2: Extreme Precision */}
                   <motion.div
                     className={`creative-os-card ${activeCreativeCard === 1 ? 'active-focus' : ''}`}
-                    drag={!isMobile}
-                    dragConstraints={creativeWorkspaceRef}
-                    dragElastic={0.08}
-                    dragMomentum={false}
                     onPointerDown={() => setActiveCreativeCard(1)}
-                    style={{
-                      width: isMobile ? '100%' : '270px',
-                      ...(isMobile ? {} : { right: '6%', top: '10%' })
-                    }}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.1 }}
@@ -331,15 +315,7 @@ export default function About() {
                   {/* Card 3: Technical Diversity */}
                   <motion.div
                     className={`creative-os-card ${activeCreativeCard === 2 ? 'active-focus' : ''}`}
-                    drag={!isMobile}
-                    dragConstraints={creativeWorkspaceRef}
-                    dragElastic={0.08}
-                    dragMomentum={false}
                     onPointerDown={() => setActiveCreativeCard(2)}
-                    style={{
-                      width: isMobile ? '100%' : '300px',
-                      ...(isMobile ? {} : { left: '26%', bottom: '8%' })
-                    }}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
