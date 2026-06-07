@@ -94,10 +94,7 @@ export default function HolographicOrbLinks() {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const hoveredNodeRef = useRef(null); // sync ref so canvas loop reads latest
-  const [isDragging, setIsDragging] = useState(false);
-
   const velocity = useRef({ x: 0.002, y: 0.005 });
-  const dragStart = useRef({ x: 0, y: 0 });
   const rotation = useRef({ x: 0, y: 0.8 });
   const mousePos = useRef({ x: 300, y: 200 });
   const [dimensions, setDimensions] = useState({ width: 680, height: 420 });
@@ -148,32 +145,26 @@ export default function HolographicOrbLinks() {
       const parallaxX = (mousePos.current.x - cx) * 0.06;
       const parallaxY = (mousePos.current.y - cy) * 0.06;
 
-      if (isDragging) {
-        // Decay velocity if mouse is held still
-        velocity.current.x *= 0.85;
-        velocity.current.y *= 0.85;
-      } else {
-        const isHovered = hoveredNodeRef.current !== null;
-        
-        // Orbit around the vertical axis (Y-axis rotation = orbital motion)
-        const targetAmbientY = isHovered ? 0.0005 : 0.003;
-        const targetAmbientX = 0; // No tumbleweed rotation
-        
-        // Friction coefficient
-        const friction = isHovered ? 0.85 : 0.96;
-        
-        // Apply friction
-        velocity.current.x *= friction;
-        velocity.current.y *= friction;
-        
-        // Gently pull velocity towards target orbital speed
-        velocity.current.x += (targetAmbientX - velocity.current.x) * 0.04;
-        velocity.current.y += (targetAmbientY - velocity.current.y) * 0.04;
+      const isHovered = hoveredNodeRef.current !== null;
 
-        // Gently restore the view's tilt (rotation.x) to a premium tilted perspective
-        const targetTilt = 0.45; // ~25 degrees tilt
-        rotation.current.x += (targetTilt - rotation.current.x) * 0.03;
-      }
+      // Orbit around the vertical axis (Y-axis rotation = orbital motion)
+      const targetAmbientY = isHovered ? 0.0005 : 0.003;
+      const targetAmbientX = 0; // No tumbleweed rotation
+
+      // Friction coefficient
+      const friction = isHovered ? 0.85 : 0.96;
+
+      // Apply friction
+      velocity.current.x *= friction;
+      velocity.current.y *= friction;
+
+      // Gently pull velocity towards target orbital speed
+      velocity.current.x += (targetAmbientX - velocity.current.x) * 0.04;
+      velocity.current.y += (targetAmbientY - velocity.current.y) * 0.04;
+
+      // Gently restore the view's tilt (rotation.x) to a premium tilted perspective
+      const targetTilt = 0.45; // ~25 degrees tilt
+      rotation.current.x += (targetTilt - rotation.current.x) * 0.03;
 
       // Apply velocity to rotation
       rotation.current.x += velocity.current.x;
@@ -326,28 +317,9 @@ export default function HolographicOrbLinks() {
 
     loop();
     return () => cancelAnimationFrame(animId);
-  }, [dimensions, isDragging]);
+  }, [dimensions]);
 
-  const handlePointerDown = (e) => {
-    setIsDragging(true);
-    dragStart.current = { x: e.clientX, y: e.clientY };
-  };
-  const handlePointerMove = (e) => {
-    if (!isDragging) return;
-    const dx = e.clientX - dragStart.current.x;
-    const dy = e.clientY - dragStart.current.y;
-    rotation.current.y += dx * 0.005;
-    rotation.current.x += dy * 0.005;
-    
-    // smooth velocity response
-    velocity.current.y = velocity.current.y * 0.15 + (dx * 0.005) * 0.85;
-    velocity.current.x = velocity.current.x * 0.15 + (dy * 0.005) * 0.85;
-    
-    dragStart.current = { x: e.clientX, y: e.clientY };
-  };
-  const handlePointerUp = () => {
-    setIsDragging(false);
-  };
+
 
   // Derive active theme for container border
   const activeCfg = hoveredNode ? mainNodesConfig.find(n => n.id === hoveredNode) : null;
@@ -376,15 +348,11 @@ export default function HolographicOrbLinks() {
         border: `1px solid ${borderColor}`,
         borderRadius: '16px',
         overflow: 'visible',
-        cursor: isDragging ? 'grabbing' : 'grab',
+        cursor: 'default',
         backdropFilter: 'blur(14px)',
         boxShadow: containerGlow,
         transition: 'border-color 0.5s ease, box-shadow 0.5s ease',
       }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
     >
       {/* HUD corner brackets */}
       {[['top','left'],['top','right'],['bottom','left'],['bottom','right']].map(([v, h]) => (
@@ -534,16 +502,7 @@ export default function HolographicOrbLinks() {
         })}
       </div>
 
-      {/* Drag prompt */}
-      <div style={{
-        position:'absolute', bottom:10, fontFamily:'var(--font-mono)',
-        fontSize:'0.58rem', color:'rgba(0,240,255,0.3)',
-        letterSpacing:'0.12em', textTransform:'uppercase',
-        pointerEvents:'none', display:'flex', alignItems:'center', gap:5,
-      }}>
-        <span style={{ display:'inline-block', width:5, height:5, borderRadius:'50%', background:'rgba(0,240,255,0.55)', animation:'pulse 1.5s infinite' }} />
-        Hold &amp; Drag to Rotate Hologram
-      </div>
+
     </div>
   );
 }
