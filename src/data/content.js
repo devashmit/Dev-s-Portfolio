@@ -31,7 +31,7 @@ export const projectsData = [
   {
     title: 'BerojgarCv',
     year: '2024',
-    desc: 'A professional CV generator built with TypeScript. The irony is load-bearing structural code.',
+    desc: 'A dynamic, professional CV generator built with TypeScript. It provides a robust, user-friendly interface to instantly construct, preview, and export clean resumes with customizable load-bearing structural layouts.',
     tags: ['TypeScript', 'Web'],
     github: 'https://github.com/devashmit/BerojgarCv',
     category: 'web',
@@ -40,7 +40,7 @@ export const projectsData = [
   {
     title: 'Devs-bouquet',
     year: '2024',
-    desc: 'Interactive canvas experience for creating soft, hand-drawn digital flower arrangements.',
+    desc: 'A serene, interactive canvas experience designed to let users procedurally generate beautiful, hand-drawn digital flower arrangements through advanced creative coding and algorithmic geometry.',
     tags: ['Canvas API', 'Creative Coding'],
     github: 'https://github.com/devashmit/Devs-bouquet',
     category: 'creative',
@@ -49,7 +49,7 @@ export const projectsData = [
   {
     title: 'Virtual Petals',
     year: '2024',
-    desc: 'A beautiful digital garden where users can plant, grow, and customize interactive virtual flower petals.',
+    desc: 'An immersive digital ecosystem where users can plant and observe procedural floral physics. Built entirely on the HTML5 Canvas API, it simulates fluid wind dynamics and organic growth in real-time.',
     tags: ['Canvas', 'Interactive'],
     github: '#',
     category: 'creative',
@@ -58,7 +58,7 @@ export const projectsData = [
   {
     title: 'Sahayogi',
     year: '2025',
-    desc: 'A companion helper application. Still in active development.',
+    desc: 'A comprehensive productivity companion application actively in development. Designed to streamline task execution by integrating contextual data processing within a highly efficient, responsive node-tracking network.',
     tags: ['WIP', 'Systems'],
     github: 'https://github.com/devashmit/SYP',
     category: 'systems',

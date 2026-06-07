@@ -59,47 +59,50 @@ function ProjectCanvasPreview({ type }) {
       });
     }
 
-    // 3. floating-petals
+    // 3. floating-petals (Upgraded)
     const petals = [];
-    const petalCount = 18;
+    const petalCount = 28;
     for (let i = 0; i < petalCount; i++) {
       petals.push({
         x: Math.random() * 320,
         y: Math.random() * 180,
-        size: Math.random() * 5 + 3,
-        speedY: Math.random() * 0.4 + 0.3,
-        speedX: Math.random() * 0.2 - 0.1,
-        swing: Math.random() * 4 + 2,
-        swingSpeed: Math.random() * 0.015 + 0.005,
+        size: Math.random() * 6 + 4,
+        speedY: Math.random() * 0.5 + 0.3,
+        speedX: Math.random() * 0.4 + 0.1,
+        swing: Math.random() * 5 + 3,
+        swingSpeed: Math.random() * 0.02 + 0.01,
         phase: Math.random() * Math.PI * 2,
-        rotSpeed: Math.random() * 0.02 - 0.01,
+        rotSpeed: Math.random() * 0.03 - 0.015,
         angle: Math.random() * Math.PI * 2,
-        flipSpeed: Math.random() * 0.03 + 0.01
+        flipSpeed: Math.random() * 0.04 + 0.01,
+        hueOffset: Math.random() * 40 - 20 // Slight color variation
       });
     }
     const pollen = [];
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 35; i++) {
       pollen.push({
         x: Math.random() * 320,
         y: Math.random() * 180,
-        speedY: Math.random() * 0.3 + 0.2,
-        size: Math.random() * 1.2 + 0.6,
-        alpha: Math.random() * 0.6 + 0.2,
+        speedY: Math.random() * 0.4 + 0.2,
+        speedX: Math.random() * 0.3 + 0.1,
+        size: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.8 + 0.2,
         phase: Math.random() * Math.PI * 2
       });
     }
 
-    // 4. node-network (WebSocket hub)
+    // 4. node-network (Upgraded Sahayogi Hub)
     const networkNodes = [];
-    const netCount = 10;
+    const netCount = 14;
     for (let i = 0; i < netCount; i++) {
       networkNodes.push({
         x: Math.random() * 260 + 30,
         y: Math.random() * 140 + 30,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 3 + 2,
-        pulsePhase: Math.random() * Math.PI * 2
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        r: Math.random() * 4 + 2,
+        pulsePhase: Math.random() * Math.PI * 2,
+        isHub: i < 2 // First two nodes act as central hubs
       });
     }
 
@@ -304,160 +307,192 @@ function ProjectCanvasPreview({ type }) {
         ctx.shadowBlur = 0;
 
       } else if (type === 'floating-petals') {
-        // Render wind flow lines
-        ctx.strokeStyle = c.accent + '08';
-        ctx.lineWidth = 1;
+        // Fluid wind flow lines
+        ctx.strokeStyle = c.accent + '11';
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
-        for (let j = 0; j < 3; j++) {
-          const wy = 40 + j * 50;
-          ctx.moveTo(0, wy + Math.sin(frame * 0.01 + j) * 12);
-          for (let wx = 0; wx <= width; wx += 20) {
-            ctx.lineTo(wx, wy + Math.sin((frame + wx) * 0.015 + j) * 12);
+        for (let j = 0; j < 4; j++) {
+          const wy = 30 + j * 45;
+          ctx.moveTo(0, wy + Math.sin(frame * 0.01 + j) * 15);
+          for (let wx = 0; wx <= width; wx += 15) {
+            ctx.lineTo(wx, wy + Math.sin((frame * 1.5 + wx) * 0.01 + j) * 18);
           }
         }
         ctx.stroke();
 
-        // Twinkling pollen particles
+        // Glowing pollen dust
+        ctx.globalCompositeOperation = 'screen';
         pollen.forEach(p => {
-          p.y += p.speedY;
-          p.x += Math.sin(frame * 0.01 + p.phase) * 0.15;
-          if (p.y > height + 10) {
-            p.y = -10;
+          p.y -= p.speedY; // Float up
+          p.x += Math.sin(frame * 0.01 + p.phase) * 0.2 + p.speedX;
+          if (p.y < -10) {
+            p.y = height + 10;
             p.x = Math.random() * width;
           }
-          const opacityVal = p.alpha * (0.6 + Math.sin(frame * 0.05 + p.phase) * 0.4);
-          ctx.fillStyle = c.accent + Math.floor(opacityVal * 255).toString(16).padStart(2, '0');
-          ctx.shadowBlur = 3;
-          ctx.shadowColor = c.accent;
+          if (p.x > width + 10) p.x = -10;
+
+          const opacityVal = p.alpha * (0.4 + Math.sin(frame * 0.04 + p.phase) * 0.6);
+          
           ctx.beginPath();
+          ctx.fillStyle = c.accent + Math.floor(opacityVal * 255).toString(16).padStart(2, '0');
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = c.accent;
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fill();
-          ctx.shadowBlur = 0;
         });
+        ctx.shadowBlur = 0;
+        ctx.globalCompositeOperation = 'source-over';
 
-        // Drifted Leafy Petals with 3D flip animation
+        // Rich 3D Petals
         petals.forEach(p => {
-          p.y += p.speedY;
-          p.x += p.speedX + Math.sin(frame * p.swingSpeed + p.phase) * (p.swing * 0.15);
+          p.y += p.speedY + Math.sin(frame * 0.02) * 0.2;
+          p.x += p.speedX + Math.sin(frame * p.swingSpeed + p.phase) * (p.swing * 0.2);
           p.angle += p.rotSpeed;
 
-          if (p.y > height + 10) {
-            p.y = -10;
-            p.x = Math.random() * width;
-          }
+          if (p.y > height + 15) p.y = -15;
+          if (p.x > width + 15) p.x = -15;
 
-          // Calculate 3D leaf flip scale factor
           const flipScale = Math.sin(frame * p.flipSpeed + p.phase);
 
           ctx.save();
           ctx.translate(p.x, p.y);
           ctx.rotate(p.angle);
-          ctx.scale(1, flipScale); // Performs the 3D flipping action
+          ctx.scale(1, flipScale);
 
-          // Gradient fill for organic look
-          const grad = ctx.createLinearGradient(-p.size, 0, p.size, 0);
-          grad.addColorStop(0, c.accent + '25');
-          grad.addColorStop(0.5, c.accent + '66');
-          grad.addColorStop(1, c.accent + '15');
+          // Beautiful floral gradient
+          const grad = ctx.createLinearGradient(-p.size * 1.5, 0, p.size * 1.5, 0);
+          grad.addColorStop(0, c.accent + '99');
+          grad.addColorStop(0.5, '#f472b6aa'); // Soft pinkish mix
+          grad.addColorStop(1, c.accent + '33');
           
           ctx.fillStyle = grad;
-          ctx.strokeStyle = c.accent + 'cc';
-          ctx.lineWidth = 0.8;
+          ctx.strokeStyle = c.accent + 'dd';
+          ctx.lineWidth = 1;
 
-          // Draw double curve leaf shape
+          // Drawing a more organic petal shape
           ctx.beginPath();
-          ctx.moveTo(-p.size * 1.5, 0);
-          ctx.quadraticCurveTo(0, -p.size * 0.9, p.size * 1.5, 0);
-          ctx.quadraticCurveTo(0, p.size * 0.9, -p.size * 1.5, 0);
+          ctx.moveTo(-p.size * 2, 0);
+          ctx.bezierCurveTo(-p.size, -p.size * 1.2, p.size, -p.size * 1.2, p.size * 2, 0);
+          ctx.bezierCurveTo(p.size, p.size * 1.2, -p.size, p.size * 1.2, -p.size * 2, 0);
           ctx.closePath();
           ctx.fill();
           ctx.stroke();
 
-          // Petal mid-line vector
-          ctx.strokeStyle = c.accent + '88';
+          // Petal vein detailing
+          ctx.strokeStyle = '#ffffff66';
           ctx.lineWidth = 0.5;
           ctx.beginPath();
-          ctx.moveTo(-p.size * 1.5, 0);
-          ctx.lineTo(p.size * 1.2, 0);
+          ctx.moveTo(-p.size * 1.8, 0);
+          ctx.lineTo(p.size * 1.4, 0);
           ctx.stroke();
 
           ctx.restore();
         });
 
       } else if (type === 'node-network') {
-        // Draw orbital connection path guides
         const cx = width / 2;
         const cy = height / 2;
-        ctx.strokeStyle = c.accent + '07';
-        ctx.lineWidth = 0.5;
-        [40, 75, 110].forEach(r => {
+
+        // Draw animated scanning radar/orbital rings
+        ctx.strokeStyle = c.accent + '11';
+        ctx.lineWidth = 1;
+        [50, 85, 120].forEach((r, idx) => {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(frame * 0.002 * (idx % 2 === 0 ? 1 : -1));
           ctx.beginPath();
-          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.arc(0, 0, r, 0, Math.PI * 1.5);
           ctx.stroke();
+          
+          // Orbital scanner points
+          ctx.fillStyle = c.accent + '88';
+          ctx.beginPath();
+          ctx.arc(r, 0, 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
         });
 
-        // Update node movement vectors
+        // Update nodes
         networkNodes.forEach(n => {
           n.x += n.vx;
           n.y += n.vy;
-
-          // Bounce bounds
           if (n.x < 15 || n.x > width - 15) n.vx *= -1;
           if (n.y < 15 || n.y > height - 15) n.vy *= -1;
         });
 
-        // Draw connections (Mesh grid networking topology)
-        ctx.lineWidth = 0.6;
+        // Complex Mesh Connections with glowing energy
         for (let i = 0; i < networkNodes.length; i++) {
           for (let j = i + 1; j < networkNodes.length; j++) {
             const dx = networkNodes[i].x - networkNodes[j].x;
             const dy = networkNodes[i].y - networkNodes[j].y;
             const dist = Math.hypot(dx, dy);
+            const maxDist = networkNodes[i].isHub || networkNodes[j].isHub ? 110 : 65;
 
-            // Connect nodes if they are close
-            if (dist < 60) {
-              const alpha = (1 - dist / 60) * 0.28;
-              ctx.strokeStyle = c.accent + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+            if (dist < maxDist) {
+              const alpha = (1 - dist / maxDist) * 0.4;
+              ctx.lineWidth = networkNodes[i].isHub || networkNodes[j].isHub ? 1.2 : 0.6;
+              
+              // Energy gradient along the connection
+              const grad = ctx.createLinearGradient(networkNodes[i].x, networkNodes[i].y, networkNodes[j].x, networkNodes[j].y);
+              grad.addColorStop(0, c.accent + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
+              grad.addColorStop(0.5, c.accent + Math.floor(alpha * 100).toString(16).padStart(2, '0'));
+              grad.addColorStop(1, c.accent + Math.floor(alpha * 255).toString(16).padStart(2, '0'));
+
+              ctx.strokeStyle = grad;
               ctx.beginPath();
               ctx.moveTo(networkNodes[i].x, networkNodes[i].y);
               ctx.lineTo(networkNodes[j].x, networkNodes[j].y);
               ctx.stroke();
+
+              // Moving data packets along lines
+              if (frame % 40 === 0 && Math.random() > 0.5) {
+                 ctx.fillStyle = '#fff';
+                 const t = (frame * 0.05) % 1;
+                 const px = networkNodes[i].x + dx * t;
+                 const py = networkNodes[i].y + dy * t;
+                 ctx.shadowBlur = 8;
+                 ctx.shadowColor = c.accent;
+                 ctx.beginPath(); ctx.arc(px, py, 1.5, 0, Math.PI*2); ctx.fill();
+                 ctx.shadowBlur = 0;
+              }
             }
           }
         }
 
-        // Draw active nodes
+        // Draw Nodes
         networkNodes.forEach((n, idx) => {
-          const pulse = Math.sin(frame * 0.04 + n.pulsePhase) * 1.2;
-          const nx = n.x;
-          const ny = n.y;
+          const pulse = Math.sin(frame * 0.05 + n.pulsePhase) * 2;
+          const isHub = n.isHub;
 
-          // Glowing halos for select nodes
-          if (idx % 3 === 0) {
-            ctx.fillStyle = c.accent + '1a';
-            ctx.beginPath();
-            ctx.arc(nx, ny, n.r + 4 + pulse, 0, Math.PI * 2);
-            ctx.fill();
-          }
+          // Glowing halos
+          ctx.fillStyle = c.accent + (isHub ? '22' : '11');
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.r + (isHub ? 8 : 4) + pulse, 0, Math.PI * 2);
+          ctx.fill();
 
           // Node core
-          ctx.fillStyle = idx % 2 === 0 ? c.accent : '#ffffff';
-          ctx.shadowBlur = idx % 2 === 0 ? 5 : 0;
+          ctx.fillStyle = isHub ? '#ffffff' : (idx % 2 === 0 ? c.accent : '#ffffff');
+          ctx.shadowBlur = isHub ? 12 : (idx % 2 === 0 ? 6 : 0);
           ctx.shadowColor = c.accent;
           ctx.beginPath();
-          ctx.arc(nx, ny, n.r, 0, Math.PI * 2);
+          ctx.arc(n.x, n.y, n.r + (isHub ? 1.5 : 0), 0, Math.PI * 2);
           ctx.fill();
+          
+          if (isHub) {
+            ctx.strokeStyle = c.accent;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
           ctx.shadowBlur = 0;
         });
 
-        // Render binary telemetry fragments drifting down
-        ctx.fillStyle = c.accent + '15';
-        ctx.font = '700 7px var(--font-mono)';
-        const binCols = 6;
-        for (let k = 0; k < binCols; k++) {
-          const bx = (width / binCols) * k + 20;
-          const by = ((frame * 0.4 + k * 40) % (height + 20)) - 10;
-          const binaryChar = (Math.floor(frame * 0.02 + k) % 2).toString();
+        // Binary Rain overlay
+        ctx.fillStyle = c.accent + '1a';
+        ctx.font = '600 8px var(--font-mono)';
+        for (let k = 0; k < 8; k++) {
+          const bx = (width / 8) * k + 10;
+          const by = ((frame * 0.5 + k * 50) % (height + 30)) - 15;
+          const binaryChar = (Math.floor(frame * 0.03 + k) % 2).toString();
           ctx.fillText(binaryChar, bx, by);
         }
       }
