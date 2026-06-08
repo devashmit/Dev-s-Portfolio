@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Magnetic from './Magnetic';
 import TextReveal from './TextReveal';
+import TextScramble from './TextScramble';
 import { FaLinkedin, FaGithub, FaWhatsapp } from 'react-icons/fa';
 import { 
   Mail, 
@@ -119,7 +120,9 @@ export default function Contact() {
       <div className="contact-layout-split">
         {/* Left Side Column */}
         <div className="contact-left-content">
-          <span className="contact-eyebrow-accent">// LET'S CONNECT</span>
+          <span className="contact-eyebrow-accent">
+            <TextScramble text="// LET'S CONNECT" />
+          </span>
           <h2 className="contact-huge-title">
             <TextReveal text="Let's build" tag="span" />
             <br />

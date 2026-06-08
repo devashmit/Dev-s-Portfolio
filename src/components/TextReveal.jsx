@@ -41,7 +41,14 @@ export default function TextReveal({ text, className = "", delay = 0, tag = "p",
         <span key={i} style={{ overflow: 'hidden', display: 'inline-block' }}>
           <motion.span 
             variants={childVariants}
-            style={{ display: 'inline-block' }}
+            style={{ display: 'inline-block', transformOrigin: 'left center' }}
+            whileHover={{ 
+              scale: 1.05, 
+              color: '#00ffcc', 
+              rotate: -2,
+              y: -2,
+            }}
+            transition={{ type: 'spring', stiffness: 300, damping: 15 }}
           >
             {word}
           </motion.span>
