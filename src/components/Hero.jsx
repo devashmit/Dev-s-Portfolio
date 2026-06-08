@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import TextScramble from './TextScramble';
 import Magnetic from './Magnetic';
 import RoleCycler from './RoleCycler';
+import PixelBat from './PixelBat';
 
 // ─── Each element gets its own animation signature ────────────────────────────
 
@@ -77,7 +78,10 @@ const containerVariants = {
 
 export default function Hero() {
   return (
-    <section id="hero" aria-label="Introduction">
+    <section id="hero" aria-label="Introduction" style={{ position: 'relative' }}>
+      <div style={{ position: 'absolute', top: '15%', right: '15%', zIndex: 0, opacity: 0.6, pointerEvents: 'none' }}>
+        <PixelBat />
+      </div>
       <motion.div
         className="hero-content"
         variants={containerVariants}

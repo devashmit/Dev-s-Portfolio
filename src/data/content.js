@@ -18,15 +18,6 @@ export const stackItems = [
 ];
 
 
-export const floatingIcons = [
-  'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg',
-  'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg',
-  'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg',
-  'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg',
-  'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg',
-  'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg',
-];
-
 export const projectsData = [
   {
     title: 'BerojgarCv',
