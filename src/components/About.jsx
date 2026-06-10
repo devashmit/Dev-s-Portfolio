@@ -1,390 +1,405 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import TextReveal from './TextReveal';
 
-/* ─── DATA & METRICS ─────────────────────────────────────────────── */
-const milestones = [
+/* ─── DATA ─────────────────────────────────────────────────────────── */
+const systemOverview = [
+  { label: 'RENDER ENGINE', value: '60 FPS' },
+  { label: 'AVG NETWORK RTT', value: '12 MS' },
+  { label: 'SOCKET LATENCY', value: '14 MS' },
+  { label: 'UPTIME', value: '99.98%' },
+  { label: 'AVAILABILITY', value: 'OPEN' },
+];
+
+const coreValues = [
   {
-    year: '2022',
-    title: 'The Ignition',
-    tagline: 'Kernel initialization & core algorithm design',
-    details: 'Initiated developer journey. Formulated mathematical models and custom algorithms. Structured extensive Java DSA implementations (Trees, Graphs, Sorting engines) from absolute ground zero.',
-    systemLog: 'SYS_INIT: Booting development kernel...\nDSA_LOADED: Active memory buffers mapped.\nALGO_SUCCESS: High-efficiency search patterns established.'
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+      </svg>
+    ),
+    title: 'Performance First',
+    desc: 'Every millisecond matters. I architect systems around speed — optimizing render trees, deferring non-critical work, and eliminating layout thrash to deliver sub-100ms interactions.',
   },
   {
-    year: '2023',
-    title: 'CS Foundations',
-    tagline: 'Architecture compilation & pattern mastery',
-    details: 'Deep-dived into OOP architecture, structural patterns, and computational complexity theory. Crafted math-driven computational tools and abstract systems using Python and Java.',
-    systemLog: 'COMPILER_INIT: Translating object-oriented schemas...\nCOMPLEXITY_METRIC: O(log N) average query latency verified.\nPATTERN_CHECK: Factory, Strategy, and Singleton layers integrated.'
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+      </svg>
+    ),
+    title: 'Clean Architecture',
+    desc: 'Codebases that are readable, testable, and maintainable. I apply SOLID principles and established design patterns so that any engineer can navigate the codebase with confidence.',
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    ),
+    title: 'User Focused',
+    desc: 'The best engineering is invisible to the user. I obsess over the feel of interactions — timing, friction, feedback — because great UX is a product of great engineering.',
+  },
+  {
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+    ),
+    title: 'Attention to Detail',
+    desc: 'Pixel-perfect typography, consistent spacing, and intentional micro-animations. The polish that separates a good product from an exceptional one lives in the details.',
+  },
+];
+
+const timelineItems = [
+  {
+    year: '2025 — PRESENT',
+    title: 'Distributed Systems & Real-Time Engineering',
+    desc: 'Currently engineering Sahayogi — a high-performance platform built around distributed WebSocket channels, atomic session cache layers, and microservice topologies. Every architectural decision is evaluated against latency budgets and horizontal scalability requirements. Focus areas include event-driven architecture, zero-downtime deployments, and secure stateless authentication via JWT refresh cycles.',
+    tags: ['WebSockets', 'Microservices', 'Node.js', 'Redis', 'JWT', 'Docker'],
   },
   {
     year: '2024',
-    title: 'Interactive UIs',
-    tagline: 'Creative layout systems & state scaling',
-    details: 'Pivoted to frontend mastery. Designed Devs-Bouquet (generative procedurally-drawn canvas physics) and BerojgarCv (automated templating engine). Shipped scalable full-stack pipelines.',
-    systemLog: 'FRONTEND_READY: React v19 workspace mounted.\nPHYSICS_ENGINE: Procedural flower bloom sequence calibrated.\nAPI_ROUTER: Shipped REST handlers; throughput stable.'
+    title: 'High-Performance Frontend Architecture',
+    desc: 'Pivoted into mastering component-driven UI engineering. Built Devs-Bouquet — a generative canvas physics engine using custom trigonometric vector math. Developed BerojgarCv, an automated resume templating pipeline with dynamic PDF generation. Focused intensely on React render optimization, memoization patterns, code-splitting strategies, and achieving consistent 60FPS on constrained hardware.',
+    tags: ['React', 'Vite', 'Canvas API', 'Framer Motion', 'PDF Generation', 'CSS Architecture'],
   },
   {
-    year: '2025',
-    title: 'Distributed Systems',
-    tagline: 'Real-time telemetry & WebSocket arrays',
-    details: 'Currently engineering Sahayogi — a high-performance system featuring distributed web sockets, secure atomic session caches, and high-frequency real-time event streaming.',
-    systemLog: 'SOCKET_ESTABLISHED: Listening on port 8080...\nLATENCY_AVG: 4.2ms socket heartbeat.\nSYNC_STATE: Active multi-threaded database replication running.'
-  }
+    year: '2023',
+    title: 'Software Architecture & Design Patterns',
+    desc: 'Dedicated this year to the fundamentals of software design. Studied and applied structural OOP patterns — Factory, Strategy, Observer, and Singleton — across real CLI tools and backend services. Mastered computational complexity analysis, relational schema design with normalization, and built disciplined code through test-driven development.',
+    tags: ['OOP Design Patterns', 'Complexity Theory', 'SQL', 'Python', 'Java', 'TDD'],
+  },
+  {
+    year: '2022',
+    title: 'Foundational Computer Science & Algorithms',
+    desc: 'The beginning. Committed entirely to building a rigorous mathematical foundation. Implemented every major data structure from scratch in Java — linked lists, B-Trees, AVL trees, directed graphs with Dijkstra — and analysed their time and space complexities. This year established the analytical framework applied to every engineering decision today.',
+    tags: ['Java', 'Data Structures', 'Graph Algorithms', 'Recursion', 'Sorting', 'Mathematics'],
+  },
 ];
 
-const telemetryMetrics = [
-  { label: 'Dark Mode bias', value: '100%', extra: 'True Obsidian' },
-  { label: 'Standard Focus State', value: 'Hyperdrive', extra: 'Coffee Powered' },
-  { label: 'Key Stroke Latency', value: '18ms', extra: 'Mechanical Blue' },
-  { label: 'UI Precision Margin', value: '0px', extra: 'Pixel Perfect' }
+const creativeProjects = [
+  {
+    label: 'FEATURED PROJECT',
+    title: 'Devs-Bouquet',
+    subtitle: 'Generative Canvas Physics Engine',
+    desc: 'A custom rendering engine that uses Bézier curve mathematics, parametric equations, and spring physics to procedurally generate organic flower animations on an HTML Canvas. Zero external libraries — every frame is rendered by hand-crafted vector algorithms at 60 FPS.',
+    tags: ['Canvas API', 'Vector Math', 'Procedural Generation', 'Vanilla JS'],
+  },
+  {
+    label: 'FEATURED PROJECT',
+    title: 'Sahayogi',
+    subtitle: 'Real-Time Distributed Communication Platform',
+    desc: 'A production-grade messaging and collaboration platform with persistent WebSocket connections, atomic session management, and real-time event streaming. Architected for zero data loss under network partition and horizontal scalability from day one.',
+    tags: ['Node.js', 'WebSockets', 'Redis', 'React', 'PostgreSQL', 'Docker'],
+  },
+  {
+    label: 'FEATURED PROJECT',
+    title: 'BerojgarCv',
+    subtitle: 'Automated Document Generation Pipeline',
+    desc: 'An automated resume and cover letter templating system with dynamic PDF generation, custom layout engines, and structured data schemas. Built to generate pixel-perfect, print-ready PDFs programmatically from user-defined structured inputs.',
+    tags: ['PDF Generation', 'Template Engines', 'REST API', 'Node.js'],
+  },
+  {
+    label: 'DESIGN SYSTEM',
+    title: 'Ashmit Portfolio',
+    subtitle: 'This Interface — From Concept to Code',
+    desc: 'A fully custom design system built without UI libraries. Every component — the custom cursor, scroll animations, 3D isometric keyboard, typed text effects, and this dashboard — is hand-engineered with precision CSS and Framer Motion to create a cohesive, high-performance user experience.',
+    tags: ['React', 'Framer Motion', 'CSS Architecture', 'Design Systems', 'Animation'],
+  },
 ];
 
-/* ─── TERMINAL WRITER HELPER ───────────────────────────────────────── */
-function TerminalWriter({ logText, details, title, tagline }) {
-  const [typedText, setTypedText] = useState('');
-  
-  useEffect(() => {
-    let index = 0;
-    const timer = setInterval(() => {
-      if (index < logText.length) {
-        setTypedText((prev) => prev + logText.charAt(index));
-        index++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 12);
-    return () => clearInterval(timer);
-  }, [logText]);
+const diagnosticRows = [
+  { metric: 'Main Thread Execution',   target: '< 50ms',     actual: '22ms',    status: 'OPTIMAL' },
+  { metric: 'First Contentful Paint',  target: '< 1.2s',     actual: '0.8s',    status: 'OPTIMAL' },
+  { metric: 'Largest Contentful Paint',target: '< 2.5s',     actual: '1.4s',    status: 'OPTIMAL' },
+  { metric: 'Cumulative Layout Shift', target: '< 0.1',      actual: '0.02',    status: 'OPTIMAL' },
+  { metric: 'WebSocket Ping (avg)',     target: '< 20ms',     actual: '14ms',    status: 'OPTIMAL' },
+  { metric: 'DOM Node Depth',           target: '< 14 levels',actual: '8 levels',status: 'OPTIMAL' },
+  { metric: 'Animation Frame Drop',    target: '0%',         actual: '0%',      status: 'OPTIMAL' },
+  { metric: 'Bundle Size (gzip)',       target: '< 150kb',    actual: '98kb',    status: 'OPTIMAL' },
+];
 
-  return (
-    <div className="terminal-box">
-      <div className="terminal-bar">
-        <div className="terminal-dots">
-          <span className="dot red" />
-          <span className="dot yellow" />
-          <span className="dot green" />
-        </div>
-        <div className="terminal-tab">system_log.sh</div>
-      </div>
-      <div className="terminal-body font-mono">
-        <div className="log-success">// EXECUTION TERMINAL SUCCESSFUL</div>
-        <pre className="log-code">{typedText}<span className="blink-cursor">_</span></pre>
-        
-        <div className="terminal-milestone-info">
-          <h4>{title}</h4>
-          <h5>{tagline}</h5>
-          <p>{details}</p>
-        </div>
-      </div>
-    </div>
-  );
+const rings = [
+  { pct: 98,  label: 'CODE QUALITY',  color: '#10b981' },
+  { pct: 100, label: 'ACCESSIBILITY', color: '#d4af37' },
+  { pct: 96,  label: 'PERFORMANCE',   color: '#6366f1' },
+  { pct: 100, label: 'MOBILE READY',  color: '#f97316' },
+];
+
+function dashOffset(pct) {
+  const circ = 2 * Math.PI * 40;
+  return circ - (pct / 100) * circ;
 }
 
-/* ─── MAIN ABOUT EXPORT ──────────────────────────────────────────── */
+/* ─── MAIN COMPONENT ─────────────────────────────────────────────── */
 export default function About() {
-  const [activeTab, setActiveTab] = useState('bio');
-  const [selectedMilestone, setSelectedMilestone] = useState(0);
-  const creativeWorkspaceRef = useRef(null);
-  const [activeCreativeCard, setActiveCreativeCard] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [activeTab, setActiveTab] = useState('mission');
 
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Tab configurations
   const tabs = [
-    { id: 'bio', label: '[01. MISSION]' },
-    { id: 'timeline', label: '[02. TIMELINE]' },
-    { id: 'creative', label: '[03. CREATIVE]' },
-    { id: 'specs', label: '[04. DIAGNOSTICS]' }
+    { id: 'mission',     label: '01. MISSION'     },
+    { id: 'timeline',    label: '02. TIMELINE'    },
+    { id: 'creative',    label: '03. CREATIVE'    },
+    { id: 'diagnostics', label: '04. DIAGNOSTICS' },
   ];
 
   return (
-    <section id="about" aria-label="About Me Redesign" className="workstation-section">
-      
-      {/* ─── Header ─── */}
-      <div className="workstation-header">
+    <section id="about" aria-label="About Me" className="professional-about-section">
+
+      {/* Header */}
+      <div className="pro-about-header">
+        <TextReveal text="About Me" className="pro-section-title" tag="h2" delay={0.1} />
         <motion.p
-          className="section-eyebrow"
-          initial={{ opacity: 0, x: -18 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          className="pro-section-subtitle"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          // CORE LOGIC INTERFACE
-        </motion.p>
-        <TextReveal text="About Me" className="section-title" tag="h2" delay={0.1} />
-        <motion.p
-          className="workstation-tagline"
-          initial={{ opacity: 0, filter: 'blur(6px)' }}
-          whileInView={{ opacity: 1, filter: 'blur(0px)' }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }}
-        >
-          An interactive, high-fidelity developer workstation displaying biological logs, engineering philosophies, and performance metrics.
+          Engineering scalable web experiences through disciplined architecture, creative vision, and an obsessive attention to quality.
         </motion.p>
       </div>
 
-      {/* ─── Interactive Console HUD ─── */}
-      <div className="console-wrapper">
-        
-        {/* HUD Navigation Tabs */}
-        <div className="console-tabs-bar">
+      {/* Dashboard */}
+      <div className="pro-dashboard-container">
+
+        {/* Tabs */}
+        <div className="pro-tabs-nav">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`console-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+              className={`pro-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
             >
-              {tab.label}
+              <span className="pro-tab-label">{tab.label}</span>
               {activeTab === tab.id && (
                 <motion.div
-                  className="active-indicator"
-                  layoutId="activeTabIndicator"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  className="pro-tab-indicator"
+                  layoutId="proTabIndicator"
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 />
               )}
             </button>
           ))}
         </div>
 
-        {/* Console Workspace Screen */}
-        <div className="console-screen">
-          <div className="screen-scanline" />
-          <div className="screen-corner-braces top-left" />
-          <div className="screen-corner-braces top-right" />
-          <div className="screen-corner-braces bottom-left" />
-          <div className="screen-corner-braces bottom-right" />
-
+        {/* Content */}
+        <div className="pro-dashboard-content">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
-              className="screen-content"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="pro-tab-panel"
             >
-              {/* TAB 1: BIO & MISSION */}
-              {activeTab === 'bio' && (
-                <div className="workspace-bio-tab">
-                  <div className="blueprint-visual-wrap">
-                    <svg viewBox="0 0 200 200" className="blueprint-svg">
-                      <defs>
-                        <linearGradient id="glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="var(--accent-hover)" stopOpacity="0.2" />
-                        </linearGradient>
-                      </defs>
-                      <motion.circle
-                        cx="100" cy="100" r="80"
-                        fill="none" stroke="url(#glow-grad)" strokeWidth="1" strokeDasharray="5 3"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-                      />
-                      <motion.circle
-                        cx="100" cy="100" r="60"
-                        fill="none" stroke="var(--accent)" strokeWidth="0.8" opacity="0.3"
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                      />
-                      <circle cx="100" cy="100" r="40" fill="none" stroke="var(--accent)" strokeWidth="1.5" opacity="0.6" strokeDasharray="30 10 5 10" />
-                      <circle cx="100" cy="100" r="10" fill="none" stroke="var(--accent)" strokeWidth="2" />
-                      <motion.line
-                        x1="100" y1="100" x2="100" y2="20"
-                        stroke="var(--accent)" strokeWidth="1"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                        style={{ transformOrigin: '100px 100px' }}
-                      />
-                      <circle cx="100" cy="20" r="4" fill="var(--accent)" />
-                    </svg>
-                    <div className="blueprint-glow-halo" />
+
+              {/* MISSION */}
+              {activeTab === 'mission' && (
+                <div className="pro-mission-layout">
+                  <div className="pro-mission-left">
+                    <div className="pro-system-overview">
+                      <div className="pro-overview-header">
+                        <span className="pro-bullet" />
+                        <span className="pro-overview-title">SYSTEM OVERVIEW</span>
+                      </div>
+                      <ul className="pro-metrics-list">
+                        {systemOverview.map((item, i) => (
+                          <li key={i}>
+                            <span className="pro-metric-label">{item.label}</span>
+                            <span className="pro-metric-value">{item.value}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="pro-wireframe-graphics">
+                      <svg viewBox="0 0 400 200" className="pro-topo-svg" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="topo-fade" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="rgba(255,255,255,0.18)" />
+                            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M0,150 Q50,140 100,100 T200,80 T300,120 T400,90 L400,200 L0,200 Z" fill="none" stroke="url(#topo-fade)" strokeWidth="1" />
+                        <path d="M0,160 Q60,150 110,120 T220,100 T310,130 T400,100 L400,200 L0,200 Z" fill="none" stroke="url(#topo-fade)" strokeWidth="0.8" opacity="0.6" />
+                        <path d="M0,170 Q70,160 120,140 T240,120 T320,140 T400,110 L400,200 L0,200 Z" fill="none" stroke="url(#topo-fade)" strokeWidth="0.5" opacity="0.3" />
+                        <g stroke="rgba(255,255,255,0.025)" strokeWidth="1">
+                          {[50,150,250,350].map(x => <line key={x} x1={x} y1="0" x2={x} y2="200" />)}
+                          {[50,100,150].map(y => <line key={y} x1="0" y1={y} x2="400" y2={y} />)}
+                        </g>
+                        <g stroke="rgba(255,255,255,0.25)" strokeWidth="1">
+                          <path d="M280,45 L280,55 M275,50 L285,50" />
+                          <path d="M80,145 L80,155 M75,150 L85,150" />
+                        </g>
+                      </svg>
+                      <div className="pro-coordinates font-mono">
+                        X: 1284.21 &nbsp;&nbsp; Y: 862.18 &nbsp;&nbsp; Z: 452.66
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="bio-narrative font-body">
-                    <h3>// ENGINEERING PHILOSOPHY</h3>
-                    <p className="highlighted-bio-txt">
-                      "Clean compilation is not enough. Visual computing, atomic physics engines, and high-fidelity systems must mesh to create true digital artwork."
+                  <div className="pro-mission-right">
+                    <div className="pro-philosophy-header">
+                      <span className="pro-eyebrow">ENGINEERING PHILOSOPHY</span>
+                    </div>
+                    <h3 className="pro-main-heading">
+                      Building experiences that are<br />fast, thoughtful, and built to last.
+                    </h3>
+                    <p className="pro-body-text">
+                      I'm Ashmit — a full-stack engineer who specialises in building high-performance digital products. My work lives at the intersection of rigorous systems thinking and creative craftsmanship: I care deeply about the architectural decisions that make a codebase maintainable at scale, and equally about the micro-interactions that make an interface feel exceptional.
                     </p>
-                    <p>
-                      Hello, I'm Ashmit. I build highly responsive, performance-driven web products. By merging procedural vector calculations, deep algorithmic paradigms, and robust backend micro-architectures, I design systems that feel organic, alive, and interactive.
+                    <p className="pro-body-text" style={{ marginTop: '-2rem' }}>
+                      I've built distributed real-time platforms, custom canvas physics engines, and automated document generation pipelines. Whether designing a WebSocket event stream or hand-crafting a CSS animation, the standard is always the same — precise, performant, and polished.
                     </p>
-                    <p>
-                      Whether optimizing distributed websocket message queues or building hand-crafted creative physics pipelines, my objective remains absolute: <strong>absolute pixel perfection, bulletproof reliability, and gorgeous interactive styling.</strong>
-                    </p>
+                    <div className="pro-values-grid">
+                      {coreValues.map((v, i) => (
+                        <div key={i} className="pro-value-card">
+                          <div className="pro-value-icon-box">{v.icon}</div>
+                          <h4 className="pro-value-title">{v.title}</h4>
+                          <p className="pro-value-desc">{v.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="pro-footer-row">
+                      <div className="pro-availability">
+                        <span className="pro-status-dot" />
+                        <span className="pro-status-text">AVAILABLE FOR SELECT PROJECTS</span>
+                      </div>
+                      <a href="#contact" className="pro-cta-link">
+                        Let's build something great <span className="arrow">→</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* TAB 2: JOURNEY TIMELINE */}
+              {/* TIMELINE */}
               {activeTab === 'timeline' && (
-                <div className="workspace-timeline-tab">
-                  <div className="timeline-rail">
-                    {milestones.map((milestone, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedMilestone(idx)}
-                        className={`timeline-step-btn ${selectedMilestone === idx ? 'active' : ''}`}
-                      >
-                        <span className="step-year font-mono">{milestone.year}</span>
-                        <div className="step-glow-dot" />
-                        <span className="step-title">{milestone.title}</span>
-                      </button>
-                    ))}
+                <div className="pro-timeline-layout">
+                  <div className="pro-philosophy-header">
+                    <span className="pro-eyebrow">PROFESSIONAL JOURNEY</span>
                   </div>
-
-                  <div className="timeline-terminal-wrap">
-                    <TerminalWriter
-                      key={selectedMilestone}
-                      logText={milestones[selectedMilestone].systemLog}
-                      title={milestones[selectedMilestone].title}
-                      tagline={milestones[selectedMilestone].tagline}
-                      details={milestones[selectedMilestone].details}
-                    />
+                  <h3 className="pro-main-heading" style={{ marginBottom: '0.75rem' }}>
+                    Four years of deliberate, compounding growth.
+                  </h3>
+                  <p className="pro-body-text" style={{ marginBottom: '3rem' }}>
+                    Every year has been defined by a focused domain of mastery — from foundational algorithms to distributed production systems.
+                  </p>
+                  <div className="pro-timeline-container">
+                    <div className="pro-timeline-track" />
+                    {timelineItems.map((item, i) => (
+                      <div key={i} className="pro-timeline-item">
+                        <div className="pro-timeline-marker" />
+                        <div className="pro-timeline-content">
+                          <span className="pro-timeline-year">{item.year}</span>
+                          <h4 className="pro-timeline-title">{item.title}</h4>
+                          <p className="pro-timeline-desc">{item.desc}</p>
+                          <div className="pro-timeline-tags">
+                            {item.tags.map((tag, j) => (
+                              <span key={j} className="pro-timeline-tag">{tag}</span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {/* TAB 3: CREATIVE SANDBOX */}
+              {/* CREATIVE */}
               {activeTab === 'creative' && (
-                <div className="workspace-creative-tab" ref={creativeWorkspaceRef}>
-                  {/* Card 1: Generative Canvas Physics */}
-                  <motion.div
-                    className={`creative-os-card ${activeCreativeCard === 0 ? 'active-focus' : ''}`}
-                    onPointerDown={() => setActiveCreativeCard(0)}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <div className="creative-os-bar">
-                      <div className="creative-os-dots">
-                        <span className="dot red" />
-                        <span className="dot yellow" />
-                        <span className="dot green" />
+                <div className="pro-creative-layout">
+                  <div className="pro-philosophy-header">
+                    <span className="pro-eyebrow">FEATURED WORK</span>
+                  </div>
+                  <h3 className="pro-main-heading" style={{ marginBottom: '0.75rem' }}>
+                    Where engineering discipline meets creative execution.
+                  </h3>
+                  <p className="pro-body-text" style={{ marginBottom: '3rem' }}>
+                    Each project is an exercise in solving a non-trivial problem. No templates, no shortcuts — only purposeful architecture and deliberate design.
+                  </p>
+                  <div className="pro-creative-grid">
+                    {creativeProjects.map((p, i) => (
+                      <div key={i} className="pro-creative-card">
+                        <div className="pro-creative-card-top">
+                          <span className="pro-creative-label">{p.label}</span>
+                          <h4 className="pro-creative-title">{p.title}</h4>
+                          <p className="pro-creative-subtitle">{p.subtitle}</p>
+                        </div>
+                        <p className="pro-creative-desc">{p.desc}</p>
+                        <div className="pro-creative-tags">
+                          {p.tags.map((tag, j) => (
+                            <span key={j} className="pro-creative-tag">{tag}</span>
+                          ))}
+                        </div>
                       </div>
-                      <span className="creative-os-title font-mono">flower_bloom_engine.sh</span>
-                    </div>
-                    <div className="creative-os-body">
-                      <div className="sandbox-canvas-placeholder">
-                        <svg viewBox="0 0 100 100" className="generative-flower-svg">
-                          <motion.path
-                            d="M 50 50 C 30 20, 70 20, 50 50 C 20 30, 20 70, 50 50 C 70 80, 30 80, 50 50 C 80 70, 80 30, 50 50"
-                            fill="none" stroke="var(--accent)" strokeWidth="0.8"
-                            initial={{ pathLength: 0 }}
-                            animate={{ pathLength: 1 }}
-                            transition={{ duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-                          />
-                          <circle cx="50" cy="50" r="5" fill="var(--accent)" />
-                        </svg>
-                      </div>
-                      <h4>Devs-Bouquet & Soft Mathematics</h4>
-                      <p>Building procedurally computed curves using organic math algorithms. Making code flower on the screen with hand-drawn physics vectors.</p>
-                    </div>
-                  </motion.div>
-
-                  {/* Card 2: Extreme Precision */}
-                  <motion.div
-                    className={`creative-os-card ${activeCreativeCard === 1 ? 'active-focus' : ''}`}
-                    onPointerDown={() => setActiveCreativeCard(1)}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, delay: 0.1 }}
-                  >
-                    <div className="creative-os-bar">
-                      <div className="creative-os-dots">
-                        <span className="dot red" />
-                        <span className="dot yellow" />
-                        <span className="dot green" />
-                      </div>
-                      <span className="creative-os-title font-mono">precision_calibrator.cfg</span>
-                    </div>
-                    <div className="creative-os-body">
-                      <h4>Extreme Precision</h4>
-                      <p>We are obsessed with smooth framerates, zero design-compromises, and ultra-fluid responsiveness.</p>
-                      <span className="aesthetic-badge">// FPS: 60 / HIGH_HZ</span>
-                    </div>
-                  </motion.div>
-
-                  {/* Card 3: Technical Diversity */}
-                  <motion.div
-                    className={`creative-os-card ${activeCreativeCard === 2 ? 'active-focus' : ''}`}
-                    onPointerDown={() => setActiveCreativeCard(2)}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, delay: 0.2 }}
-                  >
-                    <div className="creative-os-bar">
-                      <div className="creative-os-dots">
-                        <span className="dot red" />
-                        <span className="dot yellow" />
-                        <span className="dot green" />
-                      </div>
-                      <span className="creative-os-title font-mono">stack_orbit.bin</span>
-                    </div>
-                    <div className="creative-os-body">
-                      <h4>Full Stack Orbit</h4>
-                      <p>Blending Node engines with React layers. Deploying optimized schemas with atomic WebSockets.</p>
-                      <span className="aesthetic-badge">// ACTIVE STACK</span>
-                    </div>
-                  </motion.div>
+                    ))}
+                  </div>
                 </div>
               )}
 
-              {/* TAB 4: SYSTEM DIAGNOSTICS */}
-              {activeTab === 'specs' && (
-                <div className="workspace-specs-tab">
-                  <div className="specs-metrics-grid">
-                    {telemetryMetrics.map((m, idx) => (
-                      <div key={idx} className="metric-glass-card">
-                        <span className="metric-label font-mono">{m.label}</span>
-                        <h4 className="metric-val text-glow font-display">{m.value}</h4>
-                        <span className="metric-extra">{m.extra}</span>
+              {/* DIAGNOSTICS */}
+              {activeTab === 'diagnostics' && (
+                <div className="pro-diagnostics-layout">
+                  <div className="pro-philosophy-header">
+                    <span className="pro-eyebrow">SYSTEM TELEMETRY</span>
+                  </div>
+                  <h3 className="pro-main-heading" style={{ marginBottom: '0.75rem' }}>
+                    Quality metrics, measured objectively.
+                  </h3>
+                  <p className="pro-body-text" style={{ marginBottom: '3rem' }}>
+                    Engineering quality is measurable. Every project is benchmarked against strict performance and accessibility targets before release.
+                  </p>
+
+                  <div className="pro-diag-rings-row">
+                    {rings.map((r, i) => (
+                      <div key={i} className="pro-ring-item">
+                        <svg viewBox="0 0 100 100" className="pro-circular-chart">
+                          <path className="pro-circle-bg" d="M50 10 a 40 40 0 0 1 0 80 a 40 40 0 0 1 0 -80" />
+                          <path
+                            className="pro-circle"
+                            d="M50 10 a 40 40 0 0 1 0 80 a 40 40 0 0 1 0 -80"
+                            strokeDasharray={`${2 * Math.PI * 40} ${2 * Math.PI * 40}`}
+                            style={{ strokeDashoffset: dashOffset(r.pct), stroke: r.color }}
+                          />
+                          <text x="50" y="55" className="pro-ring-text">{r.pct}%</text>
+                        </svg>
+                        <span className="pro-ring-label">{r.label}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="diagnostic-logs-panel font-mono">
-                    <div className="diag-header">// DIAGNOSTIC DIAGRAM READOUTS</div>
-                    <div className="diag-grid">
-                      <div className="diag-progress-wrap">
-                        <svg viewBox="0 0 100 100" width="80" height="80">
-                          <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(250,204,21,0.06)" strokeWidth="6" />
-                          <motion.circle
-                            cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" strokeWidth="6"
-                            strokeDasharray="251.2"
-                            initial={{ strokeDashoffset: 251.2 }}
-                            animate={{ strokeDashoffset: 50.24 }}
-                            transition={{ duration: 1.5, ease: 'easeOut' }}
-                          />
-                        </svg>
-                        <span className="diag-ring-label">SYSTEM LATENCY (LOW)</span>
-                      </div>
+                  <div className="pro-diag-table-container">
+                    <table className="pro-diag-table">
+                      <thead>
+                        <tr>
+                          <th>METRIC</th>
+                          <th>TARGET</th>
+                          <th>ACTUAL</th>
+                          <th>STATUS</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {diagnosticRows.map((row, i) => (
+                          <tr key={i}>
+                            <td>{row.metric}</td>
+                            <td>{row.target}</td>
+                            <td className="highlight">{row.actual}</td>
+                            <td><span className="pro-status-badge success">{row.status}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-                      <div className="diag-status-rows">
-                        <div className="diag-row">
-                          <span className="lbl">CPU THREADS LOAD</span>
-                          <span className="val success">OK / OPTIMIZED</span>
-                        </div>
-                        <div className="diag-row">
-                          <span className="lbl">PIXEL MARGIN ALIGNMENT</span>
-                          <span className="val success">100% PERFECT</span>
-                        </div>
-                        <div className="diag-row">
-                          <span className="lbl">FRAMER MOTION INTERPOLATION</span>
-                          <span className="val success">HARDWARE_ACCEL</span>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="pro-diag-footer">
+                    <span className="pro-diag-quote">"Make it work, make it right, make it fast — in that order."</span>
+                    <span className="pro-diag-attribution">— Kent Beck</span>
                   </div>
                 </div>
               )}
+
             </motion.div>
           </AnimatePresence>
         </div>
