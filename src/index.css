@@ -2490,6 +2490,179 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
   background: rgba(2, 132, 199, 0.06);
 }
 
+/* ── FLIP CARD SYSTEM ──────────────────────────────────────────────────── */
+
+/* Scene wrapper: sets perspective and fixed card height */
+.project-card-scene {
+  perspective: 1200px;
+  height: 440px;
+  cursor: pointer;
+  outline: none;
+}
+
+.project-card-scene:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 14px;
+}
+
+/* Flipper: the rotating container */
+.project-card-flipper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Shared face styles */
+.project-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Front face — normal orientation */
+.project-face--front {
+  transform: rotateY(0deg);
+}
+
+/* Back face — pre-rotated so it appears when parent spins 180° */
+.project-face--back {
+  transform: rotateY(180deg);
+  background: #050810;
+  border: 1px solid rgba(6, 182, 212, 0.18);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(6, 182, 212, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+:root.light-mode .project-face--back {
+  background: #f0f9ff;
+  border-color: rgba(2, 132, 199, 0.2);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Back content layout */
+.project-back-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.project-back-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.project-back-desc {
+  font-size: 0.85rem;
+  color: var(--ink-mid);
+  line-height: 1.65;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.project-back-tags {
+  margin-top: auto;
+}
+
+/* GitHub CTA button */
+.project-github-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #030406;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, gap 0.22s ease;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.35);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.project-github-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.project-github-cta:hover::before { opacity: 1; }
+
+.project-github-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.45);
+  gap: 0.9rem;
+}
+
+.project-github-cta svg:first-child {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.project-github-arrow {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  transition: transform 0.22s ease;
+  flex-shrink: 0;
+}
+
+.project-github-cta:hover .project-github-arrow {
+  transform: translateX(4px);
+}
+
+/* Flip hint icon in front face footer */
+.project-flip-hint {
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-dim);
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+.project-flip-hint svg {
+  width: 13px;
+  height: 13px;
+}
+
+.project-card-scene:hover .project-flip-hint {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(6, 182, 212, 0.06);
+  animation: spin-hint 1.2s ease-in-out infinite;
+}
+
+@keyframes spin-hint {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Responsive grid adjustments */
 @media (max-width: 768px) {
   .projects-os-grid {
