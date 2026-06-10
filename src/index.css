@@ -3064,7 +3064,8 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
 }
 
 .keyboard-isometric-deck {
-  transform: scale(var(--kbd-scale, 1)) rotateX(60deg) rotateY(0deg) rotateZ(-45deg);
+  /* Adjusted angle to match the reference image perspective */
+  transform: scale(var(--kbd-scale, 1)) rotateX(54deg) rotateY(0deg) rotateZ(-32deg);
   transform-style: preserve-3d;
   width: 580px;
   height: 360px;
@@ -3075,40 +3076,36 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
 }
 
 .keyboard-isometric-deck:hover {
-  transform: scale(var(--kbd-scale, 1)) rotateX(56deg) rotateY(0deg) rotateZ(-41deg) translateY(-8px);
+  transform: scale(var(--kbd-scale, 1)) rotateX(51deg) rotateY(0deg) rotateZ(-29deg) translateY(-8px);
 }
 
 /* Chassis Base Plate */
 .keyboard-base-plate {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #1e293b, #0f172a);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 28px;
+  background: #090a0c; /* Deeper black */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   transform-style: preserve-3d;
-  padding: 1.25rem;
-  /* Thick 3D extruded edge pointing down-left */
+  padding: 1.5rem;
+  /* Thick black heavy case */
   box-shadow: 
-    -1px 1px 0px #090d16,
-    -2px 2px 0px #090d16,
-    -3px 3px 0px #090d16,
-    -4px 4px 0px #090d16,
-    -5px 5px 0px #090d16,
-    -6px 6px 0px #090d16,
-    -7px 7px 0px #090d16,
-    -8px 8px 0px #090d16,
-    -9px 9px 0px #090d16,
-    -10px 10px 0px #090d16,
-    -11px 11px 0px #090d16,
-    -12px 12px 0px #090d16,
-    -16px 16px 35px rgba(0, 0, 0, 0.75),
-    inset 0 2px 4px rgba(255, 255, 255, 0.08);
+    -1px 1px 0px #040506,
+    -2px 2px 0px #040506,
+    -3px 3px 0px #040506,
+    -4px 4px 0px #040506,
+    -5px 5px 0px #040506,
+    -6px 6px 0px #040506,
+    -7px 7px 0px #040506,
+    -8px 8px 0px #040506,
+    -12px 12px 30px rgba(0, 0, 0, 0.95),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15); /* Specular highlight on rim */
   transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 :root.light-mode .keyboard-base-plate {
-  background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
-  border-color: rgba(0, 0, 0, 0.08);
+  background: #e2e8f0;
+  border-color: rgba(0, 0, 0, 0.05);
   box-shadow: 
     -1px 1px 0px #94a3b8,
     -2px 2px 0px #94a3b8,
@@ -3118,26 +3115,22 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
     -6px 6px 0px #94a3b8,
     -7px 7px 0px #94a3b8,
     -8px 8px 0px #94a3b8,
-    -9px 9px 0px #94a3b8,
-    -10px 10px 0px #94a3b8,
-    -11px 11px 0px #94a3b8,
-    -12px 12px 0px #94a3b8,
-    -16px 16px 35px rgba(15, 23, 42, 0.15),
-    inset 0 2px 4px rgba(255, 255, 255, 0.7);
+    -12px 12px 25px rgba(15, 23, 42, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 .keyboard-base-plate::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 28px;
-  transform: translateZ(-24px);
-  background: linear-gradient(135deg, #090b0f, #020305);
-  box-shadow: 0 0 1px rgba(0,0,0,0.8);
+  border-radius: 12px;
+  transform: translateZ(-16px);
+  background: #000;
+  box-shadow: 0 0 50px rgba(0,0,0,1);
 }
 
 :root.light-mode .keyboard-base-plate::before {
-  background: linear-gradient(135deg, #64748b, #475569);
+  background: #64748b;
 }
 
 /* Extrusion side effects */
@@ -3147,27 +3140,27 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
   top: 100%;
   left: 0;
   width: 100%;
-  height: 24px;
-  background: #06070a;
+  height: 16px;
+  background: #000;
   transform: rotateX(-90deg);
   transform-origin: top;
-  border-bottom-left-radius: 28px;
-  border-bottom-right-radius: 28px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 :root.light-mode .keyboard-base-plate::after {
-  background: #334155;
+  background: #cbd5e1;
 }
 
-/* Inner Tray */
+/* Inner Tray (Plate) */
 .keyboard-inner-tray {
   width: 100%;
   height: 100%;
-  background: #090a0f;
-  box-shadow: inset 4px -4px 15px rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 1.25rem;
+  background: #0c0d10;
+  box-shadow: inset 3px -3px 12px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.9);
+  border-radius: 8px;
+  padding: 1rem;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -3178,9 +3171,9 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
 }
 
 :root.light-mode .keyboard-inner-tray {
-  background: #f1f5f9;
-  box-shadow: inset 4px -4px 12px rgba(15, 23, 42, 0.1);
-  border-color: rgba(0, 0, 0, 0.06);
+  background: #d1d5db;
+  box-shadow: inset 2px -2px 10px rgba(15, 23, 42, 0.1);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* ==============================
@@ -3197,143 +3190,202 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
   cursor: pointer;
 }
 
+/* Clear Switch Housing */
+.keycap-switch-base {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+.switch-face {
+  position: absolute;
+  background: rgba(140, 210, 255, 0.2); /* Clear blueish switch plastic */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  box-shadow: inset 0 0 8px rgba(255,255,255,0.1);
+}
+
+.switch-face.top {
+  inset: 0;
+  transform: translateZ(8px);
+}
+
+.switch-face.front {
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  transform: rotateX(-90deg);
+  transform-origin: top;
+  background: rgba(140, 210, 255, 0.15);
+}
+
+.switch-face.right {
+  top: 0;
+  left: 100%;
+  width: 8px;
+  height: 100%;
+  transform: rotateY(90deg);
+  transform-origin: left;
+  background: rgba(140, 210, 255, 0.12);
+}
+
+:root.light-mode .switch-face {
+  background: rgba(100, 150, 200, 0.15);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
 .keycap-3d {
-  width: 78px;
-  height: 72px;
+  width: 72px;
+  height: 66px;
   position: relative;
   transform-style: preserve-3d;
   will-change: transform;
+  z-index: 2;
 }
 
-/* Top Face with pronounced 3D mechanical projection */
+/* Top Face with pronounced concave mechanical keycap shape */
 .keycap-face {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #334155, #1e293b);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  background: linear-gradient(145deg, #181a1e, #0e1012); /* Glossy deep black */
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Thick block extrusion shadow */
+  /* Very sharp edge highlights and deep concave inner shadow */
   box-shadow: 
-    -1px 1px 0px #0d131f,
-    -2px 2px 0px #0d131f,
-    -3px 3px 0px #0d131f,
-    -4px 4px 0px #0d131f,
-    -5px 5px 0px #0d131f,
-    -6px 6px 0px #0d131f,
-    -8px 8px 16px rgba(0,0,0,0.65),
-    inset 0 1px 2px rgba(255, 255, 255, 0.15);
-  transform: translateZ(16px); /* Elevate off the plate! */
+    inset 0 8px 16px rgba(255, 255, 255, 0.04),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    -1px 1px 0px #0a0b0d,
+    -2px 2px 0px #0a0b0d,
+    -3px 3px 0px #0a0b0d,
+    -4px 4px 0px #0a0b0d,
+    -5px 5px 6px rgba(0,0,0,0.8);
+  transform: translateZ(22px);
   transform-style: preserve-3d;
-  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease, box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 :root.light-mode .keycap-face {
-  background: linear-gradient(135deg, #ffffff, #f8fafc);
-  border-color: rgba(0, 0, 0, 0.08);
+  background: #f8fafc;
   box-shadow: 
-    -1px 1px 0px #cbd5e1,
-    -2px 2px 0px #cbd5e1,
-    -3px 3px 0px #cbd5e1,
-    -4px 4px 0px #cbd5e1,
-    -5px 5px 0px #cbd5e1,
-    -6px 6px 0px #cbd5e1,
-    -8px 8px 12px rgba(15, 23, 42, 0.08),
-    inset 0 1px 2px rgba(255,255,255,1);
+    inset 0 6px 12px rgba(255, 255, 255, 0.8),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.05),
+    0 0 0 1px #cbd5e1,
+    -1px 1px 0px #e2e8f0,
+    -2px 2px 0px #e2e8f0,
+    -3px 3px 0px #e2e8f0,
+    -4px 4px 0px #e2e8f0,
+    -5px 5px 0px #e2e8f0,
+    -6px 6px 6px rgba(15, 23, 42, 0.15);
 }
 
 .keycap-container.active .keycap-face {
-  transform: translateZ(4px); /* Mechanical depress! */
-  background: linear-gradient(135deg, #1e293b, #0f172a);
+  transform: translateZ(8px); /* Mechanical depress! */
   box-shadow: 
-    -1px 1px 0px #090d16,
-    -2px 2px 0px #090d16,
-    -3px 3px 6px rgba(0,0,0,0.5),
-    inset 0 1px 2px rgba(255, 255, 255, 0.05);
+    inset 0 6px 12px rgba(255, 255, 255, 0.02),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px #111,
+    -1px 1px 0px #1a1a1e,
+    -2px 2px 0px #1a1a1e,
+    -3px 3px 4px rgba(0,0,0,0.8);
+}
+
+:root.light-mode .keycap-container.active .keycap-face {
+  box-shadow: 
+    inset 0 6px 12px rgba(255, 255, 255, 0.5),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.08),
+    0 0 0 1px #cbd5e1,
+    -1px 1px 0px #e2e8f0,
+    -2px 2px 0px #e2e8f0,
+    -3px 3px 4px rgba(15, 23, 42, 0.2);
 }
 
 
 .keycap-icon-wrapper {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateZ(5px);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+  transform: translateZ(1px); /* Slight bump above concave surface */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
 .keycap-icon {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  opacity: 0.8;
+  opacity: 0.9;
   transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
 .keycap-container:hover .keycap-icon,
 .keycap-container.active .keycap-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 8px var(--key-color));
+  filter: drop-shadow(0 0 12px var(--key-color));
 }
 
-/* Keycap Extruded Sides */
+/* Keycap Extruded Sides (Deep dark matte finish) */
 .keycap-side {
   position: absolute;
-  background: #151821;
-  transition: background 0.3s ease;
+  background: #17181b;
 }
 
 :root.light-mode .keycap-side {
-  background: #cbd5e1;
-}
-
-.keycap-container.active .keycap-side {
-  background: #0f1218;
+  background: #e2e8f0;
 }
 
 .keycap-side.front {
   top: 100%;
   left: 0;
   width: 100%;
-  height: 10px;
+  height: 14px;
   transform: rotateX(-90deg);
   transform-origin: top;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  background: #111214;
 }
 
 .keycap-side.right {
   top: 0;
   left: 100%;
-  width: 10px;
+  width: 14px;
   height: 100%;
   transform: rotateY(90deg);
   transform-origin: left;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  background: #151619;
 }
+
+:root.light-mode .keycap-side.front { background: #cbd5e1; }
+:root.light-mode .keycap-side.right { background: #d1d5db; }
 
 /* LED Ambient Underglow Spotlight */
 .key-led-glow {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   background: radial-gradient(circle closest-side, var(--key-color) 0%, transparent 80%);
   opacity: 0;
-  transform: translateZ(-2px) scale(0.6);
+  transform: translateZ(-2px) scale(0.8);
   pointer-events: none;
-  filter: blur(8px);
-  z-index: -1;
-  transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  filter: blur(12px);
+  z-index: 0;
+  mix-blend-mode: screen;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .key-led-glow.active {
-  opacity: 0.6;
-  transform: translateZ(-2px) scale(1.4);
+  opacity: 0.8;
+  transform: translateZ(4px) scale(1.5);
 }
 
 /* HUD System Scanline Overlay */
@@ -3433,7 +3485,8 @@ footer{padding:2.5rem 2rem;text-align:center;border-top:1px solid var(--border);
   }
   .keyboard-base-plate::before,
   .keyboard-base-plate::after,
-  .keycap-side {
+  .keycap-side,
+  .keycap-switch-base {
     display: none !important;
   }
   /* Inner tray becomes a flat 4-column grid */

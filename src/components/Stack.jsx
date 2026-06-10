@@ -56,11 +56,18 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
       }}
       viewport={{ once: true }}
     >
+      {/* 3D Keycap Base (Clear Switch Housing) */}
+      <div className="keycap-switch-base">
+        <div className="switch-face top"></div>
+        <div className="switch-face front"></div>
+        <div className="switch-face right"></div>
+      </div>
+
       {/* 3D Keycap Body */}
       <motion.div 
         className="keycap-3d"
         animate={isActive ? {
-          y: 7, // Push keycap down along isometric vertical direction
+          y: 6, // Push keycap down
           scale: 0.96,
         } : {
           y: 0,
