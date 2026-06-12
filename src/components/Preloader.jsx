@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, useMotionValue } from 'framer-motion';
+import { motion, useMotionValue, animate } from 'framer-motion';
 
 export default function Preloader() {
   const [isComplete, setIsComplete] = useState(false);
@@ -83,4 +83,3 @@ export default function Preloader() {
   );
 }
 
-import { animate } from "framer-motion";
