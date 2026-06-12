@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import Magnetic from './Magnetic';
 import TextReveal from './TextReveal';
 import TextScramble from './TextScramble';
-import { FaLinkedin, FaGithub, FaWhatsapp } from 'react-icons/fa';
 import { 
   Mail, 
   Calendar, 
@@ -12,57 +11,151 @@ import {
   Shield, 
   MessageSquare, 
   Zap,
-  ArrowRight
+  ArrowRight,
+  MessageCircle
 } from 'lucide-react';
 
+const GithubIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
+
+const LinkedinIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-5 h-5"
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
+const handleMouseMove = (e) => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+  e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+};
+
+const MagneticBentoCard = ({ card, idx, activeCard, setActiveCard }) => {
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
+
+  const handleTiltMove = (e) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleTiltLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      className={`os-window-card ${activeCard === idx ? 'active-focus' : ''}`}
+      onPointerDown={() => setActiveCard(idx)}
+      onMouseMove={handleTiltMove}
+      onMouseLeave={handleTiltLeave}
+      style={{
+        '--card-accent': card.accent,
+        '--card-accent-rgb': card.accentRgb,
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d"
+      }}
+      initial={{ opacity: 0, scale: 0.85, y: 30, perspective: 1000 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ type: "spring", stiffness: 200, damping: 15, delay: idx * 0.1 }}
+    >
+      <div style={{ transform: "translateZ(20px)" }}>
+        {/* OS Window Chrome Bar */}
+        <div className="os-window-bar">
+          <div className="os-window-dots">
+            <span className="dot red" />
+            <span className="dot yellow" />
+            <span className="dot green" />
+          </div>
+          <span className="os-window-title font-mono">{card.filename}</span>
+          <span className="os-window-number">{card.num}</span>
+        </div>
+
+        {/* OS Window Content Body */}
+        <div className="os-window-body" onMouseMove={handleMouseMove}>
+          <div className="os-window-header">
+            <div className="os-window-icon-box">
+              {card.icon}
+            </div>
+          </div>
+          <div className="os-window-details">
+            <h3>{card.title}</h3>
+            <p>{card.value}</p>
+          </div>
+          <a
+            href={card.href}
+            target={card.href.startsWith('http') ? '_blank' : '_self'}
+            rel={card.href.startsWith('http') ? 'noopener noreferrer' : ''}
+            className="os-window-action"
+          >
+            <span>{card.action}</span>
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function Contact() {
+  const [activeCard, setActiveCard] = useState(null);
   const [time, setTime] = useState('');
   const [dateStr, setDateStr] = useState('');
   const workspaceRef = useRef(null);
-  const [activeCard, setActiveCard] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      // NPT (Nepal Standard Time) is UTC +5:45
-      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-      const nptOffset = 5.75 * 3600000;
-      const nptDate = new Date(utc + nptOffset);
-      
-      let hours = nptDate.getHours();
-      const minutes = String(nptDate.getMinutes()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      const timeString = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
-      
-      const options = { month: 'short', day: 'numeric', year: 'numeric' };
-      const dateString = nptDate.toLocaleDateString('en-US', options);
-      
-      setTime(timeString);
-      setDateStr(dateString);
+      setTime(now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + now.toLocaleTimeString('en-us',{timeZoneName:'short'}).split(' ')[2]);
+      setDateStr(now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
     };
-
     updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
   }, []);
-
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
-    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
-  };
 
   const cards = [
     {
@@ -83,7 +176,7 @@ export default function Contact() {
       value: 'Professional network',
       action: "Let's connect",
       href: 'https://www.linkedin.com/in/abhishek-dev-5b5148357',
-      icon: <FaLinkedin className="w-5 h-5" />,
+      icon: <LinkedinIcon />,
       accent: '#0a66c2',
       accentRgb: '10, 102, 194',
       filename: 'linkedin_dossier.lnk',
@@ -95,7 +188,7 @@ export default function Contact() {
       value: 'Open source repos',
       action: 'View my work',
       href: 'https://github.com/devashmit',
-      icon: <FaGithub className="w-5 h-5" />,
+      icon: <GithubIcon />,
       accent: '#a855f7',
       accentRgb: '168, 85, 247',
       filename: 'repo_analyzer.cfg',
@@ -107,7 +200,7 @@ export default function Contact() {
       value: '+977 9829306607',
       action: 'Chat on WhatsApp',
       href: 'https://wa.me/9779829306607',
-      icon: <FaWhatsapp className="w-5 h-5" />,
+      icon: <MessageCircle className="w-5 h-5" />,
       accent: '#25d366',
       accentRgb: '37, 211, 102',
       filename: 'comms_uplink.bin',
@@ -180,52 +273,13 @@ export default function Contact() {
         <div className="contact-bento-container">
           <div className="contact-os-workspace" ref={workspaceRef}>
             {cards.map((card, idx) => (
-              <motion.div
+              <MagneticBentoCard
                 key={idx}
-                className={`os-window-card ${activeCard === idx ? 'active-focus' : ''}`}
-                onPointerDown={() => setActiveCard(idx)}
-                style={{
-                  '--card-accent': card.accent,
-                  '--card-accent-rgb': card.accentRgb
-                }}
-                initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-              >
-                {/* OS Window Chrome Bar */}
-                <div className="os-window-bar">
-                  <div className="os-window-dots">
-                    <span className="dot red" />
-                    <span className="dot yellow" />
-                    <span className="dot green" />
-                  </div>
-                  <span className="os-window-title font-mono">{card.filename}</span>
-                  <span className="os-window-number">{card.num}</span>
-                </div>
-
-                {/* OS Window Content Body */}
-                <div className="os-window-body" onMouseMove={handleMouseMove}>
-                  <div className="os-window-header">
-                    <div className="os-window-icon-box">
-                      {card.icon}
-                    </div>
-                  </div>
-                  <div className="os-window-details">
-                    <h3>{card.title}</h3>
-                    <p>{card.value}</p>
-                  </div>
-                  <a
-                    href={card.href}
-                    target={card.href.startsWith('http') ? '_blank' : '_self'}
-                    rel={card.href.startsWith('http') ? 'noopener noreferrer' : ''}
-                    className="os-window-action"
-                  >
-                    <span>{card.action}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </motion.div>
+                card={card}
+                idx={idx}
+                activeCard={activeCard}
+                setActiveCard={setActiveCard}
+              />
             ))}
           </div>
 
