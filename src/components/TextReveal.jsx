@@ -15,12 +15,13 @@ export default function TextReveal({ text, className = "", delay = 0, tag = "p",
   };
 
   const childVariants = {
-    hidden: { opacity: 0, y: "100%" },
+    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
     visible: { 
       opacity: 1, 
       y: 0, 
+      filter: "blur(0px)",
       transition: { 
-        duration: 0.6, 
+        duration: 0.7, 
         ease: [0.2, 0.65, 0.3, 0.9]
       } 
     }
@@ -43,12 +44,10 @@ export default function TextReveal({ text, className = "", delay = 0, tag = "p",
             variants={childVariants}
             style={{ display: 'inline-block', transformOrigin: 'left center' }}
             whileHover={{ 
-              scale: 1.05, 
-              color: '#00ffcc', 
-              rotate: -2,
-              y: -2,
+              scale: 1.02, 
+              color: 'var(--card-accent, #06b6d4)', 
             }}
-            transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
             {word}
           </motion.span>
