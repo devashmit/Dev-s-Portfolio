@@ -134,7 +134,7 @@ export default function Stack() {
 
       <div className="stack-keyboard-workspace relative-z">
         
-        {/* Telemetry Display Terminal — slides in from right */}
+        {/* Telemetry Display Terminal - slides in from right */}
         <motion.div
           className="stack-telemetry-panel"
           initial={{ opacity: 0, x: 40 }}
@@ -171,7 +171,7 @@ export default function Stack() {
                     </span>
                   </div>
                   
-                  {/* Glowing custom description — blurs in after the header */}
+                  {/* Glowing custom description - blurs in after the header */}
                   <motion.h3 
                     className="telemetry-description"
                     initial={{ opacity: 0, filter: 'blur(5px)' }}
@@ -211,7 +211,13 @@ export default function Stack() {
         </motion.div>
 
         {/* 3D Isometric Mechanical Keyboard Deck */}
-        <div className="keyboard-chassis-wrapper">
+        <motion.div 
+          className="keyboard-chassis-wrapper"
+          initial={{ opacity: 0, y: -40, scale: 0.9 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ type: 'spring', stiffness: 120, damping: 15, mass: 1.5, delay: 0.2 }}
+        >
           <div className="keyboard-isometric-deck">
             {/* Base Bevel Frame */}
             <div className="keyboard-base-plate">
@@ -229,7 +235,7 @@ export default function Stack() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
       </div>
 

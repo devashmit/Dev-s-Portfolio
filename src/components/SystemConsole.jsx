@@ -354,7 +354,7 @@ export default function SystemConsole() {
         </motion.div>
 
 
-        {/* Rebuilt Typographic Heading — clipPath mask reveal */}
+        {/* Rebuilt Typographic Heading - clipPath mask reveal */}
         <motion.h2
           className="console-spotlight-text"
           initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
@@ -367,7 +367,7 @@ export default function SystemConsole() {
           <span className="text-solid">DEVELOPER</span>
         </motion.h2>
 
-        {/* Enhanced Readable Sub-Headline — blur fade-in */}
+        {/* Enhanced Readable Sub-Headline - blur fade-in */}
         <motion.p
           className="console-spotlight-sub"
           initial={{ opacity: 0, filter: 'blur(8px)' }}

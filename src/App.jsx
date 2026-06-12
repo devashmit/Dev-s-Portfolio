@@ -10,10 +10,9 @@ import Preloader from './components/Preloader'
 import CustomCursor from './components/CustomCursor'
 import CatCompanion from './components/CatCompanion'
 import RippleEffect from './components/RippleEffect'
-import FloatingIcons from './components/FloatingIcons'
 import PageSpotlight from './components/PageSpotlight'
 import ScrollProgress from './components/ScrollProgress'
-
+import PixelBat from './components/PixelBat'
 
 function App() {
   useEffect(() => {
@@ -40,7 +39,9 @@ function App() {
       <ScrollProgress />
       <PageSpotlight />
       <div id="bg-layer"></div>
-      <FloatingIcons />
+      <div className="bat-wrapper global-bat">
+        <PixelBat />
+      </div>
       <a className="skip-link" href="#main">Skip to main content</a>
       <Preloader />
       <CustomCursor />
