@@ -277,81 +277,7 @@ export default function SystemConsole() {
       
       <div className="console-spotlight">
         {/* Systems Diagnostics HUD Bar */}
-        <motion.div 
-          className="hud-status-bar"
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {/* Module 1: System Status */}
-          <div className="hud-metric-card" title="Host cluster status. Changes based on active workspace file.">
-            <div className="hud-status-node">
-              <span 
-                className="hud-pulse-dot" 
-                style={{ 
-                  color: activeFile === 'secure-uplink.sh' ? '#ef4444' : (activeFile === 'developer-profile.json' ? 'var(--accent)' : '#10b981') 
-                }}
-              ></span>
-              <Terminal className="hud-icon accent" size={13} />
-              <span className="hud-label">SYS_STATUS:</span>
-              <span className="hud-metric-val">{filesMap[activeFile].status}</span>
-            </div>
-            <div className="hud-tooltip">Host cluster status. Dynamic state change.</div>
-          </div>
-          
-          <span className="hud-divider">//</span>
 
-          {/* Module 2: Security Firewall */}
-          <div className="hud-metric-card" title="Sandboxed local environment. Hardware firewall active.">
-            <Shield className="hud-icon green" size={13} />
-            <span className="hud-metric-label">SECURE:</span>
-            <span className="hud-metric-val">AES-256</span>
-            <div className="hud-tooltip">Sandboxed core environment. Hardware firewall.</div>
-          </div>
-
-          <span className="hud-divider">//</span>
-
-          {/* Module 3: Geolocation Coordinates */}
-          <div className="hud-metric-card" title="Developer local coordinates. GMT +5:45 timezone.">
-            <MapPin className="hud-icon accent" size={13} />
-            <span className="hud-metric-label">LOC:</span>
-            <span className="hud-metric-val">27.7172° N, 85.3240° E</span>
-            <div className="hud-tooltip">Kathmandu, Nepal (Workstation standard timezone)</div>
-          </div>
-
-          <span className="hud-divider">//</span>
-
-          {/* Module 4: Live Simulated Engine Performance */}
-          <div className="hud-metric-card" title="Live CPU engine load. Dyn-resource allocation.">
-            <Cpu className="hud-icon yellow" size={13} />
-            <span className="hud-metric-label">CPU:</span>
-            <span className="hud-metric-val">{cpuLoad}</span>
-            <div className="hud-tooltip">Live engine load balancer. CPU resources stable.</div>
-          </div>
-
-          <span className="hud-divider">//</span>
-
-          {/* Module 5: Repository Branch */}
-          <div className="hud-metric-card hide-mobile" title="Current git version control node.">
-            <GitBranch className="hud-icon blue" size={13} />
-            <span className="hud-metric-label">BRANCH:</span>
-            <span className="hud-metric-val">main@v2.4.0</span>
-            <div className="hud-tooltip">Git version control. Encrypted production branch.</div>
-          </div>
-
-          <span className="hud-divider hide-mobile">//</span>
-
-          {/* Module 6: Live clock and elapsed time */}
-          <div className="hud-metric-card hide-mobile" title="System session uptime & real-time clock.">
-            <Clock className="hud-icon purple" size={13} />
-            <span className="hud-metric-label">UPTIME:</span>
-            <span className="hud-metric-val">{uptime}</span>
-            <span className="hud-metric-sep">/</span>
-            <span className="hud-metric-val text-dim">{liveTime}</span>
-            <div className="hud-tooltip">Session elapsed uptime & active local workstation clock.</div>
-          </div>
-        </motion.div>
 
 
         {/* Rebuilt Typographic Heading - clipPath mask reveal */}
@@ -386,11 +312,7 @@ export default function SystemConsole() {
       >
         {/* Window Header */}
         <div className="ide-header">
-          <div className="ide-controls">
-            <div className="ide-dot red"></div>
-            <div className="ide-dot yellow"></div>
-            <div className="ide-dot green"></div>
-          </div>
+
           <div className="ide-title">DEVELOPER WORKSTATION - core-node-04</div>
           <div className="ide-spacer"></div>
         </div>

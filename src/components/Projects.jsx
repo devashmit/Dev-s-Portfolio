@@ -19,8 +19,60 @@ const GithubIcon = () => (
   </svg>
 );
 
-/* ─── Single Professional Project Card (3D Tilt & Glow) ───────────────────────── */
-function ProjectCard({ project, index }) {
+const ProjectVisual = ({ type }) => {
+  switch(type) {
+    case 'cv-flow':
+      return (
+        <div className="bento-visual cv-flow">
+          <div className="cv-box header"></div>
+          <div className="cv-line short"></div>
+          <div className="cv-line long"></div>
+          <div className="cv-line medium"></div>
+          <div className="cv-box body"></div>
+        </div>
+      );
+    case 'flower-bloom':
+      return (
+        <div className="bento-visual flower-bloom">
+           <div className="petal p1"></div>
+           <div className="petal p2"></div>
+           <div className="petal p3"></div>
+           <div className="petal p4"></div>
+           <div className="flower-center"></div>
+        </div>
+      );
+    case 'floating-petals':
+      return (
+        <div className="bento-visual floating-petals">
+          <div className="float-petal f1"></div>
+          <div className="float-petal f2"></div>
+          <div className="float-petal f3"></div>
+          <div className="float-petal f4"></div>
+        </div>
+      );
+    case 'node-network':
+      return (
+        <div className="bento-visual node-network">
+          <div className="node n1"></div>
+          <div className="node n2"></div>
+          <div className="node n3"></div>
+          <div className="node n4"></div>
+          <svg className="node-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <line x1="20" y1="20" x2="80" y2="40" />
+            <line x1="80" y1="40" x2="50" y2="80" />
+            <line x1="50" y1="80" x2="20" y2="20" />
+            <line x1="20" y1="20" x2="10" y2="70" />
+            <line x1="10" y1="70" x2="50" y2="80" />
+          </svg>
+        </div>
+      );
+    default:
+      return <div className="bento-visual generic"></div>;
+  }
+}
+
+/* ─── Bento Box Project Card ───────────────────────── */
+function ProjectCard({ project, index, isWide }) {
   const ref = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -29,9 +81,9 @@ function ProjectCard({ project, index }) {
   const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
   const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
 
-  // Transform mouse position to rotation angles
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+  // Transform mouse position to rotation angles (subtle for bento)
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["3deg", "-3deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-3deg", "3deg"]);
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -44,7 +96,6 @@ function ProjectCard({ project, index }) {
     const yPct = mouseY / height - 0.5;
     x.set(xPct);
     y.set(yPct);
-    // Update CSS variables for the radial glow
     ref.current.style.setProperty('--mouse-x', `${mouseX}px`);
     ref.current.style.setProperty('--mouse-y', `${mouseY}px`);
   };
@@ -57,27 +108,26 @@ function ProjectCard({ project, index }) {
   return (
     <motion.div
       ref={ref}
-      className="project-card interactive-3d-card"
+      className={`project-card bento-card ${isWide ? 'wide' : 'square'}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, y: 40, rotateX: -15, perspective: 1200 }}
+      initial={{ opacity: 0, y: 40, rotateX: -5 }}
       whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.08 }}
+      transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.1 }}
       style={{
         rotateX,
         rotateY,
         transformStyle: "preserve-3d"
       }}
-      animate={{
-        y: [0, -8, 0],
-      }}
-      // Use another transition for the continuous idle breathing
-      // Note: framer-motion merges animate and whileInView differently, 
-      // so we use a very slow y-bounce for life.
-      // To avoid conflict with the entry animation, we will just use CSS animation in index.css
     >
       <div className="project-glow-layer"></div>
+      
+      {/* Visual background element */}
+      <div className="project-visual-wrapper" style={{ transform: "translateZ(10px)" }}>
+        <ProjectVisual type={project.previewType} />
+      </div>
+
       <div className="project-details" style={{ transform: "translateZ(30px)" }}>
         <div className="project-detail-header">
           <h3 className="project-name">{project.title}</h3>
@@ -174,16 +224,23 @@ export default function Projects() {
         ))}
       </motion.div>
 
-      {/* Elegant Card Grid */}
-      <div className="projects-os-grid">
+      {/* Elegant Bento Box Grid */}
+      <div className="projects-bento-grid">
         <AnimatePresence mode="popLayout">
-          {filtered.map((project, idx) => (
-            <ProjectCard
-              key={project.title}
-              project={project}
-              index={idx}
-            />
-          ))}
+          {filtered.map((project, idx) => {
+            // Determine if card should be wide. 
+            // If all 4 are shown, index 0 and 3 are wide.
+            // If filtered, we can just make every other one wide or dynamically calculate.
+            const isWide = filtered.length > 2 ? (idx === 0 || idx === 3) : true;
+            return (
+              <ProjectCard
+                key={project.title}
+                project={project}
+                index={idx}
+                isWide={isWide}
+              />
+            );
+          })}
         </AnimatePresence>
       </div>
     </section>

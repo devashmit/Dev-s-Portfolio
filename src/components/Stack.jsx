@@ -143,11 +143,7 @@ export default function Stack() {
           transition={{ type: 'spring', stiffness: 140, damping: 22, delay: 0.1 }}
         >
           <div className="telemetry-chrome">
-            <div className="chrome-dots">
-              <span className="dot red"></span>
-              <span className="dot yellow"></span>
-              <span className="dot green"></span>
-            </div>
+
             <span className="telemetry-title">Skill_Telemetry.sh</span>
           </div>
           

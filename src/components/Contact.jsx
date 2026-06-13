@@ -105,11 +105,7 @@ const MagneticBentoCard = ({ card, idx, activeCard, setActiveCard }) => {
       <div style={{ transform: "translateZ(20px)" }}>
         {/* OS Window Chrome Bar */}
         <div className="os-window-bar">
-          <div className="os-window-dots">
-            <span className="dot red" />
-            <span className="dot yellow" />
-            <span className="dot green" />
-          </div>
+
           <span className="os-window-title font-mono">{card.filename}</span>
           <span className="os-window-number">{card.num}</span>
         </div>

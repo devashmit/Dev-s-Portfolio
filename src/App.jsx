@@ -13,6 +13,7 @@ import RippleEffect from './components/RippleEffect'
 import PageSpotlight from './components/PageSpotlight'
 import ScrollProgress from './components/ScrollProgress'
 import PixelBat from './components/PixelBat'
+import FloatingIcons from './components/FloatingIcons'
 
 function App() {
   useEffect(() => {
@@ -46,6 +47,7 @@ function App() {
       <Preloader />
       <CustomCursor />
       <RippleEffect />
+      <FloatingIcons />
       <Nav />
 
       <main id="main">
