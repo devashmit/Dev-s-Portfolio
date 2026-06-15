@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ExternalLink, ArrowRight } from 'lucide-react';
 import TextReveal from './TextReveal';
 import { projectsData } from '../data/content';
 
@@ -12,7 +12,7 @@ const GithubIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    style={{ width: '14px', height: '14px' }}
+    style={{ width: '18px', height: '18px' }}
   >
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
     <path d="M9 18c-4.51 2-5-2-7-2" />
@@ -71,177 +71,101 @@ const ProjectVisual = ({ type }) => {
   }
 }
 
-/* ─── Bento Box Project Card ───────────────────────── */
-function ProjectCard({ project, index, isWide }) {
-  const ref = useRef(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  // Smooth out mouse tracking for tilt
-  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
-  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
-
-  // Transform mouse position to rotation angles (subtle for bento)
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["3deg", "-3deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-3deg", "3deg"]);
-
-  const handleMouseMove = (e) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
-    ref.current.style.setProperty('--mouse-x', `${mouseX}px`);
-    ref.current.style.setProperty('--mouse-y', `${mouseY}px`);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      className={`project-card bento-card ${isWide ? 'wide' : 'square'}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, y: 40, rotateX: -5 }}
-      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.1 }}
-      style={{
-        rotateX,
-        rotateY,
-        transformStyle: "preserve-3d"
-      }}
-    >
-      <div className="project-glow-layer"></div>
-      
-      {/* Visual background element */}
-      <div className="project-visual-wrapper" style={{ transform: "translateZ(10px)" }}>
-        <ProjectVisual type={project.previewType} />
-      </div>
-
-      <div className="project-details" style={{ transform: "translateZ(30px)" }}>
-        <div className="project-detail-header">
-          <h3 className="project-name">{project.title}</h3>
-          <span className="project-year font-mono">{project.year}</span>
-        </div>
-        
-        <p className="project-desc">{project.desc}</p>
-        
-        <div className="project-footer">
-          <div className="project-tags">
-            {project.tags.map(t => (
-              <span key={t} className="project-tag-pill font-mono">{t}</span>
-            ))}
-          </div>
-
-          <div className="project-actions">
-            {project.github && project.github !== '#' && (
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="project-action-btn"
-                aria-label={`View ${project.title} on GitHub`}
-              >
-                <GithubIcon />
-                <span>Code</span>
-              </a>
-            )}
-            {project.link && project.link !== '#' && (
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="project-action-btn"
-                aria-label={`Open Live Project of ${project.title}`}
-              >
-                <ExternalLink className="w-3 h-3" />
-                <span>Demo</span>
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─── Main Projects Redesign Component ───────────────────────────────── */
 export default function Projects() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const categories = [
-    { id: 'all',      label: 'ALL' },
-    { id: 'web',      label: 'WEB' },
-    { id: 'systems',  label: 'SYSTEMS' },
-    { id: 'creative', label: 'CREATIVE' },
-  ];
-
-  const filtered = selectedCategory === 'all'
-    ? projectsData
-    : projectsData.filter(p => p.category === selectedCategory);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeProject = projectsData[activeIndex];
 
   return (
-    <section id="projects" aria-label="Featured Projects" className="projects-section">
-      <div className="section-intro">
-        <motion.p
-          className="section-eyebrow"
-          initial={{ opacity: 0, x: -18 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        >
-          // 01 / SELECTED WORK
-        </motion.p>
-        <TextReveal text="Featured Projects" className="section-title" tag="h2" delay={0.1} />
-      </div>
+    <section id="projects" aria-label="Featured Projects" className="projects-showcase-section">
+      <div className="showcase-container">
+        
+        {/* Left Side: Live Preview Area */}
+        <div className="showcase-preview-area">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeProject.title}
+              initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="showcase-visual-wrapper"
+            >
+              {/* Huge Background Watermark */}
+              <div className="showcase-watermark">
+                {String(activeIndex + 1).padStart(2, '0')}
+              </div>
 
-      {/* Filters strip */}
-      <motion.div
-        className="proj-filters"
-        initial={{ opacity: 0, y: 14 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.1 }}
-      >
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            className={`proj-filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(cat.id)}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </motion.div>
+              <div className="showcase-visual-bg">
+                <ProjectVisual type={activeProject.previewType} />
+              </div>
+              
+              <div className="showcase-project-details-overlay">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+                  className="showcase-details-content"
+                >
+                  <div className="showcase-tags">
+                    {activeProject.tags.map(t => (
+                      <span key={t} className="showcase-tag font-mono">{t}</span>
+                    ))}
+                  </div>
 
-      {/* Elegant Bento Box Grid */}
-      <div className="projects-bento-grid">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((project, idx) => {
-            // Determine if card should be wide. 
-            // If all 4 are shown, index 0 and 3 are wide.
-            // If filtered, we can just make every other one wide or dynamically calculate.
-            const isWide = filtered.length > 2 ? (idx === 0 || idx === 3) : true;
-            return (
-              <ProjectCard
-                key={project.title}
-                project={project}
-                index={idx}
-                isWide={isWide}
-              />
-            );
-          })}
-        </AnimatePresence>
+                  <p className="showcase-desc">{activeProject.desc}</p>
+
+                  <div className="showcase-actions">
+                    {activeProject.github && activeProject.github !== '#' && (
+                      <a href={activeProject.github} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-ghost" aria-label={`View ${activeProject.title} on GitHub`}>
+                        <GithubIcon /> <span>Source Code</span>
+                      </a>
+                    )}
+                    {activeProject.link && activeProject.link !== '#' && (
+                      <a href={activeProject.link} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-primary" aria-label={`Open Live Project of ${activeProject.title}`}>
+                        <span>Live Preview</span> <ArrowRight className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Right Side: Vertical Navigation */}
+        <div className="showcase-navigation-area">
+          <div className="showcase-header">
+            <motion.p
+              className="section-eyebrow"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              // 01 / SELECTED WORK
+            </motion.p>
+            <TextReveal text="Product Showcase" className="showcase-title" tag="h2" delay={0.1} />
+          </div>
+
+          <div className="showcase-list">
+            {projectsData.map((project, idx) => {
+              const isActive = idx === activeIndex;
+              return (
+                <div 
+                  key={project.title}
+                  className={`showcase-list-item ${isActive ? 'active' : ''}`}
+                  onMouseEnter={() => setActiveIndex(idx)}
+                  onClick={() => setActiveIndex(idx)}
+                >
+                  <span className="showcase-item-num font-mono">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="showcase-item-title">{project.title}</h3>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
     </section>
   );

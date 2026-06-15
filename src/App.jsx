@@ -12,7 +12,6 @@ import CatCompanion from './components/CatCompanion'
 import RippleEffect from './components/RippleEffect'
 import PageSpotlight from './components/PageSpotlight'
 import ScrollProgress from './components/ScrollProgress'
-import PixelBat from './components/PixelBat'
 import FloatingIcons from './components/FloatingIcons'
 
 function App() {
@@ -40,9 +39,6 @@ function App() {
       <ScrollProgress />
       <PageSpotlight />
       <div id="bg-layer"></div>
-      <div className="bat-wrapper global-bat">
-        <PixelBat />
-      </div>
       <a className="skip-link" href="#main">Skip to main content</a>
       <Preloader />
       <CustomCursor />
