@@ -24,6 +24,7 @@ export const projectsData = [
     year: '2024',
     desc: 'A dynamic, professional CV generator built with TypeScript. It provides a robust, user-friendly interface to instantly construct, preview, and export clean resumes with customizable load-bearing structural layouts.',
     tags: ['TypeScript', 'Web'],
+    stack: ['TypeScript', 'React', 'Tailwind CSS'],
     github: 'https://github.com/devashmit/BerojgarCv',
     category: 'web',
     previewType: 'cv-flow'
@@ -33,6 +34,7 @@ export const projectsData = [
     year: '2024',
     desc: 'A serene, interactive canvas experience designed to let users procedurally generate beautiful, hand-drawn digital flower arrangements through advanced creative coding and algorithmic geometry.',
     tags: ['Canvas API', 'Creative Coding'],
+    stack: ['HTML5', 'TypeScript', 'Vite'],
     github: 'https://github.com/devashmit/Devs-bouquet',
     category: 'creative',
     previewType: 'flower-bloom'
@@ -42,6 +44,7 @@ export const projectsData = [
     year: '2024',
     desc: 'An immersive digital ecosystem where users can plant and observe procedural floral physics. Built entirely on the HTML5 Canvas API, it simulates fluid wind dynamics and organic growth in real-time.',
     tags: ['Canvas', 'Interactive'],
+    stack: ['HTML5', 'Node.js'],
     github: '#',
     category: 'creative',
     previewType: 'floating-petals'
@@ -51,6 +54,7 @@ export const projectsData = [
     year: '2025',
     desc: 'A comprehensive productivity companion application actively in development. Designed to streamline task execution by integrating contextual data processing within a highly efficient, responsive node-tracking network.',
     tags: ['WIP', 'Systems'],
+    stack: ['Next.js', 'MongoDB', 'Node.js', 'Tailwind CSS'],
     github: 'https://github.com/devashmit/SYP',
     category: 'systems',
     previewType: 'node-network'
