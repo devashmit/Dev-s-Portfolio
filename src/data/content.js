@@ -58,6 +58,17 @@ export const projectsData = [
     github: 'https://github.com/devashmit/SYP',
     category: 'systems',
     previewType: 'node-network'
+  },
+  {
+    title: 'Dollar Colony',
+    year: '2024',
+    desc: 'A resource management colony-builder game and financial simulator. It provides players with real-time economic telemetry to construct colonies, optimize supply chains, and balance budgets.',
+    tags: ['Simulation', 'Web'],
+    stack: ['React', 'Tailwind CSS', 'Vite'],
+    github: 'https://github.com/devashmit/dollarcolony',
+    link: 'https://dollarcolony.vercel.app',
+    category: 'web',
+    previewType: 'dollar-colony'
   }
 ];
 
