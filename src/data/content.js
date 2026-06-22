@@ -66,7 +66,7 @@ export const projectsData = [
     tags: ['Simulation', 'Web'],
     stack: ['React', 'Tailwind CSS', 'Vite'],
     github: 'https://github.com/devashmit/dollarcolony',
-    link: 'https://dollarcolony.vercel.app',
+    link: 'https://dollarscolony1.vercel.app/',
     category: 'web',
     previewType: 'dollar-colony'
   }
