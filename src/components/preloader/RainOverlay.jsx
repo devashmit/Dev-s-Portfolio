@@ -18,40 +18,56 @@ export default function RainOverlay() {
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    const maxDrops = 100;
+    const maxDrops = 70;
     const drops = [];
 
     for (let i = 0; i < maxDrops; i++) {
+      const depth = Math.random();
       drops.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height - canvas.height,
-        vy: 10 + Math.random() * 15,
-        len: 8 + Math.random() * 12,
-        opacity: 0.1 + Math.random() * 0.4
+        vy: 6 + depth * 8,       // Slower velocity
+        vx: -0.8 - depth * 1.2,   // Slower wind drift
+        len: 12 + depth * 22,     // Slightly shorter streaks for slower rain
+        width: 0.5 + depth * 1.0,
+        opacity: 0.05 + depth * 0.22,
+        depth
       });
     }
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(4, 4, 4, 0.2)'; // Clear with trail effect
+      ctx.fillStyle = 'rgba(9, 9, 11, 0.2)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = 'rgba(255, 27, 45, 0.35)'; // Crimson rain drops
-      ctx.lineWidth = 1.2;
 
       for (let i = 0; i < maxDrops; i++) {
         const d = drops[i];
+        
+        const gradient = ctx.createLinearGradient(d.x, d.y, d.x + d.vx, d.y + d.len);
+        gradient.addColorStop(0, 'rgba(239, 68, 68, 0)');
+        gradient.addColorStop(0.5, `rgba(239, 68, 68, ${d.opacity})`);
+        gradient.addColorStop(1, `rgba(244, 63, 94, ${d.opacity * 1.5})`);
+
         ctx.beginPath();
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = d.width;
+        ctx.lineCap = 'round';
         ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x, d.y + d.len);
+        ctx.lineTo(d.x + d.vx, d.y + d.len);
         ctx.stroke();
 
         d.y += d.vy;
+        d.x += d.vx;
 
-        if (d.y > canvas.height) {
-          d.x = Math.random() * canvas.width;
+        if (d.y > canvas.height || d.x < -d.len) {
+          d.x = Math.random() * (canvas.width + 100);
           d.y = -d.len;
-          d.vy = 10 + Math.random() * 15;
-          d.len = 8 + Math.random() * 12;
+          const depth = Math.random();
+          d.vy = 6 + depth * 8;
+          d.vx = -0.8 - depth * 1.2;
+          d.len = 12 + depth * 22;
+          d.width = 0.5 + depth * 1.0;
+          d.opacity = 0.05 + depth * 0.22;
+          d.depth = depth;
         }
       }
 

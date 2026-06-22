@@ -1,56 +1,63 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
-export default function IdentityReveal() {
+export default function IdentityReveal({ progress, activeLogs = [], isLoaded, onComplete }) {
   return (
-    <div className="identity-reveal-container">
-      {/* Verification State */}
-      <div className="identity-status-wrapper">
-        <span className="identity-badge-glow"></span>
-        <span className="identity-status-text">IDENTITY DETECTED</span>
-      </div>
+    <div className="glass-compiler-card">
 
-      {/* Holographic Central Emblem */}
-      <div className="identity-emblem-wrapper">
-        <div className="concentric-ring ring-outer"></div>
-        <div className="concentric-ring ring-middle"></div>
-        <div className="concentric-ring ring-inner"></div>
-        
-        {/* Emblem Core SVG */}
-        <div className="emblem-core">
-          <svg viewBox="0 0 100 100" width="80" height="80" className="emblem-svg">
-            {/* Sci-fi geometric emblem: overlapping triangles & hexagon */}
-            <polygon points="50,5 90,25 90,75 50,95 10,75 10,25" className="emblem-poly-outer" />
-            <polygon points="50,15 80,32 80,68 50,85 20,68 20,32" className="emblem-poly-inner" />
-            <circle cx="50" cy="50" r="10" className="emblem-circle-core" />
-            <path d="M 50,15 L 50,85 M 20,32 L 80,68 M 20,68 L 80,32" className="emblem-grid-lines" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Primary Bio Info */}
+      {/* Details Header */}
       <div className="identity-details">
         <h1 className="identity-name">ASHMIT DEV</h1>
         <h2 className="identity-role">FULL STACK DEVELOPER</h2>
-        <p className="identity-description">
-          Building scalable, high-performance digital experiences.
-        </p>
       </div>
 
-      {/* Final Action Controls */}
-      <div className="identity-actions">
-        <button className="preloader-cta-btn" onClick={() => {
-          // Immediately dispatch completion
-          document.dispatchEvent(new CustomEvent('preloader:complete'));
-        }}>
-          Explore My Work <span className="btn-arrow">→</span>
-        </button>
+      <div className="compiler-divider"></div>
 
-        <div className="scroll-indicator-wrapper">
-          <div className="mouse-icon">
-            <div className="mouse-wheel"></div>
+      {/* Terminal logs panel */}
+      <div className="compiler-terminal">
+        {activeLogs.map((log, idx) => {
+          const isActive = idx === activeLogs.length - 1;
+          return (
+            <div key={idx} className={`compiler-log-line ${isActive ? 'active' : ''}`}>
+              <span className="log-prefix">&gt;</span>
+              {log}
+            </div>
+          );
+        })}
+        {activeLogs.length === 0 && (
+          <div className="compiler-log-line">
+            <span className="log-prefix">&gt;</span>
+            <span className="blinking-cursor">▮</span>
           </div>
-          <span className="scroll-text">SYSTEM READY</span>
-        </div>
+        )}
+      </div>
+
+      {/* Progress & Launch Button Area */}
+      <div className="compiler-ready-container">
+        {!isLoaded ? (
+          <div className="compiler-progress-wrapper">
+            <div className="compiler-progress-track">
+              <div 
+                className="compiler-progress-fill" 
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+            <div className="compiler-progress-meta">
+              <span>COMPILING SYSTEM</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+          </div>
+        ) : (
+          <motion.button 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="preloader-cta-btn" 
+            onClick={onComplete}
+          >
+            Launch Interface <span className="btn-arrow">→</span>
+          </motion.button>
+        )}
       </div>
     </div>
   );
