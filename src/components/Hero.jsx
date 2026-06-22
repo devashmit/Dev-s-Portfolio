@@ -164,6 +164,31 @@ export default function Hero() {
               <a className="btn btn-primary" href="#projects">View Work</a>
             </Magnetic>
             <Magnetic>
+              <a 
+                className="btn btn-accent btn-game-trigger" 
+                href="#stack"
+                style={{
+                  borderColor: '#f43f5e',
+                  background: 'linear-gradient(135deg, rgba(244,63,94,0.2) 0%, rgba(225,29,72,0.1) 100%)',
+                  color: '#f43f5e',
+                  boxShadow: '0 0 15px rgba(244,63,94,0.15)',
+                  fontWeight: 600
+                }}
+                onClick={(e) => {
+                  const target = document.querySelector('#stack');
+                  if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                  }
+                  setTimeout(() => {
+                    document.dispatchEvent(new CustomEvent('console:open_game'));
+                  }, 450);
+                }}
+              >
+                🎮 Gravity Composer
+              </a>
+            </Magnetic>
+            <Magnetic>
               <a className="btn btn-accent" href="/Ashmit_Dev_CV.pdf" download="Ashmit_Dev_CV.pdf">Download CV &#8595;</a>
             </Magnetic>
             <Magnetic>

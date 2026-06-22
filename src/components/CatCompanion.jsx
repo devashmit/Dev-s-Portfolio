@@ -130,6 +130,34 @@ export default function CatCompanion() {
         catY += (targetY - catY) * chaseSpeed;
       }
 
+      // Keep cat outside the active game canvas box if it exists
+      const gameBox = document.querySelector('.physics-canvas');
+      if (gameBox) {
+        const rect = gameBox.getBoundingClientRect();
+        const margin = 55; // Keep the 90px cat fully outside
+        const boxLeft = rect.left - margin;
+        const boxRight = rect.right + margin;
+        const boxTop = rect.top - margin;
+        const boxBottom = rect.bottom + margin;
+
+        if (catX > boxLeft && catX < boxRight && catY > boxTop && catY < boxBottom) {
+          const dl = catX - boxLeft;
+          const dr = boxRight - catX;
+          const dt = catY - boxTop;
+          const db = boxBottom - catY;
+          const minDist = Math.min(dl, dr, dt, db);
+          if (minDist === dl) {
+            catX = boxLeft;
+          } else if (minDist === dr) {
+            catX = boxRight;
+          } else if (minDist === dt) {
+            catY = boxTop;
+          } else {
+            catY = boxBottom;
+          }
+        }
+      }
+
       // Position the cat companion
       cat.style.transform = `translate(-50%, -50%) translate(${catX}px, ${catY}px) scale(${catScaleX * catScale}, ${catScale})`;
 
