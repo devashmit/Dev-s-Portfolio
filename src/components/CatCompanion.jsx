@@ -130,15 +130,33 @@ export default function CatCompanion() {
         catY += (targetY - catY) * chaseSpeed;
       }
 
-      // Keep cat outside the active game canvas box if it exists
-      const gameBox = document.querySelector('.physics-canvas');
+      // Keep cat outside the active game window/workspace if it exists
+      const isPlayingGame = document.querySelector('.game-canvas');
+      const gameBox = isPlayingGame 
+        ? document.querySelector('.ide-window') 
+        : document.querySelector('.game-canvas, .physics-canvas, .canvas-container');
+
       if (gameBox) {
         const rect = gameBox.getBoundingClientRect();
-        const margin = 55; // Keep the 90px cat fully outside
+        const margin = isPlayingGame ? 65 : 55; // Keep the cat fully outside the IDE frame or game canvas
         const boxLeft = rect.left - margin;
         const boxRight = rect.right + margin;
         const boxTop = rect.top - margin;
         const boxBottom = rect.bottom + margin;
+
+        if (isPlayingGame && Math.random() < 0.01) {
+          console.log("COLLISION DEBUG:", {
+            isPlayingGame: !!isPlayingGame,
+            gameBoxClass: gameBox.className,
+            rect,
+            catX,
+            catY,
+            boxLeft,
+            boxRight,
+            boxTop,
+            boxBottom
+          });
+        }
 
         if (catX > boxLeft && catX < boxRight && catY > boxTop && catY < boxBottom) {
           const dl = catX - boxLeft;
