@@ -20,115 +20,28 @@ const GithubIcon = () => (
   </svg>
 );
 
-const CvFlowVisual = () => {
-  return (
-    <div className="bento-visual cv-flow-container">
-      <div className="cv-flow-card">
-        <div className="cv-flow-header">
-          <div className="cv-flow-avatar"></div>
-          <div className="cv-flow-meta">
-            <div className="cv-line-1"></div>
-            <div className="cv-line-2"></div>
-          </div>
-        </div>
-        <div className="cv-flow-body">
-          <div className="cv-left">
-            <div className="cv-bar-1"></div>
-            <div className="cv-bar-2"></div>
-          </div>
-          <div className="cv-right">
-            <div className="cv-node"></div>
-            <div className="cv-node"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const FlowerBloomVisual = () => {
-  return (
-    <div className="bento-visual flower-bloom-container">
-      <svg viewBox="0 0 200 200" className="flower-bloom-svg">
-        {[...Array(8)].map((_, i) => (
-          <path
-            key={i}
-            d="M 100 100 C 130 50, 150 70, 100 160 C 50 70, 70 50, 100 100 Z"
-            fill="rgba(255, 27, 45, 0.25)"
-            stroke="var(--pre-accent)"
-            strokeWidth="0.5"
-            transform={`rotate(${i * 45} 100 100)`}
-          />
-        ))}
-        <circle cx="100" cy="100" r="10" fill="var(--pre-accent)" />
-      </svg>
-    </div>
-  );
-};
-
-const FloatingPetalsVisual = () => {
-  return (
-    <div className="bento-visual floating-petals-container">
-      <div className="petal-flow-1"></div>
-      <div className="petal-flow-2"></div>
-      <div className="petal-flow-3"></div>
-    </div>
-  );
-};
-
-const NodeNetworkVisual = () => {
-  return (
-    <div className="bento-visual node-network-container">
-      <svg viewBox="0 0 200 200" className="network-svg">
-        <line x1="50" y1="50" x2="150" y2="70" stroke="rgba(255,27,45,0.2)" strokeWidth="1" />
-        <line x1="150" y1="70" x2="100" y2="150" stroke="rgba(255,27,45,0.2)" strokeWidth="1" />
-        <line x1="100" y1="150" x2="50" y2="50" stroke="rgba(255,27,45,0.2)" strokeWidth="1" />
-        <line x1="50" y1="50" x2="100" y2="100" stroke="rgba(255,27,45,0.2)" strokeWidth="1" />
-        <line x1="150" y1="70" x2="100" y2="100" stroke="rgba(255,27,45,0.2)" strokeWidth="1" />
-        
-        <circle cx="50" cy="50" r="5" fill="var(--pre-accent)" className="net-node" />
-        <circle cx="150" cy="70" r="5" fill="var(--pre-accent)" className="net-node" />
-        <circle cx="100" cy="150" r="5" fill="var(--pre-accent)" className="net-node" />
-        <circle cx="100" cy="100" r="4" fill="#ffffff" className="net-node" />
-      </svg>
-    </div>
-  );
-};
-
-const DollarColonyVisual = () => {
-  return (
-    <div className="bento-visual dollar-colony-container">
-      <div className="colony-grid">
-        <div className="colony-tile t-1"></div>
-        <div className="colony-tile t-2"></div>
-        <div className="colony-tile t-3"></div>
-        <div className="colony-tile t-4"></div>
-        
-        <svg viewBox="0 0 100 100" className="colony-svg-wires">
-          <path d="M20,50 L50,20 L80,50 L50,80 Z" fill="none" stroke="rgba(255, 27, 45, 0.4)" strokeWidth="0.8" />
-          <circle cx="50" cy="20" r="2" fill="var(--pre-accent)" className="colony-pulse" />
-          <circle cx="80" cy="50" r="2" fill="var(--pre-accent)" className="colony-pulse-2" />
-        </svg>
-      </div>
-    </div>
-  );
-};
-
 const ProjectVisual = ({ type }) => {
-  switch (type) {
-    case 'cv-flow':
-      return <CvFlowVisual />;
-    case 'flower-bloom':
-      return <FlowerBloomVisual />;
-    case 'floating-petals':
-      return <FloatingPetalsVisual />;
-    case 'node-network':
-      return <NodeNetworkVisual />;
-    case 'dollar-colony':
-      return <DollarColonyVisual />;
-    default:
-      return <div className="bento-visual generic"></div>;
-  }
+  const images = {
+    'cv-flow': '/images/berojgar-cv.png',
+    'flower-bloom': '/images/devs-bouquet.png',
+    'floating-petals': '/images/virtual-petals.png',
+    'node-network': '/images/sahayogi.png',
+    'dollar-colony': '/images/dollar-colony.png'
+  };
+
+  const src = images[type] || '/images/cyberpunk-skyline.png';
+
+  return (
+    <div className="bento-visual project-image-visual w-full h-full relative overflow-hidden">
+      <img src={src} alt={type} className="w-full h-full object-cover" style={{ filter: 'brightness(0.9) contrast(1.1)' }} />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-transparent opacity-60"></div>
+      <div className="absolute inset-0 border border-white/5 pointer-events-none"></div>
+      {/* Sci-fi Overlay Detail */}
+      <div className="absolute top-2 left-2 text-[8px] font-mono opacity-40 text-white tracking-widest uppercase">
+        {type} // SCAN_ACTIVE
+      </div>
+    </div>
+  );
 };
 
 export default function Projects() {
@@ -249,7 +162,7 @@ export default function Projects() {
                     onClick={() => selectProject(idx)}
                     className={`project-wheel-node ${isActive ? 'active' : ''}`}
                     style={{
-                      transform: `rotate(${angle}deg) translateY(-145px) rotate(-${angle}deg)`
+                      transform: `rotate(${angle}deg) translateY(var(--translate-y, -145px)) rotate(-${angle}deg)`
                     }}
                     aria-label={`Select project ${proj.title}`}
                   >
