@@ -108,120 +108,115 @@ const developerProfileCode = [
   { text: "\n}", type: "punctuation" }
 ];
 
-function GravityComposer({ onPlayNote }) {
+function CyberWorm({ onPlayNote }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
-  
-  const [preset, setPreset] = useState('pluck'); // 'pluck', 'chime', '8bit'
-  const [gravity, setGravity] = useState(0.3);
-  const [ballCount, setBallCount] = useState(3);
-  const [activeLinesCount, setActiveLinesCount] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isIntersecting, setIsIntersecting] = useState(true);
 
-  // Pentatonic scale frequencies
-  const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00];
-
-  // Refs for loop variables (to prevent stale closures in requestAnimationFrame)
-  const stateRef = useRef({
-    balls: [],
-    lines: [],
-    particles: [],
-    drawingLine: null,
-    preset: 'pluck',
-    gravity: 0.3,
-    scale,
-    isMuted: false,
-    isIntersecting: true
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    try {
+      return parseInt(localStorage.getItem('cyberworm_highscore') || '0', 10);
+    } catch {
+      return 0;
+    }
   });
+  const [speed, setSpeed] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [gameState, setGameState] = useState('playing'); // 'playing', 'loss'
 
-  // Intersection Observer to mute sound and pause simulation when out of view
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
-      },
-      { threshold: 0.05 }
-    );
-
-    observer.observe(container);
-    return () => {
-      observer.unobserve(container);
-    };
-  }, []);
+  // Grid settings
+  const GRID_SIZE_X = 40;
+  const GRID_SIZE_Y = 22;
+  
+  const stateRef = useRef({
+    snake: [
+      { x: 10, y: 10 },
+      { x: 9, y: 10 },
+      { x: 8, y: 10 }
+    ],
+    direction: { x: 1, y: 0 },
+    nextDirection: { x: 1, y: 0 },
+    food: { x: 25, y: 10 },
+    particles: [],
+    score: 0,
+    highScore: 0,
+    speedLevel: 1,
+    isMuted: false,
+    gameLoopDelay: 110 // ms per frame
+  });
 
   // Sync state refs
   useEffect(() => {
-    stateRef.current.preset = preset;
-    stateRef.current.gravity = gravity;
     stateRef.current.isMuted = isMuted;
-    stateRef.current.isIntersecting = isIntersecting;
-  }, [preset, gravity, isMuted, isIntersecting]);
+    stateRef.current.score = score;
+    stateRef.current.highScore = highScore;
+    stateRef.current.speedLevel = speed;
+    stateRef.current.gameLoopDelay = Math.max(50, 115 - speed * 8);
+  }, [isMuted, score, highScore, speed]);
 
-  // Audio trigger
-  let audioCtx = null;
-  const triggerSynth = (freq) => {
-    if (stateRef.current.isMuted || !stateRef.current.isIntersecting) return;
+  // Web Audio Synth
+  const playSound = (type) => {
+    if (stateRef.current.isMuted) return;
     try {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-      const p = stateRef.current.preset;
-      if (p === 'chime') {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (type === 'turn') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
         osc.type = 'sine';
-        gain.gain.setValueAtTime(0, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
-        osc.start(audioCtx.currentTime);
-        osc.stop(audioCtx.currentTime + 1.3);
-      } else if (p === '8bit') {
-        osc.type = 'square';
-        gain.gain.setValueAtTime(0, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
-        osc.start(audioCtx.currentTime);
-        osc.stop(audioCtx.currentTime + 0.25);
-      } else { // pluck
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+      } else if (type === 'eat') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
         osc.type = 'triangle';
-        gain.gain.setValueAtTime(0, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
-        osc.start(audioCtx.currentTime);
-        osc.stop(audioCtx.currentTime + 0.65);
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.22);
+        if (onPlayNote) onPlayNote(659.25);
+      } else if (type === 'crash') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.35);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+        if (onPlayNote) onPlayNote(100);
+      } else if (type === 'highscore') {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          o.type = 'sine';
+          o.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.07);
+          g.gain.setValueAtTime(0, audioCtx.currentTime);
+          g.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + idx * 0.07 + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + idx * 0.07 + 0.3);
+          o.start(audioCtx.currentTime + idx * 0.07);
+          o.stop(audioCtx.currentTime + idx * 0.07 + 0.35);
+        });
       }
-
-      if (onPlayNote) onPlayNote(freq);
     } catch (e) {
-      console.warn("Audio Context init blocked by browser autoplay policy.");
+      console.warn("Audio Context init blocked.", e);
     }
   };
 
-  // Math helper: closest point on segment
-  const getClosestPointOnSegment = (bx, by, x1, y1, x2, y2) => {
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const lenSq = dx * dx + dy * dy;
-    if (lenSq === 0) return { x: x1, y: y1, t: 0 };
-    let t = ((bx - x1) * dx + (by - y1) * dy) / lenSq;
-    t = Math.max(0, Math.min(1, t));
-    return { x: x1 + t * dx, y: y1 + t * dy, t };
-  };
-
-  // Spawns particle burst
-  const spawnBurst = (x, y, color) => {
+  const spawnSparks = (x, y, color) => {
     for (let i = 0; i < 8; i++) {
       const angle = Math.random() * Math.PI * 2;
       const speed = Math.random() * 2 + 1;
@@ -230,351 +225,286 @@ function GravityComposer({ onPlayNote }) {
         y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        alpha: 1,
+        alpha: 1.0,
         color,
         size: Math.random() * 2 + 1
       });
     }
   };
 
-  // Canvas Resize and Loop management
+  const generateFood = (snake) => {
+    let newFood;
+    let overlapping = true;
+    while (overlapping) {
+      newFood = {
+        x: Math.floor(Math.random() * GRID_SIZE_X),
+        y: Math.floor(Math.random() * GRID_SIZE_Y)
+      };
+      overlapping = snake.some(s => s.x === newFood.x && s.y === newFood.y);
+    }
+    return newFood;
+  };
+
+  const resetGame = () => {
+    stateRef.current.snake = [
+      { x: 10, y: 10 },
+      { x: 9, y: 10 },
+      { x: 8, y: 10 }
+    ];
+    stateRef.current.direction = { x: 1, y: 0 };
+    stateRef.current.nextDirection = { x: 1, y: 0 };
+    stateRef.current.food = generateFood(stateRef.current.snake);
+    stateRef.current.particles = [];
+    setScore(0);
+    setSpeed(1);
+    setGameState('playing');
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const state = stateRef.current;
+      const dir = state.direction;
+      let newDir = null;
+
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          if (dir.y === 0) newDir = { x: 0, y: -1 };
+          e.preventDefault();
+          break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          if (dir.y === 0) newDir = { x: 0, y: 1 };
+          e.preventDefault();
+          break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          if (dir.x === 0) newDir = { x: -1, y: 0 };
+          e.preventDefault();
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          if (dir.x === 0) newDir = { x: 1, y: 0 };
+          e.preventDefault();
+          break;
+        default:
+          break;
+      }
+
+      if (newDir) {
+        state.nextDirection = newDir;
+        playSound('turn');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Main Canvas & Game Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const handleResize = () => {
       if (!canvas || !canvas.parentNode) return;
       const rect = canvas.parentNode.getBoundingClientRect();
       const dpi = window.devicePixelRatio || 1;
       canvas.width = rect.width * dpi;
       canvas.height = Math.max(320, rect.height) * dpi;
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${Math.max(320, rect.height)}px`;
       ctx.scale(dpi, dpi);
     };
-
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    // Initial setup: add a couple of starting helper lines to bounce off immediately!
-    setTimeout(() => {
-      if (!canvas || !canvas.parentNode) return;
-      const rect = canvas.parentNode.getBoundingClientRect();
-      const w = rect.width;
-      const h = Math.max(320, rect.height);
-      stateRef.current.lines = [
-        { x1: w * 0.2, y1: h * 0.4, x2: w * 0.45, y2: h * 0.52, flash: 0 },
-        { x1: w * 0.8, y1: h * 0.45, x2: w * 0.55, y2: h * 0.58, flash: 0 },
-        { x1: w * 0.35, y1: h * 0.72, x2: w * 0.65, y2: h * 0.72, flash: 0 }
-      ];
-      setActiveLinesCount(3);
-    }, 100);
-
     let animationFrameId;
-    let spawnTimer = 0;
+    let lastTickTime = 0;
 
-    const loop = () => {
-      if (!canvas || !canvas.parentNode) return;
+    const render = (timestamp) => {
       const state = stateRef.current;
-      if (!state.isIntersecting) {
-        animationFrameId = requestAnimationFrame(loop);
-        return;
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
+      
+      const cellW = width / GRID_SIZE_X;
+      const cellH = height / GRID_SIZE_Y;
+
+      if (gameState === 'playing' && timestamp - lastTickTime > state.gameLoopDelay) {
+        lastTickTime = timestamp;
+
+        state.direction = state.nextDirection;
+
+        const head = state.snake[0];
+        const newHead = {
+          x: head.x + state.direction.x,
+          y: head.y + state.direction.y
+        };
+
+        if (newHead.x < 0 || newHead.x >= GRID_SIZE_X || newHead.y < 0 || newHead.y >= GRID_SIZE_Y) {
+          setGameState('loss');
+          playSound('crash');
+          return;
+        }
+
+        const bitSelf = state.snake.some((s, idx) => idx > 0 && s.x === newHead.x && s.y === newHead.y);
+        if (bitSelf) {
+          setGameState('loss');
+          playSound('crash');
+          return;
+        }
+
+        state.snake.unshift(newHead);
+
+        if (newHead.x === state.food.x && newHead.y === state.food.y) {
+          playSound('eat');
+          spawnSparks(state.food.x * cellW + cellW / 2, state.food.y * cellH + cellH / 2, '#06b6d4');
+          
+          setScore(prev => {
+            const next = prev + 100;
+            if (next > state.highScore) {
+              setHighScore(next);
+              localStorage.setItem('cyberworm_highscore', next.toString());
+            }
+            const nextLvl = Math.min(8, 1 + Math.floor(next / 800));
+            setSpeed(nextLvl);
+            return next;
+          });
+
+          state.food = generateFood(state.snake);
+        } else {
+          state.snake.pop();
+        }
       }
-      const rect = canvas.parentNode.getBoundingClientRect();
-      const width = rect.width;
-      const height = Math.max(320, rect.height);
+
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Spawning Logic
-      spawnTimer++;
-      if (state.balls.length < ballCount && spawnTimer > 75) {
-        state.balls.push({
-          x: width * 0.5 + (Math.random() - 0.5) * 40,
-          y: 20,
-          vx: (Math.random() - 0.5) * 3,
-          vy: 1,
-          radius: 6,
-          color: '#f43f5e'
-        });
-        spawnTimer = 0;
+      // Draw Grid Matrix Background Dots
+      ctx.fillStyle = 'rgba(6, 182, 212, 0.05)';
+      for (let x = 0; x < GRID_SIZE_X; x++) {
+        for (let y = 0; y < GRID_SIZE_Y; y++) {
+          ctx.beginPath();
+          ctx.arc(x * cellW + cellW / 2, y * cellH + cellH / 2, 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
-      // 2. Render Emitter
-      ctx.fillStyle = 'rgba(244, 63, 94, 0.15)';
+      // Draw Food (glowing data core)
+      const fx = state.food.x * cellW + cellW / 2;
+      const fy = state.food.y * cellH + cellH / 2;
+      const pulseSize = 4.5 + Math.sin(timestamp * 0.008) * 1.5;
+
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.18)';
       ctx.beginPath();
-      ctx.arc(width * 0.5, 20, 24, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#f43f5e';
-      ctx.beginPath();
-      ctx.arc(width * 0.5, 20, 5, 0, Math.PI * 2);
+      ctx.arc(fx, fy, pulseSize * 2, 0, Math.PI * 2);
       ctx.fill();
 
-      // 3. Update & Draw Particles
+      ctx.fillStyle = '#f43f5e';
+      ctx.shadowColor = '#f43f5e';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(fx, fy, pulseSize, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Draw Snake
+      state.snake.forEach((segment, idx) => {
+        const sx = segment.x * cellW + cellW / 2;
+        const sy = segment.y * cellH + cellH / 2;
+        const alpha = Math.max(0.22, 1 - (idx / state.snake.length) * 0.7);
+        const radius = Math.max(3, (cellW / 2 - 1) * (1 - (idx / state.snake.length) * 0.45));
+
+        ctx.fillStyle = idx === 0 ? '#00f0ff' : `rgba(6, 182, 212, ${alpha})`;
+        if (idx === 0) {
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 10;
+        }
+        ctx.beginPath();
+        ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // Draw Particles
       state.particles = state.particles.filter(p => {
         p.x += p.vx;
         p.y += p.vy;
         p.alpha -= 0.035;
         if (p.alpha <= 0) return false;
-        ctx.fillStyle = `rgba(244, 63, 94, ${p.alpha})`;
+        ctx.fillStyle = `rgba(6, 182, 212, ${p.alpha})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
         return true;
       });
 
-      // 4. Draw Lines
-      state.lines.forEach(line => {
-        if (line.flash > 0) line.flash -= 0.05;
-        ctx.lineWidth = line.flash > 0 ? 5 + line.flash * 4 : 3;
-        ctx.strokeStyle = line.flash > 0 ? `rgba(244, 63, 94, ${0.4 + line.flash * 0.6})` : 'rgba(255,255,255,0.22)';
-        ctx.shadowColor = '#f43f5e';
-        ctx.shadowBlur = line.flash > 0 ? line.flash * 15 : 0;
-        ctx.beginPath();
-        ctx.moveTo(line.x1, line.y1);
-        ctx.lineTo(line.x2, line.y2);
-        ctx.stroke();
-        ctx.shadowBlur = 0; // reset glow
-      });
-
-      // 5. Draw Active Preview Line
-      if (state.drawingLine) {
-        ctx.lineWidth = 2.5;
-        ctx.strokeStyle = 'rgba(244, 63, 94, 0.7)';
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.moveTo(state.drawingLine.x1, state.drawingLine.y1);
-        ctx.lineTo(state.drawingLine.x2, state.drawingLine.y2);
-        ctx.stroke();
-        ctx.setLineDash([]);
+      if (gameState === 'playing') {
+        animationFrameId = requestAnimationFrame(render);
       }
-
-      // 6. Update & Draw Balls
-      state.balls.forEach((ball, bIdx) => {
-        // Gravity acceleration
-        ball.vy += state.gravity;
-
-        // Position update
-        ball.x += ball.vx;
-        ball.y += ball.vy;
-
-        // Bounce walls
-        if (ball.x - ball.radius < 0) {
-          ball.x = ball.radius;
-          ball.vx = -ball.vx * 0.78;
-        } else if (ball.x + ball.radius > width) {
-          ball.x = width - ball.radius;
-          ball.vx = -ball.vx * 0.78;
-        }
-
-        if (ball.y - ball.radius < 0) {
-          ball.y = ball.radius;
-          ball.vy = -ball.vy * 0.78;
-        }
-
-        // Bottom hit trigger (recycle ball)
-        if (ball.y - ball.radius > height) {
-          // Play a baseline pad note
-          const padIdx = Math.floor((ball.x / width) * 5);
-          const baseFreq = scale[Math.min(padIdx, 4)];
-          triggerSynth(baseFreq);
-          spawnBurst(ball.x, height - 10, '#f43f5e');
-
-          // Recycle
-          ball.x = width * 0.5 + (Math.random() - 0.5) * 40;
-          ball.y = 20;
-          ball.vx = (Math.random() - 0.5) * 3;
-          ball.vy = 1;
-          return;
-        }
-
-        // Segment Collisions
-        state.lines.forEach((line) => {
-          const closest = getClosestPointOnSegment(ball.x, ball.y, line.x1, line.y1, line.x2, line.y2);
-          const dx = ball.x - closest.x;
-          const dy = ball.y - closest.y;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist < ball.radius) {
-            // Normal vector pointing outwards from segment center to ball center
-            const nx = dist > 0 ? dx / dist : 0;
-            const ny = dist > 0 ? dy / dist : -1;
-
-            // Project ball outside of line to prevent sticking/collision loops
-            ball.x = closest.x + nx * (ball.radius + 0.5);
-            ball.y = closest.y + ny * (ball.radius + 0.5);
-
-            // Relative dot product
-            const dot = ball.vx * nx + ball.vy * ny;
-            if (dot < 0) {
-              // Elastic reflection: V' = V - 2(V.N)N
-              ball.vx = (ball.vx - 2 * dot * nx) * 0.85;
-              ball.vy = (ball.vy - 2 * dot * ny) * 0.85;
-
-              // Line flash feedback
-              line.flash = 1.0;
-
-              // Trigger Audio Note based on collision coordinate height
-              const hitHeightRatio = Math.max(0, Math.min(1, closest.y / height));
-              const noteIndex = Math.floor((1 - hitHeightRatio) * scale.length);
-              const targetNote = scale[Math.min(noteIndex, scale.length - 1)];
-              triggerSynth(targetNote);
-
-              // Visual sparks
-              spawnBurst(closest.x, closest.y, '#f43f5e');
-            }
-          }
-        });
-
-        // Draw Ball
-        ctx.fillStyle = '#f43f5e';
-        ctx.shadowColor = '#f43f5e';
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0; // reset
-      });
-
-      animationFrameId = requestAnimationFrame(loop);
     };
 
-    loop();
+    if (gameState === 'playing') {
+      animationFrameId = requestAnimationFrame(render);
+    }
 
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [ballCount]);
-
-  // Mouse / Pointer Event handlers
-  const handlePointerDown = (e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    stateRef.current.drawingLine = { x1: x, y1: y, x2: x, y2: y };
-  };
-
-  const handlePointerMove = (e) => {
-    const canvas = canvasRef.current;
-    const state = stateRef.current;
-    if (!canvas || !state.drawingLine) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    state.drawingLine.x2 = x;
-    state.drawingLine.y2 = y;
-  };
-
-  const handlePointerUp = (e) => {
-    const canvas = canvasRef.current;
-    const state = stateRef.current;
-    if (!canvas || !state.drawingLine) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const dx = x - state.drawingLine.x1;
-    const dy = y - state.drawingLine.y1;
-    const length = Math.hypot(dx, dy);
-
-    // If it's a drag segment, record it. If it is just a click, spawn a ball at that position!
-    if (length > 10) {
-      state.lines.push({
-        x1: state.drawingLine.x1,
-        y1: state.drawingLine.y1,
-        x2: x,
-        y2: y,
-        flash: 0
-      });
-      setActiveLinesCount(state.lines.length);
-    } else {
-      // Click spawning mechanics! Spawns directly at click location
-      state.balls.push({
-        x: state.drawingLine.x1,
-        y: state.drawingLine.y1,
-        vx: (Math.random() - 0.5) * 4,
-        vy: -2,
-        radius: 6,
-        color: '#f43f5e'
-      });
-    }
-
-    state.drawingLine = null;
-  };
-
-  const clearCanvas = () => {
-    stateRef.current.lines = [];
-    stateRef.current.balls = [];
-    setActiveLinesCount(0);
-  };
+  }, [gameState]);
 
   return (
     <div className="game-wrapper" ref={containerRef}>
-      {/* Synth Controls HUD */}
       <div className="game-hud">
-        <div className="hud-metric">
-          <span className="label">INSTRUMENT</span>
-          <div className="preset-selector-row mt-1">
-            <button className={`btn-preset ${preset === 'pluck' ? 'active' : ''}`} onClick={() => setPreset('pluck')}>PLUCK</button>
-            <button className={`btn-preset ${preset === 'chime' ? 'active' : ''}`} onClick={() => setPreset('chime')}>CHIME</button>
-            <button className={`btn-preset ${preset === '8bit' ? 'active' : ''}`} onClick={() => setPreset('8bit')}>8-BIT</button>
+        <div className="hud-left">
+          <div className="hud-item">
+            <span className="label">SCORE</span>
+            <span className="value text-accent">{score}</span>
+          </div>
+          <div className="hud-item">
+            <span className="label">HIGH SCORE</span>
+            <span className="value">{highScore}</span>
+          </div>
+          <div className="hud-item">
+            <span className="label">SPEED LEVEL</span>
+            <span className="value text-accent">{speed}</span>
           </div>
         </div>
-        <div className="hud-metric">
-          <span className="label">GRAVITY</span>
-          <span className="value text-accent font-mono">{(gravity * 10).toFixed(0)}x</span>
-          <input 
-            type="range" 
-            min="0" 
-            max="0.8" 
-            step="0.1" 
-            value={gravity} 
-            onChange={(e) => setGravity(parseFloat(e.target.value))} 
-            className="gravity-slider"
-          />
-        </div>
-        <div className="hud-metric">
-          <span className="label">BOUNCERS</span>
-          <span className="value font-mono">{activeLinesCount}</span>
-        </div>
-        <div className="hud-metric" style={{ alignItems: 'flex-end', flexDirection: 'row', gap: '0.5rem' }}>
+        <div className="hud-right">
           <button 
-            className={`btn btn-ghost text-[10px] font-mono py-1 px-2 border border-white/10 rounded ${isMuted ? 'text-accent border-accent/25 bg-accent/5' : 'text-ink-mid hover:text-white'}`} 
+            className={`btn btn-ghost text-[10px] py-1 px-2 border border-white/10 rounded mr-2 ${isMuted ? 'text-accent border-accent/25 bg-accent/5' : 'text-ink-mid hover:text-white'}`}
             onClick={() => setIsMuted(!isMuted)}
           >
             {isMuted ? '🔊 UNMUTE' : '🔇 MUTE'}
           </button>
-          <button className="btn btn-ghost btn-clear text-xs font-mono" onClick={clearCanvas}>
-            CLEAR ALL
+          <button className="btn btn-ghost text-xs border border-white/10 rounded py-1 px-2" onClick={resetGame}>
+            RESTART
           </button>
         </div>
       </div>
 
-      {/* Physics Canvas Viewport */}
       <div className="canvas-container relative flex-1">
-        <canvas
-          ref={canvasRef}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          className="physics-canvas cursor-crosshair w-full block rounded-lg bg-black/30 border border-white/5"
-          style={{ touchAction: 'none' }}
-        />
-        {activeLinesCount === 0 && (
-          <div className="canvas-instruction-overlay pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-            <p className="font-mono text-xs text-ink-dim tracking-wide">DRAG TO DRAW CHORD DEFLECTORS</p>
-            <p className="font-mono text-[0.65rem] text-ink-dim opacity-60 mt-1">CLICK ANYWHERE TO DROP GRAVITY NODES</p>
+        {gameState === 'loss' && (
+          <div className="game-overlay">
+            <h3 className="overlay-title loss">Worm Fragmented</h3>
+            <p className="overlay-desc">Buffer overflow. System connection lost.</p>
+            <button className="btn-game-action" onClick={resetGame}>REBOOT KERNEL (REPLAY)</button>
           </div>
         )}
+
+        <canvas
+          ref={canvasRef}
+          className="game-canvas"
+        />
       </div>
     </div>
   );
 }
+
+
 
 export default function SystemConsole() {
   const [activeFile, setActiveFile] = useState('app-router.ts');
@@ -917,10 +847,10 @@ export default function SystemConsole() {
             
             <div className="ide-editor-content">
               {activeFile === 'gravity-composer.exe' ? (
-                <GravityComposer onPlayNote={(freq) => {
+                <CyberWorm onPlayNote={(freq) => {
                   setDiagnosticLogs(prev => [
                     ...prev,
-                    `[AUDIO BOUNCE] Frequency triggered: ${freq} Hz`,
+                    `[UPLINK LAUNCH] Probe frequency / trajectory sync: ${freq} Hz`,
                   ].slice(-10));
                 }} />
               ) : (
