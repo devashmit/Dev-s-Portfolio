@@ -85,18 +85,50 @@ export default function Projects() {
               className="project-info-inner"
             >
               <div className="project-info-header">
-                <span className="project-info-year font-mono">{activeProject.year}</span>
-                <div className="project-info-tags">
+                <motion.span 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.05 }}
+                  className="project-info-year font-mono"
+                >
+                  {activeProject.year}
+                </motion.span>
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.08 }}
+                  className="project-info-tags"
+                >
                   {activeProject.tags.map((t) => (
                     <span key={t} className="project-info-tag font-mono">{t}</span>
                   ))}
-                </div>
+                </motion.div>
               </div>
 
-              <h3 className="project-info-title">{activeProject.title}</h3>
-              <p className="project-info-desc">{activeProject.desc}</p>
+              <motion.h3 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.12 }}
+                className="project-info-title"
+              >
+                {activeProject.title}
+              </motion.h3>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.18 }}
+                className="project-info-desc"
+              >
+                {activeProject.desc}
+              </motion.p>
 
-              <div className="project-info-stack">
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.24 }}
+                className="project-info-stack"
+              >
                 {activeProject.stack?.map((tech) => {
                   const techData = stackItems.find((item) => item.name === tech);
                   if (!techData) return null;
@@ -110,9 +142,14 @@ export default function Projects() {
                     </div>
                   );
                 })}
-              </div>
+              </motion.div>
 
-              <div className="project-info-actions">
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+                className="project-info-actions"
+              >
                 {activeProject.github && activeProject.github !== '#' && (
                   <Magnetic>
                     <a href={activeProject.github} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-ghost" aria-label={`View ${activeProject.title} on GitHub`}>
@@ -127,7 +164,7 @@ export default function Projects() {
                     </a>
                   </Magnetic>
                 )}
-              </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
 
@@ -162,7 +199,7 @@ export default function Projects() {
                     onClick={() => selectProject(idx)}
                     className={`project-wheel-node ${isActive ? 'active' : ''}`}
                     style={{
-                      transform: `rotate(${angle}deg) translateY(var(--translate-y, -145px)) rotate(-${angle}deg)`
+                      transform: `rotate(${angle}deg) translateY(var(--translate-y, -145px)) rotate(-${angle + rotationAngle}deg)`
                     }}
                     aria-label={`Select project ${proj.title}`}
                   >
@@ -178,10 +215,11 @@ export default function Projects() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.4 }}
+                  initial={{ opacity: 0, scale: 0.8, rotate: -8 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, rotate: 8 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
                   className="wheel-center-visual-wrapper"
                 >
                   <ProjectVisual type={activeProject.previewType} />

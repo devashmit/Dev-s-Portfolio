@@ -856,6 +856,27 @@ section:not(#hero){padding:min(6vh,3.5rem) min(5vw,4rem)}
   border-radius: 50%;
   border: 1px solid rgba(255, 27, 45, 0.05);
   pointer-events: none;
+  animation: spinClockwise 80s linear infinite;
+}
+
+.wheel-decor-ticks {
+  position: absolute;
+  width: 405px;
+  height: 405px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 27, 45, 0.08);
+  pointer-events: none;
+  animation: spinCounterClockwise 50s linear infinite;
+}
+
+@keyframes spinClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinCounterClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
 }
 
 /* =====================================================
