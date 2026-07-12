@@ -8,9 +8,10 @@ export default function Magnetic({ children }) {
   const handleMouse = (e) => {
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current.getBoundingClientRect();
-    const middleX = clientX - (left + width / 2);
-    const middleY = clientY - (top + height / 2);
-    setPosition({ x: middleX * 0.2, y: middleY * 0.2 });
+    const maxMove = 10;
+    const moveX = Math.max(-maxMove, Math.min(maxMove, middleX * 0.22));
+    const moveY = Math.max(-maxMove, Math.min(maxMove, middleY * 0.22));
+    setPosition({ x: moveX, y: moveY });
   };
 
   const reset = () => {

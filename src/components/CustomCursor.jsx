@@ -40,7 +40,7 @@ export default function CustomCursor() {
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
     document.documentElement.addEventListener('pointerenter', onPointerEnter);
 
-    const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .bento-card, .btn');
+    const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .bento-card, .btn, .project-wheel-node, .project-wheel-center, .showcase-btn, .keycap-container');
     
     const handleHoverEnter = () => {
       ring.classList.add('hover');
