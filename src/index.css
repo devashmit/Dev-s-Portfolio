@@ -5447,3 +5447,116 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   transform: translateY(-2px);
 }
 
+/* =====================================================
+   MOBILE RESPONSIVENESS AND TOUCH CONTROLS OVERRIDES
+   ===================================================== */
+
+/* 1. Mobile D-Pad Controls for CyberWorm */
+.mobile-dpad {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.dpad-row {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dpad-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(6, 182, 212, 0.18);
+  border: 1px solid rgba(6, 182, 212, 0.45);
+  color: #06b6d4;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: background-color 0.15s, transform 0.1s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.dpad-btn:active {
+  background: rgba(6, 182, 212, 0.5);
+  transform: scale(0.9);
+}
+
+/* 2. Extra Small Screens Projects Wheel Optimization */
+@media (max-width: 360px) {
+  .projects-radial-container {
+    width: 270px;
+    height: 270px;
+  }
+  .projects-radial-wheel {
+    width: 200px;
+    height: 200px;
+  }
+  .project-wheel-node {
+    width: 32px;
+    height: 32px;
+    font-size: 0.65rem;
+  }
+  .project-wheel-center {
+    width: 125px;
+    height: 125px;
+  }
+  .wheel-decor-ring {
+    width: 240px;
+    height: 240px;
+  }
+  .projects-radial-wheel .project-wheel-node {
+    --translate-y: -85px;
+  }
+}
+
+/* 3. Projects Info Actions responsiveness */
+@media (max-width: 480px) {
+  .project-info-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  .project-info-actions .showcase-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* 4. Keyboard Wrapper height crop on mobile to prevent huge margins */
+@media (max-width: 768px) {
+  .keyboard-chassis-wrapper {
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+}
+@media (max-width: 520px) {
+  .keyboard-chassis-wrapper {
+    height: 190px;
+  }
+}
+@media (max-width: 400px) {
+  .keyboard-chassis-wrapper {
+    height: 155px;
+  }
+}
+
+/* 5. Contact card text wrapping */
+.os-window-details p {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+

@@ -245,6 +245,57 @@ function CyberWorm({ onPlayNote }) {
     return newFood;
   };
 
+  const [isTouch, setIsTouch] = useState(false);
+  const touchStartRef = useRef(null);
+
+  useEffect(() => {
+    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  const handleDirectionChange = (newDir) => {
+    const state = stateRef.current;
+    const dir = state.direction;
+    if (newDir.x !== 0 && dir.x === 0) {
+      state.nextDirection = newDir;
+      playSound('turn');
+    } else if (newDir.y !== 0 && dir.y === 0) {
+      state.nextDirection = newDir;
+      playSound('turn');
+    }
+  };
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchStartRef.current) return;
+    const touch = e.touches[0];
+    const diffX = touch.clientX - touchStartRef.current.x;
+    const diffY = touch.clientY - touchStartRef.current.y;
+    const minSwipe = 30;
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      if (Math.abs(diffX) > minSwipe) {
+        if (diffX > 0) {
+          handleDirectionChange({ x: 1, y: 0 });
+        } else {
+          handleDirectionChange({ x: -1, y: 0 });
+        }
+        touchStartRef.current = null;
+      }
+    } else {
+      if (Math.abs(diffY) > minSwipe) {
+        if (diffY > 0) {
+          handleDirectionChange({ x: 0, y: 1 });
+        } else {
+          handleDirectionChange({ x: 0, y: -1 });
+        }
+        touchStartRef.current = null;
+      }
+    }
+  };
+
   const resetGame = () => {
     stateRef.current.snake = [
       { x: 10, y: 10 },
@@ -262,42 +313,33 @@ function CyberWorm({ onPlayNote }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      const state = stateRef.current;
-      const dir = state.direction;
-      let newDir = null;
-
       switch (e.key) {
         case 'ArrowUp':
         case 'w':
         case 'W':
-          if (dir.y === 0) newDir = { x: 0, y: -1 };
+          handleDirectionChange({ x: 0, y: -1 });
           e.preventDefault();
           break;
         case 'ArrowDown':
         case 's':
         case 'S':
-          if (dir.y === 0) newDir = { x: 0, y: 1 };
+          handleDirectionChange({ x: 0, y: 1 });
           e.preventDefault();
           break;
         case 'ArrowLeft':
         case 'a':
         case 'A':
-          if (dir.x === 0) newDir = { x: -1, y: 0 };
+          handleDirectionChange({ x: -1, y: 0 });
           e.preventDefault();
           break;
         case 'ArrowRight':
         case 'd':
         case 'D':
-          if (dir.x === 0) newDir = { x: 1, y: 0 };
+          handleDirectionChange({ x: 1, y: 0 });
           e.preventDefault();
           break;
         default:
           break;
-      }
-
-      if (newDir) {
-        state.nextDirection = newDir;
-        playSound('turn');
       }
     };
 
@@ -486,7 +528,11 @@ function CyberWorm({ onPlayNote }) {
         </div>
       </div>
 
-      <div className="canvas-container relative flex-1">
+      <div 
+        className="canvas-container relative flex-1"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      >
         {gameState === 'loss' && (
           <div className="game-overlay">
             <h3 className="overlay-title loss">Worm Fragmented</h3>
@@ -499,6 +545,17 @@ function CyberWorm({ onPlayNote }) {
           ref={canvasRef}
           className="game-canvas"
         />
+
+        {isTouch && (
+          <div className="mobile-dpad">
+            <button className="dpad-btn up" onClick={() => handleDirectionChange({ x: 0, y: -1 })}>▲</button>
+            <div className="dpad-row">
+              <button className="dpad-btn left" onClick={() => handleDirectionChange({ x: -1, y: 0 })}>◀</button>
+              <button className="dpad-btn down" onClick={() => handleDirectionChange({ x: 0, y: 1 })}>▼</button>
+              <button className="dpad-btn right" onClick={() => handleDirectionChange({ x: 1, y: 0 })}>▶</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
