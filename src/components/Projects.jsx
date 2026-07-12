@@ -46,6 +46,7 @@ const ProjectVisual = ({ type }) => {
 
 export default function Projects() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedProj, setSelectedProj] = useState(null);
   
   // Calculate rotation steps
   const totalProjects = projectsData.length;
@@ -64,6 +65,7 @@ export default function Projects() {
   };
 
   const activeProject = projectsData[activeIndex];
+  const customEase = [0.22, 1, 0.36, 1];
 
   return (
     <section id="projects" aria-label="Featured Projects" className="projects-wheel-section">
@@ -78,17 +80,17 @@ export default function Projects() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
+              initial={{ opacity: 0, x: -20, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, x: 20, filter: 'blur(8px)' }}
+              transition={{ duration: 0.45, ease: customEase }}
               className="project-info-inner"
             >
               <div className="project-info-header">
                 <motion.span 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.05 }}
+                  transition={{ duration: 0.3, delay: 0.05, ease: customEase }}
                   className="project-info-year font-mono"
                 >
                   {activeProject.year}
@@ -96,7 +98,7 @@ export default function Projects() {
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.08 }}
+                  transition={{ duration: 0.3, delay: 0.08, ease: customEase }}
                   className="project-info-tags"
                 >
                   {activeProject.tags.map((t) => (
@@ -106,10 +108,14 @@ export default function Projects() {
               </div>
 
               <motion.h3 
+                layoutId={`project-title-${activeProject.title}`}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.12 }}
+                transition={{ duration: 0.45, delay: 0.12, ease: customEase }}
                 className="project-info-title"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setSelectedProj(activeProject)}
+                whileHover={{ y: -2, color: 'var(--accent)' }}
               >
                 {activeProject.title}
               </motion.h3>
@@ -117,7 +123,7 @@ export default function Projects() {
               <motion.p 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.18 }}
+                transition={{ duration: 0.45, delay: 0.18, ease: customEase }}
                 className="project-info-desc"
               >
                 {activeProject.desc}
@@ -126,7 +132,7 @@ export default function Projects() {
               <motion.div 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.24 }}
+                transition={{ duration: 0.45, delay: 0.24, ease: customEase }}
                 className="project-info-stack"
               >
                 {activeProject.stack?.map((tech) => {
@@ -147,7 +153,7 @@ export default function Projects() {
               <motion.div 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
+                transition={{ duration: 0.45, delay: 0.3, ease: customEase }}
                 className="project-info-actions"
               >
                 {activeProject.github && activeProject.github !== '#' && (
@@ -157,13 +163,15 @@ export default function Projects() {
                     </a>
                   </Magnetic>
                 )}
-                {activeProject.link && activeProject.link !== '#' && (
-                  <Magnetic>
-                    <a href={activeProject.link} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-primary" aria-label={`Open Live Project of ${activeProject.title}`}>
-                      <span>Preview</span> <ArrowRight className="w-4 h-4" />
-                    </a>
-                  </Magnetic>
-                )}
+                <Magnetic>
+                  <button 
+                    onClick={() => setSelectedProj(activeProject)} 
+                    className="showcase-btn btn-primary"
+                    aria-label={`Open Details for ${activeProject.title}`}
+                  >
+                    <span>Preview</span> <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Magnetic>
               </motion.div>
             </motion.div>
           </AnimatePresence>
@@ -209,23 +217,34 @@ export default function Projects() {
               })}
             </div>
 
-            {/* Static Center Viewer */}
-            <div className="project-wheel-center">
+            {/* Static Center Viewer (Project Card Hover Physics) */}
+            <motion.div 
+              className="project-wheel-center"
+              onClick={() => setSelectedProj(activeProject)}
+              style={{ cursor: 'pointer' }}
+              whileHover={{ 
+                y: -8, 
+                boxShadow: "0 25px 50px rgba(6, 182, 212, 0.25)",
+                borderColor: "rgba(6, 182, 212, 0.6)"
+              }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            >
               <div className="wheel-center-glow"></div>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
-                  initial={{ opacity: 0, scale: 0.8, rotate: -8 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, rotate: 8 }}
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                  layoutId={`project-image-${activeProject.title}`}
+                  initial={{ opacity: 0, scale: 0.8, rotate: -8, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, scale: 0.8, rotate: 8, filter: 'blur(8px)' }}
+                  whileHover={{ scale: 1.06 }}
+                  transition={{ duration: 0.45, ease: customEase }}
                   className="wheel-center-visual-wrapper"
                 >
                   <ProjectVisual type={activeProject.previewType} />
                 </motion.div>
               </AnimatePresence>
-            </div>
+            </motion.div>
             
             {/* Compass HUD decoration */}
             <div className="wheel-decor-ring"></div>
@@ -233,6 +252,107 @@ export default function Projects() {
           </div>
         </div>
       </div>
+
+      {/* Shared Layout Project Opening Overlay */}
+      <AnimatePresence>
+        {selectedProj && (
+          <motion.div 
+            className="project-detail-overlay"
+            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            animate={{ opacity: 1, backdropFilter: 'blur(12px)' }}
+            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            transition={{ duration: 0.45, ease: customEase }}
+          >
+            <button 
+              className="overlay-close-btn" 
+              onClick={() => setSelectedProj(null)}
+              aria-label="Close project details"
+            >
+              ✕
+            </button>
+
+            <div className="overlay-container">
+              <div className="overlay-header">
+                <div className="overlay-meta">
+                  <span>{selectedProj.year}</span>
+                  <span className="nav-dot">·</span>
+                  <span>{selectedProj.category.toUpperCase()}</span>
+                </div>
+                <motion.h3 
+                  layoutId={`project-title-${selectedProj.title}`}
+                  className="overlay-title"
+                >
+                  {selectedProj.title}
+                </motion.h3>
+              </div>
+
+              <motion.div 
+                layoutId={`project-image-${selectedProj.title}`}
+                className="overlay-visual-wrapper"
+              >
+                <ProjectVisual type={selectedProj.previewType} />
+              </motion.div>
+
+              <motion.div 
+                className="overlay-content"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } }
+                }}
+              >
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
+                    visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: customEase } }
+                  }}
+                  className="overlay-desc"
+                >
+                  {selectedProj.desc}
+                </motion.div>
+
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
+                    visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: customEase } }
+                  }}
+                  className="overlay-info-panel"
+                >
+                  <div>
+                    <div className="overlay-section-title">Tech Stack</div>
+                    <div className="overlay-stack">
+                      {selectedProj.stack?.map((tech) => (
+                        <span key={tech} className="project-info-tag font-mono">{tech}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="overlay-section-title">Links</div>
+                    <div className="overlay-actions">
+                      {selectedProj.github && selectedProj.github !== '#' && (
+                        <Magnetic>
+                          <a href={selectedProj.github} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-ghost">
+                            <GithubIcon /> <span>Source</span>
+                          </a>
+                        </Magnetic>
+                      )}
+                      {selectedProj.link && selectedProj.link !== '#' && (
+                        <Magnetic>
+                          <a href={selectedProj.link} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-primary">
+                            <span>Live Preview</span> <ArrowRight className="w-4 h-4" />
+                          </a>
+                        </Magnetic>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
