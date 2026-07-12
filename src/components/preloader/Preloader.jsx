@@ -62,7 +62,9 @@ export default function Preloader() {
   const handleLaunch = () => {
     gsap.to(containerRef.current, {
       opacity: 0,
-      duration: 0.6,
+      scale: 1.04,
+      filter: 'blur(16px)',
+      duration: 0.8,
       ease: 'power3.inOut',
       onComplete: () => {
         window.scrollTo(0, 0);
