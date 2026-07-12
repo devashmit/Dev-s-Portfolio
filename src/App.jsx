@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import Lenis from 'lenis'
+import { motion } from 'framer-motion'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Projects from './components/Projects'
@@ -13,6 +14,20 @@ import RippleEffect from './components/RippleEffect'
 import PageSpotlight from './components/PageSpotlight'
 import ScrollProgress from './components/ScrollProgress'
 import FloatingIcons from './components/FloatingIcons'
+
+// Premium coordinated ScrollReveal component using 0.22, 1, 0.36, 1 easing
+function ScrollReveal({ children }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 60, filter: 'blur(10px)' }}
+      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 function App() {
   useEffect(() => {
@@ -39,6 +54,7 @@ function App() {
       <ScrollProgress />
       <PageSpotlight />
       <div id="bg-layer"></div>
+      <div className="global-grain-overlay" aria-hidden="true"></div>
       <a className="skip-link" href="#main">Skip to main content</a>
       <Preloader />
       <CustomCursor />
@@ -48,10 +64,10 @@ function App() {
 
       <main id="main">
         <Hero />
-        <Projects />
-        <Stack />
-        <About />
-        <Contact />
+        <ScrollReveal><Projects /></ScrollReveal>
+        <ScrollReveal><Stack /></ScrollReveal>
+        <ScrollReveal><About /></ScrollReveal>
+        <ScrollReveal><Contact /></ScrollReveal>
       </main>
 
       <footer>
