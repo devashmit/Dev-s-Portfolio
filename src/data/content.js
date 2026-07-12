@@ -45,7 +45,7 @@ export const projectsData = [
     desc: 'An immersive digital ecosystem where users can plant and observe procedural floral physics. Built entirely on the HTML5 Canvas API, it simulates fluid wind dynamics and organic growth in real-time.',
     tags: ['Canvas', 'Interactive'],
     stack: ['HTML5', 'Node.js'],
-    github: '#',
+    github: 'https://github.com/devashmit/Virtual-Petals',
     category: 'creative',
     previewType: 'floating-petals'
   },
@@ -69,6 +69,76 @@ export const projectsData = [
     link: 'https://dollarscolony1.vercel.app/',
     category: 'web',
     previewType: 'dollar-colony'
+  },
+  {
+    title: 'ChatX',
+    year: '2024',
+    desc: 'A real-time socket-based messaging client built to handle concurrent communication logs. Integrates custom modern interface overlays with secure channel operations.',
+    tags: ['WebSockets', 'Comms'],
+    stack: ['React', 'Node.js', 'Express'],
+    github: 'https://github.com/devashmit/ChatX',
+    category: 'web',
+    previewType: 'node-network'
+  },
+  {
+    title: 'Nirikshan',
+    year: '2024',
+    desc: 'A structural testing and inspection utility. Allows developers to evaluate component lifecycle metrics and monitor real-time system performance data.',
+    tags: ['Testing', 'Diagnostics'],
+    stack: ['React', 'Node.js', 'Express'],
+    github: 'https://github.com/devashmit/Nirikshan',
+    category: 'systems',
+    previewType: 'cv-flow'
+  },
+  {
+    title: 'Amora',
+    year: '2024',
+    desc: 'A lightweight TypeScript micro-framework supporting customizable component lifecycle state triggers and high-performance render updates.',
+    tags: ['Framework', 'TS'],
+    stack: ['TypeScript', 'Node.js'],
+    github: 'https://github.com/devashmit/Amora',
+    category: 'systems',
+    previewType: 'node-network'
+  },
+  {
+    title: 'Disha',
+    year: '2023',
+    desc: 'An intelligent career recommendation and roadmap planning engine designed to analyze student skills and suggest tailored pathways.',
+    tags: ['Education', 'Systems'],
+    stack: ['Java', 'MySQL'],
+    github: 'https://github.com/devashmit/Disha',
+    category: 'systems',
+    previewType: 'node-network'
+  },
+  {
+    title: 'Gokyo-Bistro-UI',
+    year: '2024',
+    desc: 'A modern, responsive design blueprint for a fine dining restaurant web portal featuring interactive booking forms and sleek digital menus.',
+    tags: ['UI Design', 'Web'],
+    stack: ['React', 'Tailwind CSS'],
+    github: 'https://github.com/devashmit/Gokyo-Bistro-UI',
+    category: 'web',
+    previewType: 'dollar-colony'
+  },
+  {
+    title: 'Quickdraw',
+    year: '2024',
+    desc: 'A canvas-based multiplayer drawing platform where users can construct digital paintings synchronously over secure network rooms.',
+    tags: ['Canvas API', 'Sockets'],
+    stack: ['React', 'Node.js'],
+    github: 'https://github.com/devashmit/Quickdraw',
+    category: 'creative',
+    previewType: 'flower-bloom'
+  },
+  {
+    title: 'Daily-Dev-Challenges',
+    year: '2024',
+    desc: 'A repository containing solutions to code challenges, algorithms, and modular design patterns built to polish daily programming efficiency.',
+    tags: ['Algorithms', 'Practice'],
+    stack: ['HTML5', 'TypeScript'],
+    github: 'https://github.com/devashmit/Daily-Dev-Challenges',
+    category: 'systems',
+    previewType: 'cv-flow'
   }
 ];
 
