@@ -37,6 +37,11 @@ const ProjectVisual = ({ type }) => {
       <img src={src} alt={type} className="w-full h-full object-cover" style={{ filter: 'brightness(0.9) contrast(1.1)' }} />
       <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-transparent opacity-60"></div>
       <div className="absolute inset-0 border border-white/5 pointer-events-none"></div>
+      
+      {/* Sci-fi Hologram FXs */}
+      <div className="hud-scanline"></div>
+      <div className="hud-laser"></div>
+      
       {/* Sci-fi Overlay Detail */}
       <div className="absolute top-2 left-2 text-[8px] font-mono opacity-40 text-white tracking-widest uppercase">
         {type} // SCAN_ACTIVE
@@ -89,18 +94,18 @@ export default function Projects() {
             >
               <div className="project-info-header">
                 <motion.span 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.05, ease: customEase }}
-                  className="project-info-year font-mono"
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.3, delay: 0.05, ease: customEase }}
+                   className="project-info-year font-mono"
                 >
                   {activeProject.year}
                 </motion.span>
                 <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.08, ease: customEase }}
-                  className="project-info-tags"
+                   initial={{ opacity: 0, y: 10 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ duration: 0.3, delay: 0.08, ease: customEase }}
+                   className="project-info-tags"
                 >
                   {activeProject.tags.map((t) => (
                     <span key={t} className="project-info-tag font-mono">{t}</span>
@@ -231,6 +236,13 @@ export default function Projects() {
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
             >
               <div className="wheel-center-glow"></div>
+              
+              {/* Sci-fi Corner Brackets */}
+              <div className="hud-corner top-left"></div>
+              <div className="hud-corner top-right"></div>
+              <div className="hud-corner bottom-left"></div>
+              <div className="hud-corner bottom-right"></div>
+              
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
