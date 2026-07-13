@@ -843,43 +843,47 @@ section:not(#hero){padding:min(6vh,3.5rem) min(5vw,4rem)}
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  border: 1px dashed rgba(255, 27, 45, 0.15);
+  border: 1px dashed rgba(6, 182, 212, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
   transform-style: preserve-3d;
 }
 
 .project-wheel-node {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 27, 45, 0.2);
-  background: #040404;
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  background: #09090b;
   color: rgba(250, 250, 250, 0.5);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 10;
 }
 
 .project-wheel-node:hover {
-  border-color: var(--pre-accent);
-  color: var(--pre-accent);
-  box-shadow: var(--pre-glow-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+  transform: translateY(var(--translate-y, -145px)) scale(1.1) !important;
 }
 
 .project-wheel-node.active {
-  border-color: var(--pre-accent);
-  background: var(--pre-accent);
-  color: #040404;
-  box-shadow: var(--pre-glow);
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #09090b;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.7);
+  transform: translateY(var(--translate-y, -145px)) scale(1.15) !important;
 }
 
 /* Center Visual Holder */
@@ -888,7 +892,7 @@ section:not(#hero){padding:min(6vh,3.5rem) min(5vw,4rem)}
   width: 210px;
   height: 210px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 27, 45, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.25);
   background: #070708;
   overflow: hidden;
   display: flex;
@@ -896,6 +900,8 @@ section:not(#hero){padding:min(6vh,3.5rem) min(5vw,4rem)}
   justify-content: center;
   z-index: 10;
 }
+
+/* overridden by styles below */
 
 .wheel-center-glow {
   position: absolute;
@@ -5607,6 +5613,53 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
     overflow: visible;
   }
 }
+.wheel-center-glow {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 30px rgba(6, 182, 212, 0.3);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.wheel-center-visual-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheel-decor-ring {
+  position: absolute;
+  width: 375px;
+  height: 375px;
+  border-radius: 50%;
+  border: 1px solid rgba(6, 182, 212, 0.08);
+  pointer-events: none;
+  animation: spinClockwise 80s linear infinite;
+}
+
+.wheel-decor-ticks {
+  position: absolute;
+  width: 405px;
+  height: 405px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(6, 182, 212, 0.12);
+  pointer-events: none;
+  animation: spinCounterClockwise 50s linear infinite;
+}
+
+@keyframes spinClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinCounterClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Corner Brackets */
 .hud-corner {
   position: absolute;
   width: 12px;
@@ -5642,6 +5695,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   border-top: none;
 }
 
+/* Hologram laser effects */
 .hud-scanline {
   position: absolute;
   inset: 0;
@@ -5678,6 +5732,18 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
 @keyframes laserScan {
   0% { top: 0%; }
   100% { top: 100%; }
+}
+
+/* =====================================================
+   PROJECT VISUAL MOCKS (INSIDE WHEEL CENTER)
+   ===================================================== */
+.bento-visual {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.1), transparent 70%);
 }
 @media (max-width: 520px) {
   .keyboard-chassis-wrapper {
