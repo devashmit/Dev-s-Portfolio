@@ -185,7 +185,7 @@ export default function Hero() {
                   }, 450);
                 }}
               >
-                🎮 Gravity Composer
+                🎮 Void Serpent
               </a>
             </Magnetic>
             <Magnetic>
