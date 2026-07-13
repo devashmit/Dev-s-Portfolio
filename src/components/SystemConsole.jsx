@@ -610,7 +610,7 @@ export default function SystemConsole() {
 
   useEffect(() => {
     const handleOpenGame = () => {
-      setActiveFile('gravity-composer.exe');
+      setActiveFile('void-serpent.exe');
       setDiagnosticMode(false);
       setTypedCode([]);
       setCurrentIndex(0);
@@ -680,7 +680,7 @@ export default function SystemConsole() {
       node: 'PASS_00',
       status: 'ONLINE'
     },
-    'gravity-composer.exe': {
+    'void-serpent.exe': {
       code: [],
       linesCount: 0,
       lang: 'SYNTH',
@@ -826,7 +826,7 @@ export default function SystemConsole() {
                       {fileInfo.lang}
                     </span> 
                     {fileName}
-                    {fileName === 'gravity-composer.exe' && (
+                    {fileName === 'void-serpent.exe' && (
                       <span className="play-badge-glow">PLAY</span>
                     )}
                   </li>
@@ -903,7 +903,7 @@ export default function SystemConsole() {
             </div>
             
             <div className="ide-editor-content">
-              {activeFile === 'gravity-composer.exe' ? (
+              {activeFile === 'void-serpent.exe' ? (
                 <CyberWorm onPlayNote={(freq) => {
                   setDiagnosticLogs(prev => [
                     ...prev,
