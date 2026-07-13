@@ -21,7 +21,7 @@ export const stackItems = [
 export const projectsData = [
   {
     title: 'Dollar Colony',
-    year: '2024',
+    year: '2026',
     desc: 'A dynamic and secure residential community management and rental portal for Dollars Colony, featuring booking systems, secure user authentication, and admin telemetry.',
     tags: ['Real Estate', 'Next.js'],
     stack: ['Next.js', 'React', 'Tailwind CSS', 'Node.js', 'MongoDB'],
@@ -32,7 +32,7 @@ export const projectsData = [
   },
   {
     title: 'BerojgarCv',
-    year: '2024',
+    year: '2025',
     desc: 'A modern, free resume builder built with React and TypeScript, helping students and job-seekers quickly generate and download professional resumes in clean PDF formats.',
     tags: ['TypeScript', 'Web'],
     stack: ['TypeScript', 'React', 'Tailwind CSS'],
@@ -42,7 +42,7 @@ export const projectsData = [
   },
   {
     title: 'Sahayogi',
-    year: '2025',
+    year: '2026',
     desc: 'A collaborative task organizer and productivity companion application built with Next.js and MongoDB, streamlining team workflows through interactive lists and role management.',
     tags: ['Productivity', 'WIP'],
     stack: ['Next.js', 'MongoDB', 'Node.js', 'Tailwind CSS'],
@@ -52,7 +52,7 @@ export const projectsData = [
   },
   {
     title: 'Devs-bouquet',
-    year: '2024',
+    year: '2025',
     desc: 'An interactive web canvas that procedurally generates hand-drawn digital flower arrangements using custom coordinate geometry and vector strokes.',
     tags: ['Canvas API', 'Creative Coding'],
     stack: ['HTML5', 'TypeScript', 'Vite'],
@@ -62,7 +62,7 @@ export const projectsData = [
   },
   {
     title: 'Virtual Petals',
-    year: '2024',
+    year: '2026',
     desc: 'A real-time physics simulation built on the HTML5 Canvas API that renders tranquil falling flower petals, organic stem growth, and fluid wind dynamics.',
     tags: ['Physics', 'Canvas'],
     stack: ['HTML5', 'Node.js'],
