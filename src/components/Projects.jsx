@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, ArrowRight, ArrowLeft } from 'lucide-react';
 import TextReveal from './TextReveal';
+import TextScramble from './TextScramble';
 import Magnetic from './Magnetic';
 import { projectsData, stackItems } from '../data/content';
 
@@ -115,9 +116,9 @@ export default function Projects() {
                 className="project-info-title"
                 style={{ cursor: 'pointer' }}
                 onClick={() => setSelectedProj(activeProject)}
-                whileHover={{ y: -2, color: 'var(--accent)' }}
+                whileHover={{ y: -2 }}
               >
-                {activeProject.title}
+                <TextScramble text={activeProject.title} key={activeIndex} />
               </motion.h3>
               
               <motion.p 
