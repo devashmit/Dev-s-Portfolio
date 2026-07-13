@@ -22,9 +22,9 @@ export const projectsData = [
   {
     title: 'Dollar Colony',
     year: '2024',
-    desc: 'A resource management colony-builder game and financial simulator. It provides players with real-time economic telemetry to construct colonies, optimize supply chains, and balance budgets.',
-    tags: ['Simulation', 'Web'],
-    stack: ['React', 'Tailwind CSS', 'Vite'],
+    desc: 'A dynamic and secure residential community management and rental portal for Dollars Colony, featuring booking systems, secure user authentication, and admin telemetry.',
+    tags: ['Real Estate', 'Next.js'],
+    stack: ['Next.js', 'React', 'Tailwind CSS', 'Node.js', 'MongoDB'],
     github: 'https://github.com/devashmit/dollarcolony',
     link: 'https://dollarscolony1.vercel.app/',
     category: 'web',
@@ -33,7 +33,7 @@ export const projectsData = [
   {
     title: 'BerojgarCv',
     year: '2024',
-    desc: 'A dynamic, professional CV generator built with TypeScript. It provides a robust, user-friendly interface to instantly construct, preview, and export clean resumes with customizable load-bearing structural layouts.',
+    desc: 'A modern, free resume builder built with React and TypeScript, helping students and job-seekers quickly generate and download professional resumes in clean PDF formats.',
     tags: ['TypeScript', 'Web'],
     stack: ['TypeScript', 'React', 'Tailwind CSS'],
     github: 'https://github.com/devashmit/BerojgarCv',
@@ -43,8 +43,8 @@ export const projectsData = [
   {
     title: 'Sahayogi',
     year: '2025',
-    desc: 'A comprehensive productivity companion application actively in development. Designed to streamline task execution by integrating contextual data processing within a highly efficient, responsive node-tracking network.',
-    tags: ['WIP', 'Systems'],
+    desc: 'A collaborative task organizer and productivity companion application built with Next.js and MongoDB, streamlining team workflows through interactive lists and role management.',
+    tags: ['Productivity', 'WIP'],
     stack: ['Next.js', 'MongoDB', 'Node.js', 'Tailwind CSS'],
     github: 'https://github.com/devashmit/SYP',
     category: 'systems',
@@ -53,7 +53,7 @@ export const projectsData = [
   {
     title: 'Devs-bouquet',
     year: '2024',
-    desc: 'A serene, interactive canvas experience designed to let users procedurally generate beautiful, hand-drawn digital flower arrangements through advanced creative coding and algorithmic geometry.',
+    desc: 'An interactive web canvas that procedurally generates hand-drawn digital flower arrangements using custom coordinate geometry and vector strokes.',
     tags: ['Canvas API', 'Creative Coding'],
     stack: ['HTML5', 'TypeScript', 'Vite'],
     github: 'https://github.com/devashmit/Devs-bouquet',
@@ -63,8 +63,8 @@ export const projectsData = [
   {
     title: 'Virtual Petals',
     year: '2024',
-    desc: 'An immersive digital ecosystem where users can plant and observe procedural floral physics. Built entirely on the HTML5 Canvas API, it simulates fluid wind dynamics and organic growth in real-time.',
-    tags: ['Canvas', 'Interactive'],
+    desc: 'A real-time physics simulation built on the HTML5 Canvas API that renders tranquil falling flower petals, organic stem growth, and fluid wind dynamics.',
+    tags: ['Physics', 'Canvas'],
     stack: ['HTML5', 'Node.js'],
     github: 'https://github.com/devashmit/Virtual-Petals',
     category: 'creative',
