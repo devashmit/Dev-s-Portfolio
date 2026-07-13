@@ -20,6 +20,17 @@ export const stackItems = [
 
 export const projectsData = [
   {
+    title: 'Dollar Colony',
+    year: '2024',
+    desc: 'A resource management colony-builder game and financial simulator. It provides players with real-time economic telemetry to construct colonies, optimize supply chains, and balance budgets.',
+    tags: ['Simulation', 'Web'],
+    stack: ['React', 'Tailwind CSS', 'Vite'],
+    github: 'https://github.com/devashmit/dollarcolony',
+    link: 'https://dollarscolony1.vercel.app/',
+    category: 'web',
+    previewType: 'dollar-colony'
+  },
+  {
     title: 'BerojgarCv',
     year: '2024',
     desc: 'A dynamic, professional CV generator built with TypeScript. It provides a robust, user-friendly interface to instantly construct, preview, and export clean resumes with customizable load-bearing structural layouts.',
@@ -28,6 +39,16 @@ export const projectsData = [
     github: 'https://github.com/devashmit/BerojgarCv',
     category: 'web',
     previewType: 'cv-flow'
+  },
+  {
+    title: 'Sahayogi',
+    year: '2025',
+    desc: 'A comprehensive productivity companion application actively in development. Designed to streamline task execution by integrating contextual data processing within a highly efficient, responsive node-tracking network.',
+    tags: ['WIP', 'Systems'],
+    stack: ['Next.js', 'MongoDB', 'Node.js', 'Tailwind CSS'],
+    github: 'https://github.com/devashmit/SYP',
+    category: 'systems',
+    previewType: 'node-network'
   },
   {
     title: 'Devs-bouquet',
@@ -48,97 +69,6 @@ export const projectsData = [
     github: 'https://github.com/devashmit/Virtual-Petals',
     category: 'creative',
     previewType: 'floating-petals'
-  },
-  {
-    title: 'Sahayogi',
-    year: '2025',
-    desc: 'A comprehensive productivity companion application actively in development. Designed to streamline task execution by integrating contextual data processing within a highly efficient, responsive node-tracking network.',
-    tags: ['WIP', 'Systems'],
-    stack: ['Next.js', 'MongoDB', 'Node.js', 'Tailwind CSS'],
-    github: 'https://github.com/devashmit/SYP',
-    category: 'systems',
-    previewType: 'node-network'
-  },
-  {
-    title: 'Dollar Colony',
-    year: '2024',
-    desc: 'A resource management colony-builder game and financial simulator. It provides players with real-time economic telemetry to construct colonies, optimize supply chains, and balance budgets.',
-    tags: ['Simulation', 'Web'],
-    stack: ['React', 'Tailwind CSS', 'Vite'],
-    github: 'https://github.com/devashmit/dollarcolony',
-    link: 'https://dollarscolony1.vercel.app/',
-    category: 'web',
-    previewType: 'dollar-colony'
-  },
-  {
-    title: 'ChatX',
-    year: '2024',
-    desc: 'A real-time socket-based messaging client built to handle concurrent communication logs. Integrates custom modern interface overlays with secure channel operations.',
-    tags: ['WebSockets', 'Comms'],
-    stack: ['React', 'Node.js', 'Express'],
-    github: 'https://github.com/devashmit/ChatX',
-    category: 'web',
-    previewType: 'node-network'
-  },
-  {
-    title: 'Nirikshan',
-    year: '2024',
-    desc: 'A structural testing and inspection utility. Allows developers to evaluate component lifecycle metrics and monitor real-time system performance data.',
-    tags: ['Testing', 'Diagnostics'],
-    stack: ['React', 'Node.js', 'Express'],
-    github: 'https://github.com/devashmit/Nirikshan',
-    category: 'systems',
-    previewType: 'cv-flow'
-  },
-  {
-    title: 'Amora',
-    year: '2024',
-    desc: 'A lightweight TypeScript micro-framework supporting customizable component lifecycle state triggers and high-performance render updates.',
-    tags: ['Framework', 'TS'],
-    stack: ['TypeScript', 'Node.js'],
-    github: 'https://github.com/devashmit/Amora',
-    category: 'systems',
-    previewType: 'node-network'
-  },
-  {
-    title: 'Disha',
-    year: '2023',
-    desc: 'An intelligent career recommendation and roadmap planning engine designed to analyze student skills and suggest tailored pathways.',
-    tags: ['Education', 'Systems'],
-    stack: ['Java', 'MySQL'],
-    github: 'https://github.com/devashmit/Disha',
-    category: 'systems',
-    previewType: 'node-network'
-  },
-  {
-    title: 'Gokyo-Bistro-UI',
-    year: '2024',
-    desc: 'A modern, responsive design blueprint for a fine dining restaurant web portal featuring interactive booking forms and sleek digital menus.',
-    tags: ['UI Design', 'Web'],
-    stack: ['React', 'Tailwind CSS'],
-    github: 'https://github.com/devashmit/Gokyo-Bistro-UI',
-    category: 'web',
-    previewType: 'dollar-colony'
-  },
-  {
-    title: 'Quickdraw',
-    year: '2024',
-    desc: 'A canvas-based multiplayer drawing platform where users can construct digital paintings synchronously over secure network rooms.',
-    tags: ['Canvas API', 'Sockets'],
-    stack: ['React', 'Node.js'],
-    github: 'https://github.com/devashmit/Quickdraw',
-    category: 'creative',
-    previewType: 'flower-bloom'
-  },
-  {
-    title: 'Daily-Dev-Challenges',
-    year: '2024',
-    desc: 'A repository containing solutions to code challenges, algorithms, and modular design patterns built to polish daily programming efficiency.',
-    tags: ['Algorithms', 'Practice'],
-    stack: ['HTML5', 'TypeScript'],
-    github: 'https://github.com/devashmit/Daily-Dev-Challenges',
-    category: 'systems',
-    previewType: 'cv-flow'
   }
 ];
 
