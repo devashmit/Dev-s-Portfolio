@@ -1,100 +1,135 @@
-import React, { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import LightSweep from './LightSweep';
+import DustParticles from './DustParticles';
+import CinematicTitle from './CinematicTitle';
+import RevealTransition from './RevealTransition';
 import NoiseOverlay from './NoiseOverlay';
-import RainOverlay from './RainOverlay';
-import IdentityReveal from './IdentityReveal';
+import RedRain from './RedRain';
 
-const COMPILER_LOGS = [
-  { threshold: 0, text: 'Initializing load-bearing systems...' },
-  { threshold: 22, text: 'Fetching selected work & canvas...' },
-  { threshold: 48, text: 'Binding smooth scroll context...' },
-  { threshold: 75, text: 'Assembling React UI components...' },
-  { threshold: 100, text: 'Compilation successful. System ready.' }
-];
-
-export default function Preloader() {
-  const [progress, setProgress] = useState(0);
-  const [activeLogs, setActiveLogs] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  
-  const containerRef = useRef(null);
+export default function Preloader({ onRevealStart, onComplete }) {
+  const [showAmbient, setShowAmbient] = useState(false);
+  const [showSweep, setShowSweep] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
+  const [isDissolved, setIsDissolved] = useState(false);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    // Disable automatic browser scroll restoration and force top scroll
+    // Detect reduced motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e) => {
+      setPrefersReducedMotion(e.matches);
+    };
+    mediaQuery.addEventListener('change', handleChange);
+
+    // Initial page scroll prep
     if (window.history.scrollRestoration) {
       window.history.scrollRestoration = 'manual';
     }
     window.scrollTo(0, 0);
-
-    // Freeze page scrolling during loading
     document.body.style.overflow = 'hidden';
 
-    // Simulate system compilation progress
-    let startTimestamp = null;
-    const duration = 2800; // 2.8 seconds compilation duration
+    let timers = [];
 
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const elapsed = timestamp - startTimestamp;
-      const currentProgress = Math.min((elapsed / duration) * 100, 100);
+    if (mediaQuery.matches) {
+      // Reduced motion timeline: simple fade in and fade out
+      setShowTitle(true);
       
-      setProgress(currentProgress);
+      timers.push(setTimeout(() => {
+        setIsDissolved(true);
+        if (onRevealStart) onRevealStart();
+      }, 1000));
 
-      // Map logs matching threshold
-      const visibleLogs = COMPILER_LOGS.filter(log => currentProgress >= log.threshold).map(log => log.text);
-      setActiveLogs(visibleLogs);
+      timers.push(setTimeout(() => {
+        setIsRevealing(true);
+      }, 1400));
 
-      if (currentProgress < 100) {
-        window.requestAnimationFrame(step);
-      } else {
-        setIsLoaded(true);
-      }
-    };
+      timers.push(setTimeout(() => {
+        document.body.style.overflow = '';
+        if (onComplete) onComplete();
+      }, 1800));
+    } else {
+      // Standard cinematic timeline
+      // 0.5s - Ambient light appears
+      timers.push(setTimeout(() => {
+        setShowAmbient(true);
+      }, 500));
 
-    window.requestAnimationFrame(step);
+      // 1.2s - Soft light sweeps across center
+      timers.push(setTimeout(() => {
+        setShowSweep(true);
+      }, 1200));
+
+      // 1.8s - "ASHMIT DEV" emerges from darkness
+      timers.push(setTimeout(() => {
+        setShowTitle(true);
+      }, 1800));
+
+      // 3.2s - Title gently dissolves, start portfolio reveal
+      timers.push(setTimeout(() => {
+        setIsDissolved(true);
+        if (onRevealStart) onRevealStart();
+      }, 3200));
+
+      // 3.6s - Reveal transition starts fading out the preloader background completely
+      timers.push(setTimeout(() => {
+        setIsRevealing(true);
+      }, 3600));
+
+      // 4.2s - Complete preloader unmount
+      timers.push(setTimeout(() => {
+        document.body.style.overflow = '';
+        if (onComplete) onComplete();
+      }, 4200));
+    }
 
     return () => {
+      timers.forEach(clearTimeout);
+      mediaQuery.removeEventListener('change', handleChange);
       document.body.style.overflow = '';
     };
-  }, []);
-
-  const handleLaunch = () => {
-    gsap.to(containerRef.current, {
-      opacity: 0,
-      scale: 1.04,
-      filter: 'blur(16px)',
-      duration: 0.8,
-      ease: 'power3.inOut',
-      onComplete: () => {
-        window.scrollTo(0, 0);
-        document.body.style.overflow = '';
-        setIsComplete(true);
-      }
-    });
-  };
-
-  if (isComplete) return null;
+  }, [onRevealStart, onComplete]);
 
   return (
-    <div ref={containerRef} id="premium-preloader" className="premium-preloader-root">
-      {/* Moving Ambient Cyan Spotlights */}
-      <div className="preloader-ambient-glow-1"></div>
-      <div className="preloader-ambient-glow-2"></div>
-      
-      {/* Very Light animated rain canvas (behind the card) */}
-      <RainOverlay />
+    <motion.div
+      id="premium-preloader"
+      className="premium-preloader-root"
+      animate={isRevealing ? { opacity: 0 } : { opacity: 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {/* Background Cinematic Overlays */}
+      <div className="cinematic-vignette" />
+      {showAmbient && <div className="cinematic-haze" />}
 
-      {/* Retro overlays (grain, vignette) - very clean now */}
+      {/* Subtle organic noise/film grain */}
       <NoiseOverlay />
 
-      {/* Glassmorphic Central Compiler Card */}
-      <IdentityReveal 
-        progress={progress}
-        activeLogs={activeLogs}
-        isLoaded={isLoaded}
-        onComplete={handleLaunch}
-      />
-    </div>
+      {/* Subtle light red rain falling slowly */}
+      <RedRain />
+
+      {/* Subtle slow floating dust particles */}
+      {!prefersReducedMotion && <DustParticles />}
+
+      {/* Horizontal Light Sweep Beam */}
+      {!prefersReducedMotion && showSweep && <LightSweep />}
+
+      {/* Title & Reveal Animations Container */}
+      <RevealTransition isRevealing={isRevealing}>
+        <motion.div
+          animate={prefersReducedMotion ? {} : { scale: [0.99, 1.015] }}
+          transition={{ duration: 4.2, ease: [0.25, 0.46, 0.45, 0.94] }} // slow camera push-in zoom
+        >
+          {showTitle && (
+            <CinematicTitle
+              isDissolved={isDissolved}
+              prefersReducedMotion={prefersReducedMotion}
+            />
+          )}
+        </motion.div>
+      </RevealTransition>
+    </motion.div>
   );
 }
