@@ -72,7 +72,7 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.14,
-      delayChildren: 2.2,
+      delayChildren: 0.3,
     }
   }
 };
@@ -110,7 +110,7 @@ function CyberDust() {
   );
 }
 
-export default function Hero() {
+export default function Hero({ isRevealStarted = false }) {
   return (
     <section id="hero" aria-label="Introduction" style={{ position: 'relative' }}>
       <CyberDust />
@@ -118,7 +118,7 @@ export default function Hero() {
         className="hero-content"
         variants={containerVariants}
         initial="hidden"
-        animate="visible"
+        animate={isRevealStarted ? "visible" : "hidden"}
       >
         {/* Slide from left - status badge */}
         <motion.div className="hero-availability" variants={slideFromLeft}>
