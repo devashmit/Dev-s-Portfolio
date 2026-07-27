@@ -5,6 +5,11 @@ export default function BackgroundGlow({ activeIndex }) {
   const glowRef = useRef(null);
 
   // Map of project indices to colors matching their glow
+  // Index 0: Dollar Colony (cyan glow)
+  // Index 1: BerojgarCv (purple glow)
+  // Index 2: Sahayogi (orange glow)
+  // Index 3: Devs-bouquet (rose glow)
+  // Index 4: Virtual Petals (emerald glow)
   const colors = [
     'rgba(6, 182, 212, 0.15)',  // 001: Dollar Colony (cyan)
     'rgba(168, 85, 247, 0.15)', // 002: BerojgarCv (purple)
