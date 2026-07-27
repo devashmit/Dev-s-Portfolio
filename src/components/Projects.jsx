@@ -61,7 +61,7 @@ export default function Projects() {
         scrollTrigger: {
           trigger: scrollSection,
           pin: true,
-          scrub: 0.8,
+          scrub: 0.8, // Smooth scrub setting for inertia control
           start: 'top top',
           end: () => `+=${getScrollAmount()}`,
           invalidateOnRefresh: true,
