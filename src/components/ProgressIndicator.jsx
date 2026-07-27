@@ -1,4 +1,5 @@
 export default function ProgressIndicator({ activeIndex, total, progress }) {
+  // Format indices to be zero-padded (e.g. 01 / 05)
   const formattedActive = String(activeIndex + 1).padStart(2, '0');
   const formattedTotal = String(total).padStart(2, '0');
 
