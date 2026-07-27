@@ -1,12 +1,12 @@
-import { useRef, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ArrowRight, ArrowLeft } from 'lucide-react';
-import TextReveal from './TextReveal';
-import TextScramble from './TextScramble';
-import Magnetic from './Magnetic';
-import { projectsData, stackItems } from '../data/content';
+import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ArrowUpRight } from 'lucide-react';
+import { projectsData } from '../data/content';
+import BackgroundGlow from './BackgroundGlow';
+import ProgressIndicator from './ProgressIndicator';
 
-const GithubIcon = () => (
+const GithubIcon = ({ className = '', size = 16 }) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -14,358 +14,331 @@ const GithubIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    style={{ width: '18px', height: '18px' }}
+    className={className}
+    style={{ width: size, height: size }}
   >
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
     <path d="M9 18c-4.51 2-5-2-7-2" />
   </svg>
 );
 
-const ProjectVisual = ({ type }) => {
-  const images = {
-    'cv-flow': '/images/berojgar-cv.png',
-    'flower-bloom': '/images/devs-bouquet.png',
-    'floating-petals': '/images/virtual-petals.png',
-    'node-network': '/images/sahayogi.png',
-    'dollar-colony': '/images/dollar-colony.png'
-  };
-
-  const src = images[type] || '/images/cyberpunk-skyline.png';
-
-  return (
-    <div className="bento-visual project-image-visual w-full h-full relative overflow-hidden">
-      <img src={src} alt={type} className="w-full h-full object-cover" style={{ filter: 'brightness(0.9) contrast(1.1)' }} />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-transparent opacity-60"></div>
-      <div className="absolute inset-0 border border-white/5 pointer-events-none"></div>
-      
-      {/* Sci-fi Hologram FXs */}
-      <div className="hud-scanline"></div>
-      <div className="hud-laser"></div>
-      
-      {/* Sci-fi Overlay Detail */}
-      <div className="absolute top-2 left-2 text-[8px] font-mono opacity-40 text-white tracking-widest uppercase">
-        {type} // SCAN_ACTIVE
-      </div>
-    </div>
-  );
-};
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Projects() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [selectedProj, setSelectedProj] = useState(null);
+  const scrollSectionRef = useRef(null);
+  const containerRef = useRef(null);
   
-  // Calculate rotation steps
-  const totalProjects = projectsData.length;
-  const rotationAngle = -activeIndex * (360 / totalProjects);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const nextProject = () => {
-    setActiveIndex((prev) => (prev + 1) % totalProjects);
-  };
+  useEffect(() => {
+    // Detect screen size to toggle desktop vs mobile layout
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 900);
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
-  const prevProject = () => {
-    setActiveIndex((prev) => (prev - 1 + totalProjects) % totalProjects);
-  };
+  useEffect(() => {
+    if (isMobile) return;
 
-  const selectProject = (idx) => {
-    setActiveIndex(idx);
-  };
+    const scrollSection = scrollSectionRef.current;
+    const container = containerRef.current;
+    if (!scrollSection || !container) return;
 
-  const activeProject = projectsData[activeIndex];
-  const customEase = [0.22, 1, 0.36, 1];
+    // Calculate total horizontal scroll length
+    const getScrollAmount = () => {
+      return container.scrollWidth - window.innerWidth;
+    };
 
-  return (
-    <section id="projects" aria-label="Featured Projects" className="projects-wheel-section">
-      <div className="projects-wheel-header">
-        <p className="section-eyebrow">// 01 / SELECTED WORK</p>
-        <TextReveal text="Product Showcase" className="section-title" tag="h2" delay={0.1} />
-      </div>
+    // Master Timeline for Pinned Horizontal Scroll
+    const mainCtx = gsap.context(() => {
+      const pinTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: scrollSection,
+          pin: true,
+          scrub: 0.8,
+          start: 'top top',
+          end: () => `+=${getScrollAmount()}`,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            setScrollProgress(self.progress);
+            // Calculate active project index dynamically
+            const segment = 1 / projectsData.length;
+            const index = Math.min(
+              Math.floor(self.progress / segment),
+              projectsData.length - 1
+            );
+            setActiveIndex(index);
+          }
+        }
+      });
 
-      <div className="projects-wheel-layout">
-        {/* Left Side: Dynamic Details Panel */}
-        <div className="projects-info-panel">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0, x: -20, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, x: 20, filter: 'blur(8px)' }}
-              transition={{ duration: 0.45, ease: customEase }}
-              className="project-info-inner"
-            >
-              <div className="project-info-header">
-                <motion.span 
-                   initial={{ opacity: 0, y: 10 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   transition={{ duration: 0.3, delay: 0.05, ease: customEase }}
-                   className="project-info-year font-mono"
-                >
-                  {activeProject.year}
-                </motion.span>
-                <motion.div 
-                   initial={{ opacity: 0, y: 10 }}
-                   animate={{ opacity: 1, y: 0 }}
-                   transition={{ duration: 0.3, delay: 0.08, ease: customEase }}
-                   className="project-info-tags"
-                >
-                  {activeProject.tags.map((t) => (
-                    <span key={t} className="project-info-tag font-mono">{t}</span>
-                  ))}
-                </motion.div>
-              </div>
+      // Horizontal container slide animation
+      pinTimeline.to(container, {
+        x: () => -getScrollAmount(),
+        ease: 'none'
+      });
 
-              <motion.h3 
-                layoutId={`project-title-${activeProject.title}`}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.12, ease: customEase }}
-                className="project-info-title"
-                style={{ cursor: 'pointer' }}
-                onClick={() => setSelectedProj(activeProject)}
-                whileHover={{ y: -2 }}
-              >
-                <TextScramble text={activeProject.title} key={activeIndex} />
-              </motion.h3>
-              
-              <motion.p 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.18, ease: customEase }}
-                className="project-info-desc"
-              >
-                {activeProject.desc}
-              </motion.p>
+      // Animate individual card transitions during scroll
+      const cards = gsap.utils.toArray('.cinematic-project-card');
+      cards.forEach((card, idx) => {
+        const bgNumber = card.querySelector('.cinematic-project-bg-number');
+        const title = card.querySelector('.cinematic-project-title');
+        const desc = card.querySelector('.cinematic-project-desc');
+        const tags = card.querySelectorAll('.cinematic-project-tag');
+        const actions = card.querySelector('.cinematic-project-actions');
 
-              <motion.div 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.24, ease: customEase }}
-                className="project-info-stack"
-              >
-                {activeProject.stack?.map((tech) => {
-                  const techData = stackItems.find((item) => item.name === tech);
-                  if (!techData) return null;
-                  return (
-                    <div key={tech} className="project-info-icon" title={tech}>
-                      <img
-                        src={techData.icon}
-                        alt={tech}
-                        className={techData.invertInDark ? 'invert-in-dark' : ''}
-                      />
-                    </div>
-                  );
-                })}
-              </motion.div>
+        // Initial entry state of card components
+        gsap.set([title, desc, actions], { opacity: 0, y: 50, filter: 'blur(10px)' });
+        gsap.set(tags, { opacity: 0, y: 20 });
+        gsap.set(bgNumber, { opacity: 0, x: 100 });
 
-              <motion.div 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.3, ease: customEase }}
-                className="project-info-actions"
-              >
-                {activeProject.github && activeProject.github !== '#' && (
-                  <Magnetic>
-                    <a href={activeProject.github} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-ghost" aria-label={`View ${activeProject.title} on GitHub`}>
-                      <GithubIcon /> <span>Source</span>
-                    </a>
-                  </Magnetic>
-                )}
-                <Magnetic>
-                  <button 
-                    onClick={() => setSelectedProj(activeProject)} 
-                    className="showcase-btn btn-primary"
-                    aria-label={`Open Details for ${activeProject.title}`}
-                  >
-                    <span>Preview</span> <ArrowRight className="w-4 h-4" />
-                  </button>
-                </Magnetic>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Navigation Arrows */}
-          <div className="project-wheel-nav">
-            <button onClick={prevProject} className="wheel-nav-btn" aria-label="Previous Project">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <span className="wheel-nav-indicator font-mono">
-              {String(activeIndex + 1).padStart(2, '0')} / {String(totalProjects).padStart(2, '0')}
-            </span>
-            <button onClick={nextProject} className="wheel-nav-btn" aria-label="Next Project">
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Right Side: Rotating Radial Wheel */}
-        <div className="projects-wheel-panel">
-          <div className="projects-radial-container">
-            {/* Spinning Outer Ring */}
-            <div 
-              className="projects-radial-wheel"
-              style={{ transform: `rotate(${rotationAngle}deg)` }}
-            >
-              {projectsData.map((proj, idx) => {
-                const angle = idx * (360 / totalProjects);
-                const isActive = idx === activeIndex;
-                return (
-                  <button
-                    key={proj.title}
-                    onClick={() => selectProject(idx)}
-                    className={`project-wheel-node ${isActive ? 'active' : ''}`}
-                    style={{
-                      transform: `rotate(${angle}deg) translateY(var(--translate-y, -145px)) rotate(-${angle + rotationAngle}deg)`
-                    }}
-                    aria-label={`Select project ${proj.title}`}
-                  >
-                    {String(idx + 1).padStart(2, '0')}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Static Center Viewer (Project Card Hover Physics) */}
-            <motion.div 
-              className="project-wheel-center"
-              onClick={() => setSelectedProj(activeProject)}
-              style={{ cursor: 'pointer' }}
-              whileHover={{ 
-                y: -8, 
-                boxShadow: "0 25px 50px rgba(6, 182, 212, 0.25)",
-                borderColor: "rgba(6, 182, 212, 0.6)"
-              }}
-              transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            >
-              <div className="wheel-center-glow"></div>
-              
-              {/* Sci-fi Corner Brackets */}
-              <div className="hud-corner top-left"></div>
-              <div className="hud-corner top-right"></div>
-              <div className="hud-corner bottom-left"></div>
-              <div className="hud-corner bottom-right"></div>
-              
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeIndex}
-                  layoutId={`project-image-${activeProject.title}`}
-                  initial={{ opacity: 0, scale: 0.8, rotate: -8, filter: 'blur(8px)' }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, scale: 0.8, rotate: 8, filter: 'blur(8px)' }}
-                  whileHover={{ scale: 1.06 }}
-                  transition={{ duration: 0.45, ease: customEase }}
-                  className="wheel-center-visual-wrapper"
-                >
-                  <ProjectVisual type={activeProject.previewType} />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
+        // Trigger animations when the card is active in the viewport
+        ScrollTrigger.create({
+          trigger: card,
+          containerAnimation: pinTimeline,
+          start: 'left right-=150',
+          end: 'right left+=150',
+          onEnter: () => {
+            // Animate card items staggers
+            gsap.to(bgNumber, { opacity: 0.03, x: 0, duration: 1.2, ease: 'power3.out' });
+            gsap.to(title, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, delay: 0.1, ease: 'power3.out' });
+            gsap.to(desc, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, delay: 0.2, ease: 'power3.out' });
             
-            {/* Compass HUD decoration */}
-            <div className="wheel-decor-ring"></div>
-            <div className="wheel-decor-ticks"></div>
-          </div>
+            // Stagger tech tags animation
+            gsap.to(tags, { 
+              opacity: 1, 
+              y: 0, 
+              duration: 0.5, 
+              stagger: 0.05, 
+              delay: 0.3,
+              ease: 'power2.out' 
+            });
+
+            gsap.to(actions, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, delay: 0.5, ease: 'power3.out' });
+          },
+          onLeave: () => {
+            // Exit states: Fade previous card elements to 20% opacity and scale down slightly
+            gsap.to([title, desc, tags, actions], { opacity: 0.2, scale: 0.98, filter: 'blur(4px)', duration: 0.8 });
+          },
+          onEnterBack: () => {
+            // Restore card states when scrolling back
+            gsap.to(bgNumber, { opacity: 0.03, x: 0, duration: 1.2, ease: 'power3.out' });
+            gsap.to([title, desc, tags, actions], { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.8 });
+          },
+          onLeaveBack: () => {
+            // Reset to initial entry state
+            gsap.to([title, desc, actions], { opacity: 0, y: 50, filter: 'blur(10px)', duration: 0.6 });
+            gsap.to(tags, { opacity: 0, y: 20, duration: 0.4 });
+            gsap.to(bgNumber, { opacity: 0, x: 100, duration: 0.8 });
+          }
+        });
+
+        // Parallax Effect for Background Number (slow horizontal movement)
+        gsap.to(bgNumber, {
+          x: -120,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: card,
+            containerAnimation: pinTimeline,
+            start: 'left right',
+            end: 'right left',
+            scrub: true
+          }
+        });
+      });
+    }, scrollSection);
+
+    return () => mainCtx.revert();
+  }, [isMobile]);
+
+  // Mobile layout trigger hooks
+  useEffect(() => {
+    if (!isMobile) return;
+
+    // Standard stacked mobile animation trigger
+    const mobileCards = gsap.utils.toArray('.cinematic-project-card-mobile');
+    const mobileCtx = gsap.context(() => {
+      mobileCards.forEach((card) => {
+        gsap.fromTo(
+          card.querySelectorAll('.animate-mobile'),
+          { opacity: 0, y: 40, filter: 'blur(10px)' },
+          {
+            opacity: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            duration: 0.8,
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse'
+            }
+          }
+        );
+      });
+    });
+
+    return () => mobileCtx.revert();
+  }, [isMobile]);
+
+  // Render Horizontal Experience on Desktop/Tablet
+  if (!isMobile) {
+    return (
+      <section 
+        id="projects" 
+        ref={scrollSectionRef} 
+        className="projects-cinematic-pin-section"
+        aria-label="Selected Work"
+      >
+        <BackgroundGlow activeIndex={activeIndex} />
+        
+        <div className="projects-cinematic-sticky-header">
+          <p className="section-eyebrow">// SELECTED WORK</p>
         </div>
-      </div>
 
-      {/* Shared Layout Project Opening Overlay */}
-      <AnimatePresence>
-        {selectedProj && (
-          <motion.div 
-            className="project-detail-overlay"
-            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            animate={{ opacity: 1, backdropFilter: 'blur(12px)' }}
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            transition={{ duration: 0.45, ease: customEase }}
-          >
-            <button 
-              className="overlay-close-btn" 
-              onClick={() => setSelectedProj(null)}
-              aria-label="Close project details"
+        <div ref={containerRef} className="projects-cinematic-horizontal-list">
+          {projectsData.map((project, index) => (
+            <div 
+              key={project.title} 
+              className="cinematic-project-card"
             >
-              ✕
-            </button>
-
-            <div className="overlay-container">
-              <div className="overlay-header">
-                <div className="overlay-meta">
-                  <span>{selectedProj.year}</span>
-                  <span className="nav-dot">·</span>
-                  <span>{selectedProj.category.toUpperCase()}</span>
-                </div>
-                <motion.h3 
-                  layoutId={`project-title-${selectedProj.title}`}
-                  className="overlay-title"
-                >
-                  {selectedProj.title}
-                </motion.h3>
+              {/* Giant background number parallax layer */}
+              <div className="cinematic-project-bg-number">
+                {String(index + 1).padStart(3, '0')}
               </div>
 
-              <motion.div 
-                layoutId={`project-image-${selectedProj.title}`}
-                className="overlay-visual-wrapper"
-              >
-                <ProjectVisual type={selectedProj.previewType} />
-              </motion.div>
+              {/* Foreground content card */}
+              <div className="cinematic-project-content">
+                <span className="cinematic-project-category">
+                  {project.category} · {project.year}
+                </span>
 
-              <motion.div 
-                className="overlay-content"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: {},
-                  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } }
-                }}
-              >
-                <motion.div 
-                  variants={{
-                    hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
-                    visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: customEase } }
-                  }}
-                  className="overlay-desc"
-                >
-                  {selectedProj.desc}
-                </motion.div>
+                <h2 className="cinematic-project-title">
+                  {project.title}
+                </h2>
 
-                <motion.div 
-                  variants={{
-                    hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
-                    visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.6, ease: customEase } }
-                  }}
-                  className="overlay-info-panel"
-                >
-                  <div>
-                    <div className="overlay-section-title">Tech Stack</div>
-                    <div className="overlay-stack">
-                      {selectedProj.stack?.map((tech) => (
-                        <span key={tech} className="project-info-tag font-mono">{tech}</span>
-                      ))}
-                    </div>
-                  </div>
+                <p className="cinematic-project-desc">
+                  {project.desc}
+                </p>
 
-                  <div>
-                    <div className="overlay-section-title">Links</div>
-                    <div className="overlay-actions">
-                      {selectedProj.github && selectedProj.github !== '#' && (
-                        <Magnetic>
-                          <a href={selectedProj.github} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-ghost">
-                            <GithubIcon /> <span>Source</span>
-                          </a>
-                        </Magnetic>
-                      )}
-                      {selectedProj.link && selectedProj.link !== '#' && (
-                        <Magnetic>
-                          <a href={selectedProj.link} target="_blank" rel="noopener noreferrer" className="showcase-btn btn-primary">
-                            <span>Live Preview</span> <ArrowRight className="w-4 h-4" />
-                          </a>
-                        </Magnetic>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
+                <div className="cinematic-project-tags">
+                  {project.stack?.map((tech) => (
+                    <span key={tech} className="cinematic-project-tag">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="cinematic-project-actions">
+                  {project.github && project.github !== '#' && (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cinematic-action-btn github-btn"
+                    >
+                      <GithubIcon className="btn-icon" size={16} />
+                      <span>Source Code</span>
+                      <ArrowUpRight className="arrow-indicator" size={16} />
+                    </a>
+                  )}
+                  {project.link && project.link !== '#' && (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cinematic-action-btn preview-btn"
+                    >
+                      <span>Live Preview</span>
+                      <ArrowUpRight className="arrow-indicator" size={16} />
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          ))}
+        </div>
+
+        <ProgressIndicator 
+          activeIndex={activeIndex} 
+          total={projectsData.length} 
+          progress={scrollProgress} 
+        />
+      </section>
+    );
+  }
+
+  // Fallback Vertical Stack Experience on Mobile
+  return (
+    <section id="projects" className="projects-mobile-section" aria-label="Selected Work">
+      <div className="mobile-section-header">
+        <p className="section-eyebrow">// SELECTED WORK</p>
+      </div>
+
+      <div className="projects-mobile-list">
+        {projectsData.map((project, index) => (
+          <div key={project.title} className="cinematic-project-card-mobile">
+            <div className="mobile-bg-number-container">
+              <span className="mobile-bg-number animate-mobile">
+                {String(index + 1).padStart(3, '0')}
+              </span>
+            </div>
+
+            <div className="mobile-card-content">
+              <span className="cinematic-project-category animate-mobile">
+                {project.category} · {project.year}
+              </span>
+
+              <h2 className="cinematic-project-title animate-mobile">
+                {project.title}
+              </h2>
+
+              <p className="cinematic-project-desc animate-mobile">
+                {project.desc}
+              </p>
+
+              <div className="cinematic-project-tags animate-mobile">
+                {project.stack?.map((tech) => (
+                  <span key={tech} className="cinematic-project-tag">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
+              <div className="cinematic-project-actions animate-mobile">
+                {project.github && project.github !== '#' && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cinematic-action-btn github-btn"
+                  >
+                    <GithubIcon className="btn-icon" size={14} />
+                    <span>Source Code</span>
+                    <ArrowUpRight className="arrow-indicator" size={14} />
+                  </a>
+                )}
+                {project.link && project.link !== '#' && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cinematic-action-btn preview-btn"
+                  >
+                    <span>Live Preview</span>
+                    <ArrowUpRight className="arrow-indicator" size={14} />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
