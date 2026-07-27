@@ -34,6 +34,7 @@ export default function Projects() {
 
   useEffect(() => {
     // Detect screen size to toggle desktop vs mobile layout
+    // 900px is selected as the breakpoint between horizontal scroll and stacked lists
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth <= 900);
     };
