@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Lenis from 'lenis'
 import { motion } from 'framer-motion'
 import Nav from './components/Nav'
@@ -30,6 +30,9 @@ function ScrollReveal({ children }) {
 }
 
 function App() {
+  const [isPreloaderActive, setIsPreloaderActive] = useState(true);
+  const [isRevealStarted, setIsRevealStarted] = useState(false);
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.4,
@@ -56,24 +59,37 @@ function App() {
       <div id="bg-layer"></div>
       <div className="global-grain-overlay" aria-hidden="true"></div>
       <a className="skip-link" href="#main">Skip to main content</a>
-      <Preloader />
+      {isPreloaderActive && (
+        <Preloader
+          onRevealStart={() => setIsRevealStarted(true)}
+          onComplete={() => setIsPreloaderActive(false)}
+        />
+      )}
       <CustomCursor />
       <RippleEffect />
       <FloatingIcons />
-      <Nav />
 
-      <main id="main">
-        <Hero />
-        <ScrollReveal><Projects /></ScrollReveal>
-        <ScrollReveal><Stack /></ScrollReveal>
-        <ScrollReveal><About /></ScrollReveal>
-        <ScrollReveal><Contact /></ScrollReveal>
-      </main>
+      <motion.div
+        initial={{ opacity: 0, y: 35, filter: 'blur(10px)' }}
+        animate={isRevealStarted ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 35, filter: 'blur(10px)' }}
+        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+        style={{ pointerEvents: isRevealStarted ? 'auto' : 'none' }}
+      >
+        <Nav />
 
-      <footer>
-        <p className="footer-l1">ASHMIT DEV · 2026 · BUILT WITH REACT & FRAMER MOTION</p>
-        <p className="footer-l2">SYSTEM STATUS: ONLINE</p>
-      </footer>
+        <main id="main">
+          <Hero isRevealStarted={isRevealStarted} />
+          <Projects />
+          <ScrollReveal><Stack /></ScrollReveal>
+          <ScrollReveal><About /></ScrollReveal>
+          <ScrollReveal><Contact /></ScrollReveal>
+        </main>
+
+        <footer>
+          <p className="footer-l1">ASHMIT DEV · 2026 · BUILT WITH REACT & FRAMER MOTION</p>
+          <p className="footer-l2">SYSTEM STATUS: ONLINE</p>
+        </footer>
+      </motion.div>
 
       <CatCompanion />
       
