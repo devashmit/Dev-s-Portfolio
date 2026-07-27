@@ -9,8 +9,6 @@ export default function CustomCursor() {
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    // Custom cursor now enabled on all devices to allow cat to follow it
-
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let ringX = mouseX;
@@ -40,19 +38,27 @@ export default function CustomCursor() {
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
     document.documentElement.addEventListener('pointerenter', onPointerEnter);
 
-    const interactiveElements = document.querySelectorAll('a, button, input, textarea, select, .bento-card, .btn, .project-wheel-node, .project-wheel-center, .showcase-btn, .keycap-container');
-    
-    const handleHoverEnter = () => {
-      ring.classList.add('hover');
-    };
-    const handleHoverLeave = () => {
-      ring.classList.remove('hover');
+    // Event delegation for cursor hover states
+    const handleMouseOver = (e) => {
+      const target = e.target.closest('a, button, input, textarea, select, .bento-card, .btn, .showcase-btn, .keycap-container, [data-cursor]');
+      if (target) {
+        ring.classList.add('hover');
+        if (target.getAttribute('data-cursor') === 'arrow') {
+          ring.classList.add('cursor-arrow');
+        }
+      }
     };
 
-    interactiveElements.forEach(el => {
-      el.addEventListener('mouseenter', handleHoverEnter);
-      el.addEventListener('mouseleave', handleHoverLeave);
-    });
+    const handleMouseOut = (e) => {
+      const target = e.target.closest('a, button, input, textarea, select, .bento-card, .btn, .showcase-btn, .keycap-container, [data-cursor]');
+      if (target) {
+        ring.classList.remove('hover');
+        ring.classList.remove('cursor-arrow');
+      }
+    };
+
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
 
     let animationFrameId;
     const render = () => {
@@ -67,10 +73,8 @@ export default function CustomCursor() {
       window.removeEventListener('pointermove', onPointerMove);
       document.documentElement.removeEventListener('pointerleave', onPointerLeave);
       document.documentElement.removeEventListener('pointerenter', onPointerEnter);
-      interactiveElements.forEach(el => {
-        el.removeEventListener('mouseenter', handleHoverEnter);
-        el.removeEventListener('mouseleave', handleHoverLeave);
-      });
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
