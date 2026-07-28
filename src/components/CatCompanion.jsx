@@ -7,11 +7,7 @@ export default function CatCompanion() {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(
-        window.innerWidth <= 900 ||
-        ('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0)
-      );
+      setIsMobile(window.innerWidth <= 768);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
