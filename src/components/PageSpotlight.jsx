@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { tigranzs } from '../data/content';
 
 export default function PageSpotlight() {
   const mouseX = useMotionValue(0);
@@ -7,12 +8,10 @@ export default function PageSpotlight() {
   const scale = useMotionValue(1);
   const opacity = useMotionValue(0); // start at 0 and fade in on first movement
 
-  // Fluid spring configuration for professional inertia and damping
-  const springConfig = { damping: 45, stiffness: 220, mass: 0.6 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-  const smoothScale = useSpring(scale, springConfig);
-  const smoothOpacity = useSpring(opacity, springConfig);
+  const smoothX = useSpring(mouseX, tigranzs);
+  const smoothY = useSpring(mouseY, tigranzs);
+  const smoothScale = useSpring(scale, tigranzs);
+  const smoothOpacity = useSpring(opacity, tigranzs);
 
   useEffect(() => {
     let hasMoved = false;
