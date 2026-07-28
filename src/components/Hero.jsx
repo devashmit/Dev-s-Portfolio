@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import TextScramble from './TextScramble';
 import Magnetic from './Magnetic';
 import RoleCycler from './RoleCycler';
+import { springtune, tigranzs } from '../data/content';
 
 // ─── Each element gets its own animation signature ────────────────────────────
 
@@ -52,7 +53,7 @@ const springPop = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { type: 'spring', stiffness: 280, damping: 20, mass: 0.8 }
+    transition: springtune
   }
 };
 
@@ -71,8 +72,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.14,
-      delayChildren: 0.3,
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
     }
   }
 };
