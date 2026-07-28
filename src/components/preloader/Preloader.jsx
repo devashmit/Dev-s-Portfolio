@@ -53,37 +53,33 @@ export default function Preloader({ onRevealStart, onComplete }) {
       }, 1800));
     } else {
       // Standard cinematic timeline
-      // 0.5s - Ambient light appears
+      // 0.6s - Ambient light appears
       timers.push(setTimeout(() => {
         setShowAmbient(true);
-      }, 500));
+      }, 600));
 
-      // 1.2s - Soft light sweeps across center
+      // 1.4s - Soft light sweeps across center
       timers.push(setTimeout(() => {
         setShowSweep(true);
-      }, 1200));
+      }, 1400));
 
-      // 1.8s - "ASHMIT DEV" emerges from darkness
+      // 2.2s - "DEV" emerges from darkness
       timers.push(setTimeout(() => {
         setShowTitle(true);
-      }, 1800));
+      }, 2200));
 
-      // 3.2s - Title gently dissolves, start portfolio reveal
+      // 4.2s - Title gently dissolves, start portfolio reveal and fade out preloader simultaneously
       timers.push(setTimeout(() => {
         setIsDissolved(true);
-        if (onRevealStart) onRevealStart();
-      }, 3200));
-
-      // 3.6s - Reveal transition starts fading out the preloader background completely
-      timers.push(setTimeout(() => {
         setIsRevealing(true);
-      }, 3600));
+        if (onRevealStart) onRevealStart();
+      }, 4200));
 
-      // 4.2s - Complete preloader unmount
+      // 4.6s - Complete preloader unmount
       timers.push(setTimeout(() => {
         document.body.style.overflow = '';
         if (onComplete) onComplete();
-      }, 4200));
+      }, 4600));
     }
 
     return () => {
@@ -98,7 +94,7 @@ export default function Preloader({ onRevealStart, onComplete }) {
       id="premium-preloader"
       className="premium-preloader-root"
       animate={isRevealing ? { opacity: 0 } : { opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
     >
       {/* Background Cinematic Overlays */}
       <div className="cinematic-vignette" />
@@ -120,7 +116,7 @@ export default function Preloader({ onRevealStart, onComplete }) {
       <RevealTransition isRevealing={isRevealing}>
         <motion.div
           animate={prefersReducedMotion ? {} : { scale: [0.99, 1.015] }}
-          transition={{ duration: 4.2, ease: [0.25, 0.46, 0.45, 0.94] }} // slow camera push-in zoom
+          transition={{ duration: 4.6, ease: [0.25, 0.46, 0.45, 0.94] }} // slow camera push-in zoom
         >
           {showTitle && (
             <CinematicTitle
