@@ -995,6 +995,42 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   .stack-grid .bento-card{grid-column:span 12}
 }
 
+/* Height-specific adjustments to keep hero content above the fold on shorter viewports */
+@media (max-height: 800px) {
+  #hero {
+    min-height: 500px;
+  }
+  .hero-content {
+    margin-top: auto;
+    margin-bottom: 2vh;
+  }
+  .hero-availability {
+    margin-bottom: 0.5rem;
+  }
+  .hero-name-block {
+    margin-bottom: 0.5rem;
+  }
+  .hero-footer-row {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-height: 700px) {
+  #hero {
+    min-height: 400px;
+  }
+  .hero-name {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+  }
+  .hero-role {
+    font-size: 1.25rem;
+  }
+  .hero-tagline {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
   .hero-scroll-line{animation:none}
