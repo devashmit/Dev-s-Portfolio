@@ -85,8 +85,8 @@ function App() {
       <FloatingIcons />
 
       <motion.div
-        initial={isMobileDevice ? { opacity: 0, y: 35 } : { opacity: 0, y: 35, filter: 'blur(10px)' }}
-        animate={isRevealStarted ? (isMobileDevice ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, filter: 'blur(0px)' }) : (isMobileDevice ? { opacity: 0, y: 35 } : { opacity: 0, y: 35, filter: 'blur(10px)' })}
+        initial={{ opacity: 0, y: 35 }}
+        animate={isRevealStarted ? { opacity: 1, y: 0 } : { opacity: 0, y: 35 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         style={{ pointerEvents: isRevealStarted ? 'auto' : 'none' }}
       >
