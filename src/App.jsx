@@ -36,8 +36,15 @@ function ScrollReveal({ children }) {
 function App() {
   const [isPreloaderActive, setIsPreloaderActive] = useState(true);
   const [isRevealStarted, setIsRevealStarted] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   useEffect(() => {
+    setIsMobileDevice(window.innerWidth <= 900);
+  }, []);
+
+  useEffect(() => {
+    if (window.innerWidth <= 900) return; // Disable Lenis on mobile/tablet for 60fps native scrolling performance
+
     const lenis = new Lenis({
       duration: 1.4,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -78,8 +85,8 @@ function App() {
       <FloatingIcons />
 
       <motion.div
-        initial={{ opacity: 0, y: 35, filter: 'blur(10px)' }}
-        animate={isRevealStarted ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 35, filter: 'blur(10px)' }}
+        initial={isMobileDevice ? { opacity: 0, y: 35 } : { opacity: 0, y: 35, filter: 'blur(10px)' }}
+        animate={isRevealStarted ? (isMobileDevice ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, filter: 'blur(0px)' }) : (isMobileDevice ? { opacity: 0, y: 35 } : { opacity: 0, y: 35, filter: 'blur(10px)' })}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         style={{ pointerEvents: isRevealStarted ? 'auto' : 'none' }}
       >

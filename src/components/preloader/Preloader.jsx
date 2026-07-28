@@ -115,6 +115,13 @@ export default function Preloader({ onRevealStart, onComplete }) {
       {/* Title & Reveal Animations Container */}
       <RevealTransition isRevealing={isRevealing}>
         <motion.div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%'
+          }}
           animate={prefersReducedMotion ? {} : { scale: [0.99, 1.015] }}
           transition={{ duration: 4.6, ease: [0.25, 0.46, 0.45, 0.94] }} // slow camera push-in zoom
         >
