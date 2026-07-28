@@ -37,6 +37,7 @@ export const projectsData = [
     tags: ['TypeScript', 'Web'],
     stack: ['TypeScript', 'React', 'Tailwind CSS'],
     github: 'https://github.com/devashmit/BerojgarCv',
+    link: 'https://github.com/devashmit/BerojgarCv',
     category: 'web',
     previewType: 'cv-flow'
   },
@@ -47,6 +48,7 @@ export const projectsData = [
     tags: ['Productivity', 'WIP'],
     stack: ['Next.js', 'MongoDB', 'Node.js', 'Tailwind CSS'],
     github: 'https://github.com/devashmit/SYP',
+    link: 'https://github.com/devashmit/SYP',
     category: 'systems',
     previewType: 'node-network'
   },
@@ -57,6 +59,7 @@ export const projectsData = [
     tags: ['Canvas API', 'Creative Coding'],
     stack: ['HTML5', 'TypeScript', 'Vite'],
     github: 'https://github.com/devashmit/Devs-bouquet',
+    link: 'https://github.com/devashmit/Devs-bouquet',
     category: 'creative',
     previewType: 'flower-bloom'
   },
@@ -67,6 +70,7 @@ export const projectsData = [
     tags: ['Physics', 'Canvas'],
     stack: ['HTML5', 'Node.js'],
     github: 'https://github.com/devashmit/Virtual-Petals',
+    link: 'https://github.com/devashmit/Virtual-Petals',
     category: 'creative',
     previewType: 'floating-petals'
   }
