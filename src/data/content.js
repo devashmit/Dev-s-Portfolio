@@ -72,3 +72,17 @@ export const projectsData = [
   }
 ];
 
+export const springtune = {
+  type: 'spring',
+  stiffness: 350,
+  damping: 28,
+  mass: 0.5
+};
+
+export const tigranzs = {
+  type: 'spring',
+  stiffness: 140,
+  damping: 14,
+  mass: 0.8
+};
+
