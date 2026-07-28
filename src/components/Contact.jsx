@@ -3,6 +3,7 @@ import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import Magnetic from './Magnetic';
 import TextReveal from './TextReveal';
 import TextScramble from './TextScramble';
+import { tigranzs } from '../data/content';
 import { 
   Mail, 
   Calendar, 
@@ -100,7 +101,7 @@ const MagneticBentoCard = ({ card, idx, activeCard, setActiveCard }) => {
       initial={{ opacity: 0, scale: 0.85, y: 30, perspective: 1000 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ type: "spring", stiffness: 200, damping: 15, delay: idx * 0.1 }}
+      transition={{ ...tigranzs, delay: idx * 0.1 }}
     >
       <div style={{ transform: "translateZ(20px)" }}>
         {/* OS Window Chrome Bar */}
