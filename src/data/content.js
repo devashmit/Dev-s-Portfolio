@@ -26,7 +26,7 @@ export const projectsData = [
     tags: ['Real Estate', 'Next.js'],
     stack: ['Next.js', 'React', 'Tailwind CSS', 'Node.js', 'MongoDB'],
     github: 'https://github.com/devashmit/dollarcolony',
-    link: 'https://dollarscolony1.vercel.app/',
+    link: 'https://dollarscolony.in',
     category: 'web',
     previewType: 'dollar-colony'
   },
