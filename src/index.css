@@ -188,17 +188,25 @@ ul,ol{list-style:none}
   text-align: center;
 }
 
-.cinematic-title {
-  font-size: clamp(2.5rem, 8vw, 6.5rem);
+.cinematic-title-letter {
+  font-size: clamp(3rem, 10vw, 8.5rem);
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--pre-title-color);
-  margin: 0;
-  padding-left: 0.18em; /* Offset for letter-spacing to center it perfectly */
   font-family: var(--font-satoshi);
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 40px rgba(6, 182, 212, 0.1);
   will-change: transform, opacity, filter;
+}
+
+.cinematic-title-glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
+  mix-blend-mode: screen;
 }
 
 /* Light Sweep Effect */
