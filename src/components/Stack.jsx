@@ -10,8 +10,15 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
 
   // Audio click generator for physical realism
   const playClick = () => {
+    if (window.innerWidth <= 900) return; // Disable audio effects on mobile for high performance
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!window._audioCtx) {
+        window._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = window._audioCtx;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       
@@ -39,6 +46,10 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
         playClick();
       }}
       onMouseLeave={onLeave}
+      onClick={() => {
+        onHover(item);
+        playClick();
+      }}
       style={{
         '--key-color': item.color,
       }}

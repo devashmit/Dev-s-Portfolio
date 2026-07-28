@@ -1022,6 +1022,26 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   .hero-role{font-size:1.25rem}
   
   .stack-grid .bento-card{grid-column:span 12}
+
+  /* Responsive Workstation Code Editor alignment and sizing */
+  .ide-code pre {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    font-size: 0.72rem !important;
+    line-height: 1.45 !important;
+  }
+  .ide-line-numbers {
+    font-size: 0.72rem !important;
+    line-height: 1.45 !important;
+    padding: 0 0.75rem !important;
+  }
+  .ide-editor-content {
+    padding: 1rem 0 !important;
+  }
+  .ide-title {
+    font-size: 0.7rem !important;
+  }
 }
 
 /* Height-specific adjustments to keep hero content above the fold on shorter viewports */
@@ -5143,7 +5163,9 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
 /* 4. Keyboard Wrapper height crop on mobile to prevent huge margins */
 @media (max-width: 768px) {
   .keyboard-chassis-wrapper {
-    height: 240px;
+    flex: none !important;
+    height: 220px !important;
+    padding: 0 !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -5284,12 +5306,16 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
 }
 @media (max-width: 520px) {
   .keyboard-chassis-wrapper {
-    height: 190px;
+    flex: none !important;
+    height: 180px !important;
+    padding: 0 !important;
   }
 }
 @media (max-width: 400px) {
   .keyboard-chassis-wrapper {
-    height: 155px;
+    flex: none !important;
+    height: 145px !important;
+    padding: 0 !important;
   }
 }
 
