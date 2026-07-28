@@ -1013,6 +1013,15 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   .hero-footer-row {
     gap: 0.75rem;
   }
+  .cinematic-project-content {
+    gap: 1.2rem;
+  }
+  .projects-cinematic-sticky-header {
+    top: 2rem;
+  }
+  .project-scroll-progress-container {
+    bottom: 2rem;
+  }
 }
 
 @media (max-height: 700px) {
@@ -1028,6 +1037,31 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   .hero-tagline {
     font-size: 0.95rem;
     line-height: 1.4;
+  }
+  .cinematic-project-content {
+    gap: 0.8rem;
+  }
+  .cinematic-project-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+  .cinematic-project-desc {
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+  .cinematic-project-tags {
+    gap: 0.5rem;
+  }
+  .cinematic-project-tag {
+    padding: 0.25rem 0.7rem;
+    font-size: 0.65rem;
+  }
+  .cinematic-project-actions {
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .cinematic-action-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
   }
 }
 
