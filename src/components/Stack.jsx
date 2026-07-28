@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
 import TextReveal from './TextReveal';
-import { stackItems } from '../data/content';
+import { stackItems, springtune, tigranzs } from '../data/content';
 import SystemConsole from './SystemConsole';
 
 function Keycap({ item, index, onHover, onLeave, isActive }) {
-  // Mechanical keypress spring configuration
-  const springConfig = { type: "spring", stiffness: 400, damping: 20 };
+  // Mechanical keypress spring configuration - using springtune preset
+  const springConfig = springtune;
 
   // Audio click generator for physical realism
   const playClick = () => {
@@ -140,7 +140,7 @@ export default function Stack() {
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: '-80px' }}
-          transition={{ type: 'spring', stiffness: 140, damping: 22, delay: 0.1 }}
+          transition={{ ...tigranzs, delay: 0.1 }}
         >
           <div className="telemetry-chrome">
 
@@ -212,7 +212,7 @@ export default function Stack() {
           initial={{ opacity: 0, y: -40, scale: 0.9 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ type: 'spring', stiffness: 120, damping: 15, mass: 1.5, delay: 0.2 }}
+          transition={{ ...tigranzs, delay: 0.2 }}
         >
           <div className="keyboard-isometric-deck">
             {/* Base Bevel Frame */}
