@@ -129,7 +129,7 @@ export default function Hero({ isRevealStarted = false }) {
         <div className="hero-name-block">
           {/* Upward reveal - primary headline */}
           <motion.h1 className="hero-name" variants={maskReveal}>
-            <TextScramble text="Ashmit Dev" delay={2.3} />
+            <TextScramble text="Ashmit Dev" delay={0.2} />
           </motion.h1>
           {/* Blur fade-in - secondary headline, softer entry */}
           <motion.h2 className="hero-role" variants={blurIn} style={{ display: 'flex', gap: '0.5ch' }}>
