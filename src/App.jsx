@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import Lenis from 'lenis'
 import { motion } from 'framer-motion'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Projects from './components/Projects'
@@ -14,6 +16,8 @@ import RippleEffect from './components/RippleEffect'
 import PageSpotlight from './components/PageSpotlight'
 import ScrollProgress from './components/ScrollProgress'
 import FloatingIcons from './components/FloatingIcons'
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Premium coordinated ScrollReveal component using 0.22, 1, 0.36, 1 easing
 function ScrollReveal({ children }) {
@@ -40,15 +44,19 @@ function App() {
       smoothWheel: true,
     })
 
-    function raf(time) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
+    // Connect Lenis to ScrollTrigger update
+    lenis.on('scroll', ScrollTrigger.update)
 
-    requestAnimationFrame(raf)
+    // Run Lenis on GSAP Ticker
+    const tickerUpdate = (time) => {
+      lenis.raf(time * 1000)
+    }
+    gsap.ticker.add(tickerUpdate)
+    gsap.ticker.lagSmoothing(0)
 
     return () => {
       lenis.destroy()
+      gsap.ticker.remove(tickerUpdate)
     }
   }, [])
 
@@ -72,7 +80,7 @@ function App() {
       <motion.div
         initial={{ opacity: 0, y: 35, filter: 'blur(10px)' }}
         animate={isRevealStarted ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 35, filter: 'blur(10px)' }}
-        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         style={{ pointerEvents: isRevealStarted ? 'auto' : 'none' }}
       >
         <Nav />
