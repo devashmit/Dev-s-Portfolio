@@ -18,9 +18,8 @@ export default function CatCompanion() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  if (isMobile) return null;
-
   useEffect(() => {
+    if (isMobile) return;
     const cat = catRef.current;
     const toy = toyRef.current;
     if (!cat || !toy) return;
@@ -254,6 +253,8 @@ export default function CatCompanion() {
       clearTimeout(moveTimeout);
     };
   }, []);
+
+  if (isMobile) return null;
 
   return (
     <>
