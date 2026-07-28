@@ -112,15 +112,17 @@ export default function Preloader({ onRevealStart, onComplete }) {
       {/* Horizontal Light Sweep Beam */}
       {!prefersReducedMotion && showSweep && <LightSweep />}
 
-      {/* Title & Reveal Animations Container */}
       <RevealTransition isRevealing={isRevealing}>
         <motion.div
           style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '100%'
+            justifyContent: 'center'
           }}
           animate={prefersReducedMotion ? {} : { scale: [0.99, 1.015] }}
           transition={{ duration: 4.6, ease: [0.25, 0.46, 0.45, 0.94] }} // slow camera push-in zoom
