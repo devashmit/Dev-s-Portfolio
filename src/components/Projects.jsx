@@ -57,31 +57,33 @@ export default function Projects() {
 
     // Master Timeline for Pinned Horizontal Scroll
     const mainCtx = gsap.context(() => {
-      const pinTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: scrollSection,
-          pin: true,
-          scrub: 0.8, // Smooth scrub setting for inertia control
-          start: 'top top',
-          end: () => `+=${getScrollAmount()}`,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            setScrollProgress(self.progress);
-            // Calculate active project index dynamically
-            const segment = 1 / projectsData.length;
-            const index = Math.min(
-              Math.floor(self.progress / segment),
-              projectsData.length - 1
-            );
-            setActiveIndex(index);
-          }
-        }
-      });
+      const pinTimeline = gsap.timeline();
 
       // Horizontal container slide animation
       pinTimeline.to(container, {
         x: () => -getScrollAmount(),
         ease: 'none'
+      });
+
+      ScrollTrigger.create({
+        trigger: scrollSection,
+        pin: true,
+        pinType: 'transform',
+        scrub: 0.8, // Smooth scrub setting for inertia control
+        start: 'top top',
+        end: () => `+=${getScrollAmount()}`,
+        animation: pinTimeline,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          setScrollProgress(self.progress);
+          // Calculate active project index dynamically
+          const segment = 1 / projectsData.length;
+          const index = Math.min(
+            Math.floor(self.progress / segment),
+            projectsData.length - 1
+          );
+          setActiveIndex(index);
+        }
       });
 
       // Animate individual card transitions during scroll
@@ -102,40 +104,30 @@ export default function Projects() {
         ScrollTrigger.create({
           trigger: card,
           containerAnimation: pinTimeline,
-          start: 'left right-=150',
-          end: 'right left+=150',
+          start: 'left center+=250',
+          end: 'right center-=250',
           onEnter: () => {
             // Animate card items staggers
-            gsap.to(bgNumber, { opacity: 0.03, x: 0, duration: 1.2, ease: 'power3.out' });
-            gsap.to(title, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, delay: 0.1, ease: 'power3.out' });
-            gsap.to(desc, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, delay: 0.2, ease: 'power3.out' });
+            gsap.to(bgNumber, { opacity: 0.03, x: 0, duration: 1.0, ease: 'power3.out' });
+            gsap.to(title, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, delay: 0.1, ease: 'power3.out' });
+            gsap.to(desc, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, delay: 0.2, ease: 'power3.out' });
             
             // Stagger tech tags animation
             gsap.to(tags, { 
               opacity: 1, 
               y: 0, 
-              duration: 0.5, 
-              stagger: 0.05, 
-              delay: 0.3,
+              duration: 0.4, 
+              stagger: 0.04, 
+              delay: 0.25,
               ease: 'power2.out' 
             });
 
-            gsap.to(actions, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, delay: 0.5, ease: 'power3.out' });
-          },
-          onLeave: () => {
-            // Exit states: Fade previous card elements to 20% opacity and scale down slightly
-            gsap.to([title, desc, tags, actions], { opacity: 0.2, scale: 0.98, filter: 'blur(4px)', duration: 0.8 });
+            gsap.to(actions, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.6, delay: 0.4, ease: 'power3.out' });
           },
           onEnterBack: () => {
             // Restore card states when scrolling back
-            gsap.to(bgNumber, { opacity: 0.03, x: 0, duration: 1.2, ease: 'power3.out' });
-            gsap.to([title, desc, tags, actions], { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.8 });
-          },
-          onLeaveBack: () => {
-            // Reset to initial entry state
-            gsap.to([title, desc, actions], { opacity: 0, y: 50, filter: 'blur(10px)', duration: 0.6 });
-            gsap.to(tags, { opacity: 0, y: 20, duration: 0.4 });
-            gsap.to(bgNumber, { opacity: 0, x: 100, duration: 0.8 });
+            gsap.to(bgNumber, { opacity: 0.03, x: 0, duration: 1.0, ease: 'power3.out' });
+            gsap.to([title, desc, tags, actions], { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 0.6 });
           }
         });
 
