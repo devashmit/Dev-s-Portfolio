@@ -21,6 +21,7 @@ export default function CatCompanion() {
     let catScaleX = 1;
     let catScale = 1;
     let moveTimeout;
+    let currentMode = 'idle'; // Track current background state to avoid layout thrashing
 
     // Interactive Toy variables
     let toyActive = false;
@@ -71,13 +72,19 @@ export default function CatCompanion() {
 
       // Play running gif on movement
       if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
-        cat.style.backgroundImage = `url(${runningGif})`;
+        if (currentMode !== 'running') {
+          currentMode = 'running';
+          cat.style.backgroundImage = `url(${runningGif})`;
+        }
       }
 
       clearTimeout(moveTimeout);
       moveTimeout = setTimeout(() => {
         if (!isActing) {
-          cat.style.backgroundImage = `url(${staticImage})`;
+          if (currentMode !== 'idle') {
+            currentMode = 'idle';
+            cat.style.backgroundImage = `url(${staticImage})`;
+          }
         }
       }, 150);
     }
@@ -91,6 +98,7 @@ export default function CatCompanion() {
     const onClick = () => {
       if (isActing) return;
       isActing = true;
+      currentMode = 'acting';
       cat.style.backgroundImage = `url(${actionImage})`;
       
       const startY = catY;
@@ -108,6 +116,7 @@ export default function CatCompanion() {
           requestAnimationFrame(animateJump);
         } else {
           isActing = false;
+          currentMode = 'idle';
           cat.style.backgroundImage = `url(${staticImage})`;
         }
       };
@@ -136,9 +145,9 @@ export default function CatCompanion() {
         catY += (targetY - catY) * chaseSpeed;
       }
 
-      // Keep cat outside the active game window/workspace if it exists
+      // Keep cat outside the active game window/workspace if it exists (check less frequently to avoid layout thrashing)
       frameCount++;
-      if (frameCount % 30 === 0 || cachedRect === null) {
+      if (frameCount % 180 === 0 || cachedRect === null) {
         isPlayingGameCached = !!document.querySelector('.game-canvas');
         cachedGameBox = isPlayingGameCached 
           ? document.querySelector('.ide-window') 
