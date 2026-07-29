@@ -30,6 +30,12 @@ export default function CatCompanion() {
     let mouseX = lastX;
     let mouseY = lastY;
 
+    // Throttle/Cache DOM queries to avoid layout thrashing
+    let frameCount = 0;
+    let cachedGameBox = null;
+    let cachedRect = null;
+    let isPlayingGameCached = false;
+
     cat.style.transform = `translate(-50%, -50%) translate(${catX}px, ${catY}px) scale(${catScaleX * catScale}, ${catScale})`;
 
     const handleSummonToy = () => {
@@ -131,24 +137,31 @@ export default function CatCompanion() {
       }
 
       // Keep cat outside the active game window/workspace if it exists
-      const isPlayingGame = document.querySelector('.game-canvas');
-      const gameBox = isPlayingGame 
-        ? document.querySelector('.ide-window') 
-        : document.querySelector('.game-canvas, .physics-canvas, .canvas-container');
+      frameCount++;
+      if (frameCount % 30 === 0 || cachedRect === null) {
+        isPlayingGameCached = !!document.querySelector('.game-canvas');
+        cachedGameBox = isPlayingGameCached 
+          ? document.querySelector('.ide-window') 
+          : document.querySelector('.game-canvas, .physics-canvas, .canvas-container');
+        if (cachedGameBox) {
+          cachedRect = cachedGameBox.getBoundingClientRect();
+        } else {
+          cachedRect = null;
+        }
+      }
 
-      if (gameBox) {
-        const rect = gameBox.getBoundingClientRect();
-        const margin = isPlayingGame ? 65 : 55; // Keep the cat fully outside the IDE frame or game canvas
-        const boxLeft = rect.left - margin;
-        const boxRight = rect.right + margin;
-        const boxTop = rect.top - margin;
-        const boxBottom = rect.bottom + margin;
+      if (cachedGameBox && cachedRect) {
+        const margin = isPlayingGameCached ? 65 : 55; // Keep the cat fully outside the IDE frame or game canvas
+        const boxLeft = cachedRect.left - margin;
+        const boxRight = cachedRect.right + margin;
+        const boxTop = cachedRect.top - margin;
+        const boxBottom = cachedRect.bottom + margin;
 
-        if (isPlayingGame && Math.random() < 0.01) {
+        if (isPlayingGameCached && Math.random() < 0.01) {
           console.log("COLLISION DEBUG:", {
-            isPlayingGame: !!isPlayingGame,
-            gameBoxClass: gameBox.className,
-            rect,
+            isPlayingGame: isPlayingGameCached,
+            gameBoxClass: cachedGameBox.className,
+            rect: cachedRect,
             catX,
             catY,
             boxLeft,
@@ -227,13 +240,22 @@ export default function CatCompanion() {
     };
     render();
 
+    const handleInvalidateCache = () => {
+      cachedRect = null;
+      cachedGameBox = null;
+    };
+
     window.addEventListener('pointermove', onPointerMove);
     document.addEventListener('click', onClick);
+    window.addEventListener('resize', handleInvalidateCache);
+    window.addEventListener('scroll', handleInvalidateCache, { passive: true });
 
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
       document.removeEventListener('click', onClick);
       document.removeEventListener('cat:summon_toy', handleSummonToy);
+      window.removeEventListener('resize', handleInvalidateCache);
+      window.removeEventListener('scroll', handleInvalidateCache);
       cancelAnimationFrame(animationFrameId);
       clearTimeout(moveTimeout);
     };
