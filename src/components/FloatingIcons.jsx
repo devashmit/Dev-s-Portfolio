@@ -70,7 +70,7 @@ export default function FloatingIcons() {
                     enable: true,
                     area: 800,
                 },
-                value: 80, // High density for visual texture
+                value: 25, // Reduced for optimal performance
             },
             opacity: {
                 value: { min: 0.05, max: 0.2 }, // Very subtle base
@@ -102,7 +102,7 @@ export default function FloatingIcons() {
                 }
             },
             shadow: {
-                enable: true,
+                enable: false, // Disabled for high performance (canvas shadows are extremely heavy)
                 color: "#FACC15",
                 blur: 20, // Strong glow
                 offset: {
