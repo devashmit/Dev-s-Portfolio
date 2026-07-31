@@ -81,6 +81,16 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html.lenis, html.lenis body {
+  height: auto;
+  overflow: hidden;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
 body{background:transparent;color:var(--ink-mid);font-family:var(--font-body);font-weight:400;line-height:1.6;overflow-x:hidden;cursor:none}
 #bg-layer {
   position: fixed;
@@ -4066,33 +4076,78 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
    RESPONSIVE DESIGN ADAPTABILITY
    ===================================================== */
 @media (max-width: 768px) {
+  .keyboard-chassis-wrapper {
+    perspective: none !important;
+    padding: 1rem 0 !important;
+  }
   .keyboard-isometric-deck {
-    width: 460px;
-    height: 290px;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    height: auto !important;
+    margin: 0 auto !important;
+  }
+  .keyboard-isometric-deck:hover {
+    transform: none !important;
   }
   .keyboard-base-plate {
-    padding: 0.75rem;
-    border-radius: 20px;
+    position: relative !important;
+    inset: auto !important;
+    height: auto !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    transform: none !important;
+    padding: 0.6rem !important;
+    border-radius: 12px !important;
   }
-  .keyboard-base-plate::before {
-    border-radius: 20px;
+  .keyboard-base-plate::before,
+  .keyboard-base-plate::after {
+    display: none !important;
   }
   .keyboard-inner-tray {
-    gap: 0.6rem;
-    padding: 0.6rem;
-    border-radius: 14px;
+    transform: none !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    grid-template-rows: repeat(3, 1fr) !important;
+    border-radius: 8px !important;
+  }
+  .keycap-container {
+    transform: none !important;
+    aspect-ratio: 1 / 1;
+    width: 100% !important;
+    height: auto !important;
+  }
+  .keycap-switch-base {
+    display: none !important;
   }
   .keycap-3d {
-    width: 62px;
-    height: 58px;
+    width: 100% !important;
+    height: 100% !important;
+    transform: none !important;
+  }
+  .keycap-face {
+    transform: none !important;
+    position: relative !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+    border-radius: 4px !important;
+  }
+  .keycap-container.active .keycap-face {
+    transform: scale(0.95) !important;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5) !important;
   }
   .keycap-icon-wrapper {
-    width: 24px;
-    height: 24px;
+    width: 22px !important;
+    height: 22px !important;
+    transform: none !important;
+  }
+  .keycap-side {
+    display: none !important;
   }
   .key-led-glow {
-    width: 60px;
-    height: 60px;
+    display: none !important;
   }
   .stack-telemetry-panel {
     height: 280px;
@@ -5473,4 +5528,63 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   background: var(--ink);
   color: var(--bg);
 }
+
+/* Cyber Worm Game Virtual D-Pad Styling */
+.mobile-dpad {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 36px);
+  grid-template-rows: repeat(3, 36px);
+  gap: 4px;
+  z-index: 30;
+  background: rgba(2, 3, 5, 0.75);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.dpad-btn {
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: #06b6d4;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.dpad-btn:active {
+  background: #06b6d4 !important;
+  color: #020305 !important;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.7);
+}
+
+.dpad-btn.up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.dpad-btn.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.dpad-btn.down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.dpad-btn.right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
 
