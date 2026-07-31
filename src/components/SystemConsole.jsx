@@ -111,6 +111,7 @@ const developerProfileCode = [
 function CyberWorm({ onPlayNote }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const canvasContainerRef = useRef(null);
 
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(() => {
@@ -312,6 +313,25 @@ function CyberWorm({ onPlayNote }) {
   };
 
   useEffect(() => {
+    const container = canvasContainerRef.current;
+    if (!container) return;
+
+    const preventDefault = (e) => {
+      if (gameState === 'playing') {
+        e.preventDefault();
+      }
+    };
+
+    container.addEventListener('touchstart', preventDefault, { passive: false });
+    container.addEventListener('touchmove', preventDefault, { passive: false });
+
+    return () => {
+      container.removeEventListener('touchstart', preventDefault);
+      container.removeEventListener('touchmove', preventDefault);
+    };
+  }, [gameState]);
+
+  useEffect(() => {
     const handleKeyDown = (e) => {
       switch (e.key) {
         case 'ArrowUp':
@@ -371,6 +391,7 @@ function CyberWorm({ onPlayNote }) {
       const state = stateRef.current;
       const width = canvas.width / (window.devicePixelRatio || 1);
       const height = canvas.height / (window.devicePixelRatio || 1);
+      const isMobile = window.innerWidth <= 900;
       
       const cellW = width / GRID_SIZE_X;
       const cellH = height / GRID_SIZE_Y;
@@ -424,13 +445,11 @@ function CyberWorm({ onPlayNote }) {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Draw Grid Matrix Background Dots
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.05)';
+      // Draw Grid Matrix Background Dots (High-performance optimization)
+      ctx.fillStyle = 'rgba(6, 182, 212, 0.08)';
       for (let x = 0; x < GRID_SIZE_X; x++) {
         for (let y = 0; y < GRID_SIZE_Y; y++) {
-          ctx.beginPath();
-          ctx.arc(x * cellW + cellW / 2, y * cellH + cellH / 2, 1, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillRect(x * cellW + cellW / 2 - 0.75, y * cellH + cellH / 2 - 0.75, 1.5, 1.5);
         }
       }
 
@@ -439,18 +458,25 @@ function CyberWorm({ onPlayNote }) {
       const fy = state.food.y * cellH + cellH / 2;
       const pulseSize = 4.5 + Math.sin(timestamp * 0.008) * 1.5;
 
-      ctx.fillStyle = 'rgba(244, 63, 94, 0.18)';
-      ctx.beginPath();
-      ctx.arc(fx, fy, pulseSize * 2, 0, Math.PI * 2);
-      ctx.fill();
+      if (!isMobile) {
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.18)';
+        ctx.beginPath();
+        ctx.arc(fx, fy, pulseSize * 2, 0, Math.PI * 2);
+        ctx.fill();
 
-      ctx.fillStyle = '#f43f5e';
-      ctx.shadowColor = '#f43f5e';
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      ctx.arc(fx, fy, pulseSize, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
+        ctx.fillStyle = '#f43f5e';
+        ctx.shadowColor = '#f43f5e';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(fx, fy, pulseSize, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      } else {
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(fx, fy, pulseSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Draw Snake
       state.snake.forEach((segment, idx) => {
@@ -460,7 +486,7 @@ function CyberWorm({ onPlayNote }) {
         const radius = Math.max(3, (cellW / 2 - 1) * (1 - (idx / state.snake.length) * 0.45));
 
         ctx.fillStyle = idx === 0 ? '#00f0ff' : `rgba(6, 182, 212, ${alpha})`;
-        if (idx === 0) {
+        if (idx === 0 && !isMobile) {
           ctx.shadowColor = '#00f0ff';
           ctx.shadowBlur = 10;
         }
@@ -529,6 +555,7 @@ function CyberWorm({ onPlayNote }) {
       </div>
 
       <div 
+        ref={canvasContainerRef}
         className="canvas-container relative flex-1"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -549,11 +576,9 @@ function CyberWorm({ onPlayNote }) {
         {isTouch && (
           <div className="mobile-dpad">
             <button className="dpad-btn up" onClick={() => handleDirectionChange({ x: 0, y: -1 })}>▲</button>
-            <div className="dpad-row">
-              <button className="dpad-btn left" onClick={() => handleDirectionChange({ x: -1, y: 0 })}>◀</button>
-              <button className="dpad-btn down" onClick={() => handleDirectionChange({ x: 0, y: 1 })}>▼</button>
-              <button className="dpad-btn right" onClick={() => handleDirectionChange({ x: 1, y: 0 })}>▶</button>
-            </div>
+            <button className="dpad-btn left" onClick={() => handleDirectionChange({ x: -1, y: 0 })}>◀</button>
+            <button className="dpad-btn down" onClick={() => handleDirectionChange({ x: 0, y: 1 })}>▼</button>
+            <button className="dpad-btn right" onClick={() => handleDirectionChange({ x: 1, y: 0 })}>▶</button>
           </div>
         )}
       </div>
