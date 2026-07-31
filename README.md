@@ -1,5 +1,7 @@
 # Ashmit Dev's Interactive Portfolio
 
+🔗 **Live Demo**: [https://devashmit.github.io/Dev-s-Portfolio/](https://devashmit.github.io/Dev-s-Portfolio/)
+
 A premium, highly interactive developer portfolio built with React, Vite, and cutting-edge web design aesthetics. Featuring custom physical interactions, a custom cursor, retro IDE controls, and a playful canvas-based AI companion.
 
 ## 🛠️ Technology Stack
