@@ -5,6 +5,7 @@ export default function CustomCursor() {
   const ringRef = useRef(null);
 
   useEffect(() => {
+    if (window.innerWidth <= 900) return;
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
