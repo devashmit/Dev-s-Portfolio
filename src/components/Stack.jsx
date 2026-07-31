@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import TextReveal from './TextReveal';
 import { stackItems, springtune, tigranzs } from '../data/content';
 import SystemConsole from './SystemConsole';
 
-function Keycap({ item, index, onHover, onLeave, isActive }) {
+function Keycap({ item, index, onHover, onLeave, isActive, isMobile }) {
   // Mechanical keypress spring configuration - using springtune preset
   const springConfig = springtune;
 
@@ -53,8 +53,8 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
       style={{
         '--key-color': item.color,
       }}
-      initial={{ opacity: 0, scale: 0.3, z: -100 }}
-      whileInView={{ 
+      initial={isMobile ? { opacity: 1, scale: 1, z: 0 } : { opacity: 0, scale: 0.3, z: -100 }}
+      whileInView={isMobile ? undefined : { 
         opacity: 1, 
         scale: 1, 
         z: 0,
@@ -65,7 +65,7 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
           delay: index * 0.03
         }
       }}
-      viewport={{ once: true }}
+      viewport={isMobile ? undefined : { once: true }}
     >
       {/* 3D Keycap Base (Clear Switch Housing) */}
       <div className="keycap-switch-base">
@@ -77,13 +77,13 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
       {/* 3D Keycap Body */}
       <motion.div 
         className="keycap-3d"
-        animate={isActive ? {
+        animate={isMobile ? {} : (isActive ? {
           y: 6, // Push keycap down
           scale: 0.96,
         } : {
           y: 0,
           scale: 1,
-        }}
+        })}
         transition={springConfig}
       >
         {/* Top Face */}
@@ -110,6 +110,16 @@ function Keycap({ item, index, onHover, onLeave, isActive }) {
 export default function Stack() {
   const [activeItem, setActiveItem] = useState(null);
   const leaveTimeout = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 900);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleHover = (item) => {
     if (leaveTimeout.current) clearTimeout(leaveTimeout.current);
@@ -237,6 +247,7 @@ export default function Stack() {
                     isActive={activeItem?.name === item.name}
                     onHover={handleHover}
                     onLeave={handleLeave}
+                    isMobile={isMobile}
                   />
                 ))}
               </div>
