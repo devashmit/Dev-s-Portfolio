@@ -3,8 +3,19 @@ import { useEffect, useRef, useState } from 'react';
 export default function CatCompanion() {
   const catRef = useRef(null);
   const toyRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
+    setIsMobile(window.innerWidth <= 900);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 900);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const cat = catRef.current;
     const toy = toyRef.current;
     if (!cat || !toy) return;
@@ -268,7 +279,7 @@ export default function CatCompanion() {
       cancelAnimationFrame(animationFrameId);
       clearTimeout(moveTimeout);
     };
-  }, []);
+  }, []);  if (isMobile) return null;
 
   return (
     <>
