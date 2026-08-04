@@ -8,6 +8,7 @@ import Hero from './components/Hero'
 import Projects from './components/Projects'
 import Stack from './components/Stack'
 import About from './components/About'
+import Philosophy from './components/Philosophy'
 import Contact from './components/Contact'
 import Preloader from './components/Preloader'
 import CustomCursor from './components/CustomCursor'
@@ -94,9 +95,10 @@ function App() {
 
         <main id="main">
           <Hero isRevealStarted={isRevealStarted} />
-          <ScrollReveal><About /></ScrollReveal>
+          <ScrollReveal><Philosophy /></ScrollReveal>
           <Projects />
           <ScrollReveal><Stack /></ScrollReveal>
+          <ScrollReveal><About /></ScrollReveal>
           <ScrollReveal><Contact /></ScrollReveal>
         </main>
 

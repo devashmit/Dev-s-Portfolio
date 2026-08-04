@@ -4344,6 +4344,184 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
 }
 
 /* =====================================================
+   MINIMAL ABOUT SECTION
+   ===================================================== */
+.minimal-about-section {
+  position: relative;
+  width: 100%;
+  padding: 4rem 2rem;
+  background: var(--bg);
+  z-index: 5;
+  color: #fff;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.minimal-about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.minimal-about-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 2rem;
+}
+
+.minimal-section-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #f9fafb;
+}
+
+.minimal-about-split {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.minimal-bio-heading {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 300;
+  line-height: 1.3;
+  color: #f3f4f6;
+  margin-bottom: 2.5rem;
+}
+
+.minimal-bio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #9ca3af;
+  margin-bottom: 3.5rem;
+  font-weight: 300;
+}
+
+.minimal-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #e8c96a;
+  text-decoration: none;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.minimal-contact-link:hover {
+  border-bottom-color: #e8c96a;
+  gap: 1.25rem;
+}
+
+.minimal-journey-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #6b7280;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+
+.minimal-journey-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.minimal-journey-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 1.25rem;
+  align-items: baseline;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.minimal-journey-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.minimal-journey-year {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  color: #e8c96a;
+}
+
+.minimal-journey-title {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: #f9fafb;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+.minimal-journey-desc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+/* Light Mode Overrides */
+:root.light-mode .minimal-about-section {
+  background: #ffffff;
+  color: #111827;
+  border-top-color: rgba(0, 0, 0, 0.05);
+}
+
+:root.light-mode .minimal-section-title,
+:root.light-mode .minimal-bio-heading,
+:root.light-mode .minimal-journey-title {
+  color: #111827;
+}
+
+:root.light-mode .minimal-bio-text {
+  color: #4b5563;
+}
+
+:root.light-mode .minimal-about-header,
+:root.light-mode .minimal-journey-item {
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .minimal-about-split {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .minimal-about-section {
+    padding: 3.5rem 1.5rem;
+  }
+  
+  .minimal-journey-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .minimal-journey-year {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* =====================================================
    REDESIGNED BENTO CONTACT HERO SECTION
    ===================================================== */
 #contact {
