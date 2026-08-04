@@ -158,10 +158,10 @@ export default function Stack() {
         {/* Telemetry Display Terminal - slides in from right */}
         <motion.div
           className="stack-telemetry-panel"
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ ...tigranzs, delay: 0.1 }}
+          initial={isMobile ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+          whileInView={isMobile ? undefined : { opacity: 1, x: 0 }}
+          viewport={isMobile ? undefined : { once: true, margin: '-80px' }}
+          transition={isMobile ? undefined : { ...tigranzs, delay: 0.1 }}
         >
           <div className="telemetry-chrome">
 
@@ -230,10 +230,10 @@ export default function Stack() {
         {/* 3D Isometric Mechanical Keyboard Deck */}
         <motion.div 
           className="keyboard-chassis-wrapper"
-          initial={{ opacity: 0, y: -40, scale: 0.9 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ ...tigranzs, delay: 0.2 }}
+          initial={isMobile ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -40, scale: 0.9 }}
+          whileInView={isMobile ? undefined : { opacity: 1, y: 0, scale: 1 }}
+          viewport={isMobile ? undefined : { once: true, margin: '-60px' }}
+          transition={isMobile ? undefined : { ...tigranzs, delay: 0.2 }}
         >
           <div className="keyboard-isometric-deck">
             {/* Base Bevel Frame */}
