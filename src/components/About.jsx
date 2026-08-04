@@ -215,7 +215,7 @@ export default function About() {
         >
           I build modern web applications that combine thoughtful design, scalable architecture, and intuitive user experiences.
           <br /><br />
-          From government transparency platforms to real-time communication systems, I enjoy solving complex problems through design and engineering.
+          I shape digital spaces where code meets curiosity—crafting clean, fluid interfaces that turn complex logic into poetry in motion.
         </motion.p>
 
         {/* Animated divider: expands left to right */}
