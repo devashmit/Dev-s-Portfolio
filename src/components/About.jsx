@@ -1,6 +1,5 @@
 import { motion, useInView } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
-import TextReveal from './TextReveal';
 
 // Custom CountUp Component that triggers when in view
 function CountUp({ value, duration = 1.5 }) {
@@ -46,12 +45,83 @@ function CountUp({ value, duration = 1.5 }) {
   );
 }
 
+// Scrambling interactive word component
+function InteractiveWord({ word, isHighlight = false }) {
+  const [displayWord, setDisplayWord] = useState(word);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const CHARS = '0123456789ABCDEF█░▒▓<>_[]{}';
+  
+  const scramble = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    
+    let iteration = 0;
+    const interval = setInterval(() => {
+      setDisplayWord(() => {
+        return word.split('').map((char, index) => {
+          if (char === ' ') return ' ';
+          if (index < iteration) return word[index];
+          return CHARS[Math.floor(Math.random() * CHARS.length)];
+        }).join('');
+      });
+      
+      iteration += 1 / 2;
+      if (iteration >= word.length) {
+        clearInterval(interval);
+        setDisplayWord(word);
+        setIsAnimating(false);
+      }
+    }, 30);
+  };
+
+  const handleClick = () => {
+    if (isHighlight) {
+      // Summons the cat's toy at the cursor position
+      const event = new CustomEvent('cat:summon_toy', { detail: { active: true } });
+      document.dispatchEvent(event);
+      
+      // Play high-tech audio chime
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.15);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } catch (err) {}
+    }
+    scramble();
+  };
+
+  return (
+    <motion.span
+      className={isHighlight ? "philosophy-highlight cursor-pointer" : "interactive-word cursor-default"}
+      onMouseEnter={scramble}
+      onClick={handleClick}
+      whileHover={{ 
+        scale: 1.05, 
+        color: isHighlight ? undefined : 'var(--accent)',
+        textShadow: isHighlight ? undefined : '0 0 15px rgba(6, 182, 212, 0.4)'
+      }}
+      style={{ display: 'inline-block', transition: 'color 0.25s' }}
+    >
+      {displayWord}
+    </motion.span>
+  );
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
     }
   }
 };
@@ -105,24 +175,32 @@ export default function About() {
           variants={containerVariants}
         >
           <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>BUILDING</motion.span>
+            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+              <InteractiveWord word="BUILDING" />
+            </motion.span>
           </div>
           <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>DIGITAL</motion.span>
+            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+              <InteractiveWord word="DIGITAL" />
+            </motion.span>
           </div>
           <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>EXPERIENCES</motion.span>
+            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+              <InteractiveWord word="EXPERIENCES" />
+            </motion.span>
           </div>
           <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>THAT</motion.span>
+            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+              <InteractiveWord word="THAT" />
+            </motion.span>
           </div>
           <div className="line-wrapper" style={{ overflow: 'hidden', paddingBottom: '0.1em' }}>
             <motion.span 
-              className="philosophy-highlight" 
+              className="philosophy-highlight-wrapper" 
               variants={highlightVariants}
               style={{ display: 'inline-block', transformOrigin: 'left' }}
             >
-              LAST
+              <InteractiveWord word="LAST" isHighlight={true} />
             </motion.span>
           </div>
         </motion.h2>
