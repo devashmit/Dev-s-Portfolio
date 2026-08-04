@@ -32,9 +32,9 @@ export default function Nav() {
       </button>
 
       <ul className="nav-links" role="list" id="nav-menu">
+        <li><Magnetic><a href="#about" onClick={() => setIsOpen(false)}>ABOUT</a></Magnetic></li>
         <li><Magnetic><a href="#projects" onClick={() => setIsOpen(false)}>WORK</a></Magnetic></li>
         <li><Magnetic><a href="#stack" onClick={() => setIsOpen(false)}>STACK</a></Magnetic></li>
-        <li><Magnetic><a href="#about" onClick={() => setIsOpen(false)}>ABOUT</a></Magnetic></li>
         <li><Magnetic><a href="#contact" onClick={() => setIsOpen(false)}>CONTACT</a></Magnetic></li>
       </ul>
 

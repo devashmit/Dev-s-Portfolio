@@ -4216,178 +4216,130 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
 /* =====================================================
    MINIMAL ABOUT SECTION
    ===================================================== */
-.minimal-about-section {
+/* =====================================================
+   EDITORIAL PHILOSOPHY SECTION
+   ===================================================== */
+.philosophy-section {
   position: relative;
   width: 100%;
-  padding: 4rem 2rem;
+  padding: 8rem min(5vw, 4rem) 6rem min(5vw, 4rem);
   background: var(--bg);
+  color: var(--ink);
+  border-top: 1px solid var(--border);
   z-index: 5;
-  color: #fff;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.minimal-about-container {
-  max-width: 1200px;
+.philosophy-container {
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
 }
 
-.minimal-about-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 2rem;
-}
-
-.minimal-section-title {
-  font-family: var(--font-display, sans-serif);
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  color: #f9fafb;
-}
-
-.minimal-about-split {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 1.25rem;
-  align-items: start;
-}
-
-.minimal-bio-heading {
-  font-family: var(--font-display, sans-serif);
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 300;
-  line-height: 1.3;
-  color: #f3f4f6;
+.philosophy-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.25em;
   margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.75rem;
+  width: 100%;
 }
 
-.minimal-bio-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: #9ca3af;
+.philosophy-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6.5vw, 5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  color: var(--ink);
+  letter-spacing: -0.02em;
   margin-bottom: 3.5rem;
+  text-transform: uppercase;
+}
+
+.philosophy-highlight {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.05em 0.2em;
+  border-radius: 4px;
+}
+
+.philosophy-bio {
+  font-family: var(--font-body);
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+  line-height: 1.7;
+  color: var(--ink-mid);
+  max-width: 800px;
+  margin-bottom: 4rem;
   font-weight: 300;
 }
 
-.minimal-contact-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #e8c96a;
-  text-decoration: none;
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid transparent;
-  transition: all 0.3s ease;
+.philosophy-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 4rem;
+  width: 100%;
 }
 
-.minimal-contact-link:hover {
-  border-bottom-color: #e8c96a;
-  gap: 1.25rem;
+.philosophy-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
 }
 
-.minimal-journey-label {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
-  color: #6b7280;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-bottom: 3rem;
-}
-
-.minimal-journey-list {
+.philosophy-stat-item {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 0.5rem;
 }
 
-.minimal-journey-item {
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 1.25rem;
-  align-items: baseline;
-  padding-bottom: 3rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+.philosophy-stat-item .stat-number {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1;
 }
 
-.minimal-journey-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
+.philosophy-stat-item .stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.12em;
+  line-height: 1.4;
 }
 
-.minimal-journey-year {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85rem;
-  color: #e8c96a;
+/* Light Mode Adaptability */
+:root.light-mode .philosophy-section {
+  background: var(--bg);
+  color: var(--ink);
 }
 
-.minimal-journey-title {
-  font-size: 1.25rem;
-  font-weight: 400;
-  color: #f9fafb;
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.01em;
+/* Responsive Rules */
+@media (max-width: 900px) {
+  .philosophy-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem 1.5rem;
+  }
 }
 
-.minimal-journey-desc {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #6b7280;
-}
-
-/* Light Mode Overrides */
-:root.light-mode .minimal-about-section {
-  background: #ffffff;
-  color: #111827;
-  border-top-color: rgba(0, 0, 0, 0.05);
-}
-
-:root.light-mode .minimal-section-title,
-:root.light-mode .minimal-bio-heading,
-:root.light-mode .minimal-journey-title {
-  color: #111827;
-}
-
-:root.light-mode .minimal-bio-text {
-  color: #4b5563;
-}
-
-:root.light-mode .minimal-about-header,
-:root.light-mode .minimal-journey-item {
-  border-bottom-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .minimal-about-split {
+@media (max-width: 600px) {
+  .philosophy-section {
+    padding: 5rem 1.5rem;
+  }
+  .philosophy-stats {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 2rem;
   }
-}
-
-@media (max-width: 768px) {
-  .minimal-about-section {
-    padding: 3.5rem 1.5rem;
+  .philosophy-title {
+    margin-bottom: 2.5rem;
   }
-  
-  .minimal-journey-item {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
+  .philosophy-bio {
+    margin-bottom: 3rem;
   }
-  
-  .minimal-journey-year {
-    margin-bottom: 0.5rem;
+  .philosophy-divider {
+    margin-bottom: 3rem;
   }
 }
 

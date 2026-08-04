@@ -94,9 +94,9 @@ function App() {
 
         <main id="main">
           <Hero isRevealStarted={isRevealStarted} />
+          <ScrollReveal><About /></ScrollReveal>
           <Projects />
           <ScrollReveal><Stack /></ScrollReveal>
-          <ScrollReveal><About /></ScrollReveal>
           <ScrollReveal><Contact /></ScrollReveal>
         </main>
 
