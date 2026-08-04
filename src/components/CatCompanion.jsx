@@ -279,7 +279,7 @@ export default function CatCompanion() {
       cancelAnimationFrame(animationFrameId);
       clearTimeout(moveTimeout);
     };
-  }, []);  if (isMobile) return null;
+  }, [isMobile]);  if (isMobile) return null;
 
   return (
     <>
