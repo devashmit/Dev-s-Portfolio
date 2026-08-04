@@ -433,9 +433,9 @@ ul,ol{list-style:none}
 .hero-role{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.5rem);font-weight:500;color:var(--ink-mid);line-height:1.2;opacity:0;transform:translateY(20px)}
 
 .hero-footer-row{display:flex;flex-direction:column;gap:1.25rem}
-.hero-tagline{font-size:clamp(1rem,1.5vw,1.25rem);max-width:600px;color:var(--ink-mid);opacity:0;transform:translateY(20px)}
+.hero-tagline{font-size:clamp(1rem,1.5vw,1.25rem);max-width:600px;color:var(--ink-mid);opacity:0}
 
-.hero-badges{display:flex;gap:0.6rem;flex-wrap:wrap;opacity:0;transform:translateY(20px)}
+.hero-badges{display:flex;gap:0.6rem;flex-wrap:wrap;opacity:0}
 .badge{padding:0.4rem 0.8rem;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;font-family:var(--font-mono);font-size:0.75rem;color:var(--ink)}
 
 .hero-cta{display:flex;gap:0.75rem;align-items:center;opacity:0;transform:translateY(20px)}
