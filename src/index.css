@@ -432,7 +432,7 @@ ul,ol{list-style:none}
 }
 .hero-role{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.5rem);font-weight:500;color:var(--ink-mid);line-height:1.2;opacity:0;transform:translateY(20px)}
 
-.hero-footer-row{display:flex;flex-direction:column;gap:1.25rem}
+.hero-footer-row{display:flex;flex-direction:column;gap:2rem}
 .hero-tagline{font-size:clamp(1rem,1.5vw,1.25rem);max-width:600px;color:var(--ink-mid);opacity:0}
 
 .hero-badges{display:flex;gap:0.6rem;flex-wrap:wrap;opacity:0}
@@ -1061,7 +1061,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   }
   .hero-content {
     margin-top: auto;
-    margin-bottom: 2vh;
+    margin-bottom: 4vh;
   }
   .hero-availability {
     margin-bottom: 0.5rem;
@@ -1070,7 +1070,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
     margin-bottom: 0.5rem;
   }
   .hero-footer-row {
-    gap: 0.75rem;
+    gap: 1.25rem;
   }
   .cinematic-project-content {
     gap: 1.2rem;
