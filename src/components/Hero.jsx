@@ -140,7 +140,7 @@ export default function Hero({ isRevealStarted = false }) {
         <div className="hero-footer-row">
           {/* Pure opacity - body copy, no drama */}
           <motion.p className="hero-tagline" variants={pureFade}>
-            I build responsive, scalable, and visually polished web applications using React, Node.js, Java, and modern frontend technologies.
+            Weaving logic out of silence, shaping digital horizons where syntax meets soul, and structure dissolves into art.
           </motion.p>
 
           {/* Spring pop - playful, interactive elements */}
