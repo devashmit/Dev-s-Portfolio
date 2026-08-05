@@ -127,16 +127,36 @@ const containerVariants = {
 };
 
 const lineVariants = {
-  hidden: { y: 40, opacity: 0 },
-  show: { y: 0, opacity: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+  hidden: { 
+    y: 80, 
+    rotateX: -75, 
+    skewY: 6, 
+    opacity: 0 
+  },
+  show: { 
+    y: 0, 
+    rotateX: 0, 
+    skewY: 0, 
+    opacity: 1, 
+    transition: { 
+      duration: 1.1, 
+      ease: [0.16, 1, 0.3, 1] 
+    } 
+  }
 };
 
 const highlightVariants = {
-  hidden: { scaleX: 0.7, opacity: 0 },
+  hidden: { scale: 0.3, rotate: -8, opacity: 0 },
   show: { 
-    scaleX: 1, 
+    scale: 1, 
+    rotate: 0, 
     opacity: 1,
-    transition: { type: 'spring', stiffness: 90, damping: 12, delay: 0.5 }
+    transition: { 
+      type: 'spring', 
+      stiffness: 110, 
+      damping: 10, 
+      delay: 0.6 
+    }
   }
 };
 
@@ -174,31 +194,31 @@ export default function Philosophy() {
           viewport={{ once: true, margin: "-100px" }}
           variants={containerVariants}
         >
-          <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+          <div className="line-wrapper" style={{ overflow: 'hidden', perspective: '1000px' }}>
+            <motion.span style={{ display: 'block', transformStyle: 'preserve-3d' }} variants={lineVariants}>
               <InteractiveWord word="BUILDING" />
             </motion.span>
           </div>
-          <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+          <div className="line-wrapper" style={{ overflow: 'hidden', perspective: '1000px' }}>
+            <motion.span style={{ display: 'block', transformStyle: 'preserve-3d' }} variants={lineVariants}>
               <InteractiveWord word="DIGITAL" />
             </motion.span>
           </div>
-          <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+          <div className="line-wrapper" style={{ overflow: 'hidden', perspective: '1000px' }}>
+            <motion.span style={{ display: 'block', transformStyle: 'preserve-3d' }} variants={lineVariants}>
               <InteractiveWord word="EXPERIENCES" />
             </motion.span>
           </div>
-          <div className="line-wrapper" style={{ overflow: 'hidden' }}>
-            <motion.span style={{ display: 'block' }} variants={lineVariants}>
+          <div className="line-wrapper" style={{ overflow: 'hidden', perspective: '1000px' }}>
+            <motion.span style={{ display: 'block', transformStyle: 'preserve-3d' }} variants={lineVariants}>
               <InteractiveWord word="THAT" />
             </motion.span>
           </div>
-          <div className="line-wrapper" style={{ overflow: 'hidden', paddingBottom: '0.1em' }}>
+          <div className="line-wrapper" style={{ overflow: 'hidden', paddingBottom: '0.1em', perspective: '1000px' }}>
             <motion.span 
               className="philosophy-highlight-wrapper" 
               variants={highlightVariants}
-              style={{ display: 'inline-block', transformOrigin: 'left' }}
+              style={{ display: 'inline-block', transformStyle: 'preserve-3d' }}
             >
               <InteractiveWord word="LAST" isHighlight={true} />
             </motion.span>
@@ -215,7 +235,7 @@ export default function Philosophy() {
         >
           I build modern web applications that combine thoughtful design, scalable architecture, and intuitive user experiences.
           <br /><br />
-          I shape digital spaces where code meets curiosity—crafting clean, fluid interfaces that turn complex logic into poetry in motion.
+          I shape digital spaces where code meets curiosity, crafting clean, fluid interfaces that turn complex logic into poetry in motion.
         </motion.p>
 
         {/* Animated divider: expands left to right */}
