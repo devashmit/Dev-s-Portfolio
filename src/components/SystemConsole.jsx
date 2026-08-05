@@ -2,110 +2,98 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Terminal, MapPin, Cpu, Clock, GitBranch, Shield, Play, RotateCw, CheckCircle2, AlertTriangle, RefreshCw, Zap, Award } from 'lucide-react';
 
-const appRouterCode = [
-  { text: "const", type: "keyword" },
-  { text: " developerProfile ", type: "variable" },
-  { text: "= {", type: "punctuation" },
-  { text: "\n  engineer: ", type: "property" },
-  { text: '"Ashmit Dev"', type: "string" },
-  { text: ",\n  specialties: ", type: "property" },
-  { text: '["Full Stack", "Systems Architecture"]', type: "string" },
-  { text: ",\n  environment: ", type: "property" },
-  { text: '"Secure Core Terminal"', type: "string" },
-  { text: ",\n  system_status: ", type: "property" },
-  { text: '"Production Ready"', type: "string" },
-  { text: ",\n  latency: ", type: "property" },
-  { text: '"0.08ms (Optimized)"', type: "string" },
-  { text: ",\n  active_tech_stack: [", type: "property" },
-  { text: '"React"', type: "string" },
-  { text: ", ", type: "punctuation" },
-  { text: '"TypeScript"', type: "string" },
-  { text: ", ", type: "punctuation" },
-  { text: '"Node.js"', type: "string" },
-  { text: ", ", type: "punctuation" },
-  { text: '"Java"', type: "string" },
-  { text: "],\n", type: "punctuation" },
-  { text: "  coordinates: ", type: "property" },
-  { text: '"27.7172 N, 85.3240 E"\n', type: "string" },
-  { text: "};", type: "punctuation" }
+const catCompanionCode = [
+  { text: "import ", type: "keyword" },
+  { text: "{ useEffect, useRef } ", type: "variable" },
+  { text: "from ", type: "keyword" },
+  { text: "'react';\n\n", type: "string" },
+  { text: "export default function ", type: "keyword" },
+  { text: "CatCompanion", type: "variable" },
+  { text: "() {\n", type: "punctuation" },
+  { text: "  const ", type: "keyword" },
+  { text: "catRef ", type: "variable" },
+  { text: "= useRef(null);\n", type: "punctuation" },
+  { text: "  const ", type: "keyword" },
+  { text: "toyRef ", type: "variable" },
+  { text: "= useRef(null);\n\n", type: "punctuation" },
+  { text: "  // Listen to tactical toy summon events\n", type: "punctuation" },
+  { text: "  useEffect(() => {\n", type: "keyword" },
+  { text: "    const ", type: "keyword" },
+  { text: "handleSummon ", type: "variable" },
+  { text: " = (e) => {\n", type: "punctuation" },
+  { text: "      const ", type: "keyword" },
+  { text: "{ active } ", type: "variable" },
+  { text: "= e.detail;\n", type: "punctuation" },
+  { text: "      summonToy(active);\n", type: "variable" },
+  { text: "    };\n", type: "punctuation" },
+  { text: "    document.addEventListener(", type: "punctuation" },
+  { text: "'cat:summon_toy'", type: "string" },
+  { text: ", handleSummon);\n", type: "punctuation" },
+  { text: "    return ", type: "keyword" },
+  { text: "() => document.removeEventListener(", type: "punctuation" },
+  { text: "'cat:summon_toy'", type: "string" },
+  { text: ", handleSummon);\n", type: "punctuation" },
+  { text: "  }, []);\n", type: "punctuation" },
+  { text: "}", type: "punctuation" }
 ];
 
-const dataMeshCode = [
+const physicsEngineCode = [
   { text: "import", type: "keyword" },
-  { text: " time, random\n\n", type: "variable" },
+  { text: " math\n\n", type: "variable" },
   { text: "def", type: "keyword" },
-  { text: " run_pipeline", type: "variable" },
-  { text: "():", type: "punctuation" },
-  { text: "\n    print", type: "keyword" },
-  { text: "(", type: "punctuation" },
-  { text: '"Initializing data mesh scan..."', type: "string" },
-  { text: ")\n    time.sleep(", type: "punctuation" },
-  { text: "0.25", type: "property" },
-  { text: ")\n    ", type: "punctuation" },
-  { text: "active_nodes", type: "variable" },
-  { text: " = [", type: "punctuation" },
-  { text: '"KTM_04"', type: "string" },
-  { text: ", ", type: "punctuation" },
-  { text: '"SYS_01"', type: "string" },
-  { text: "]\n    ", type: "punctuation" },
-  { text: "for", type: "keyword" },
-  { text: " n ", type: "variable" },
-  { text: "in", type: "keyword" },
-  { text: " active_nodes:", type: "punctuation" },
-  { text: "\n        print", type: "keyword" },
-  { text: "(", type: "punctuation" },
-  { text: 'f"Connecting -> {n}... STATUS: OK"', type: "string" },
-  { text: ")\n\n", type: "punctuation" },
-  { text: "run_pipeline", type: "variable" },
-  { text: "()", type: "punctuation" }
+  { text: " calculate_elastic_force", type: "variable" },
+  { text: "(displacement, k=0.15, damping=0.08):\n", type: "punctuation" },
+  { text: "    \"\"\"Simulates responsive drag spring constraints for UI elements\"\"\"\n", type: "string" },
+  { text: "    rest_length = ", type: "variable" },
+  { text: "0.0", type: "property" },
+  { text: "\n    force = -k * (displacement - rest_length)\n", type: "variable" },
+  { text: "    damping_force = -damping * force\n", type: "variable" },
+  { text: "    return", type: "keyword" },
+  { text: " math.round(force + damping_force, ", type: "punctuation" },
+  { text: "4", type: "property" },
+  { text: ")\n", type: "punctuation" }
 ];
 
 const secureUplinkCode = [
   { text: "#!/bin/bash\n\n", type: "punctuation" },
   { text: "echo", type: "keyword" },
   { text: " ", type: "punctuation" },
-  { text: '"Establishing secure tactical uplink..."', type: "string" },
+  { text: '"[INIT] Deploying custom web application to Vercel Edge Server..."', type: "string" },
   { text: "\n", type: "punctuation" },
-  { text: "export", type: "keyword" },
-  { text: " UPLINK_LEVEL=", type: "variable" },
-  { text: "100", type: "property" },
-  { text: "\n", type: "punctuation" },
-  { text: "export", type: "keyword" },
-  { text: " SUMMON_TOY=", type: "variable" },
-  { text: "1", type: "property" },
-  { text: "\n\n", type: "punctuation" },
-  { text: "# SUMMONS THE CAT COMPANION BALL/RAT TOY!\n", type: "punctuation" },
+  { text: "npm", type: "keyword" },
+  { text: " run build --minify\n", type: "variable" },
   { text: "echo", type: "keyword" },
   { text: " ", type: "punctuation" },
-  { text: '"[SUCCESS] TACTICAL TOY SUMMON DEPLOYED!"', type: "string" },
+  { text: '"[SYSTEM] Syncing Kathmandu core node KTM_04..."', type: "string" },
   { text: "\n", type: "punctuation" },
+  { text: "curl", type: "keyword" },
+  { text: " -H ", type: "punctuation" },
+  { text: '"Authorization: Bearer KTM_SECURE"', type: "string" },
+  { text: " -X POST https://api.ashmit.dev/v1/deploy\n", type: "string" },
   { text: "echo", type: "keyword" },
   { text: " ", type: "punctuation" },
-  { text: '"--> Toy spawned! Click anywhere to make cat chase it!"', type: "string" }
+  { text: '"[SUCCESS] Core node deployed with 0.08ms latency."', type: "string" }
 ];
 
-const developerProfileCode = [
+const systemConfigCode = [
   { text: "{\n", type: "punctuation" },
-  { text: '  "name"', type: "property" },
+  { text: '  "workstation"', type: "property" },
   { text: ": ", type: "punctuation" },
-  { text: '"Abhishek Dev"', type: "string" },
+  { text: '"core-node-04"', type: "string" },
   { text: ",\n", type: "punctuation" },
-  { text: '  "alias"', type: "property" },
+  { text: '  "engineer"', type: "property" },
   { text: ": ", type: "punctuation" },
   { text: '"Ashmit Dev"', type: "string" },
   { text: ",\n", type: "punctuation" },
-  { text: '  "location"', type: "property" },
+  { text: '  "coordinates"', type: "property" },
   { text: ": ", type: "punctuation" },
-  { text: '"Kathmandu, Nepal"', type: "string" },
+  { text: '"27.7172 N, 85.3240 E"', type: "string" },
   { text: ",\n", type: "punctuation" },
-  { text: '  "security_pass"', type: "property" },
-  { text: ": ", type: "punctuation" },
-  { text: "true", type: "keyword" },
-  { text: ",\n", type: "punctuation" },
-  { text: '  "firewall"', type: "property" },
-  { text: ": ", type: "punctuation" },
-  { text: '"ACTIVE_SECURE"', type: "string" },
-  { text: "\n}", type: "punctuation" }
+  { text: '  "features"', type: "property" },
+  { text: ": {\n", type: "punctuation" },
+  { text: '    "cat_companion": "active",\n', type: "string" },
+  { text: '    "custom_synth": true\n', type: "string" },
+  { text: "  }\n}", type: "punctuation" }
 ];
 
 function CyberWorm({ onPlayNote }) {
@@ -589,7 +577,7 @@ function CyberWorm({ onPlayNote }) {
 
 
 export default function SystemConsole() {
-  const [activeFile, setActiveFile] = useState('app-router.ts');
+  const [activeFile, setActiveFile] = useState('CatCompanion.jsx');
   const [typedCode, setTypedCode] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [diagnosticMode, setDiagnosticMode] = useState(false);
@@ -669,36 +657,36 @@ export default function SystemConsole() {
   };
 
   const filesMap = useMemo(() => ({
-    'app-router.ts': {
-      code: appRouterCode,
-      linesCount: 11,
-      lang: 'TS',
+    'CatCompanion.jsx': {
+      code: catCompanionCode,
+      linesCount: 15,
+      lang: 'JSX',
       color: 'var(--accent)',
       ping: '12ms',
       node: 'KTM_04',
       status: 'ONLINE'
     },
-    'data-mesh.py': {
-      code: dataMeshCode,
-      linesCount: 10,
+    'physics-engine.py': {
+      code: physicsEngineCode,
+      linesCount: 11,
       lang: 'PY',
       color: '#306998',
       ping: '18ms',
       node: 'SYS_01',
       status: 'ONLINE'
     },
-    'secure-uplink.sh': {
+    'summon-toy.sh': {
       code: secureUplinkCode,
-      linesCount: 9,
+      linesCount: 10,
       lang: 'SH',
       color: '#4EAA25',
       ping: '8ms',
       node: 'UPLINK_09',
       status: 'ACTIVE_TOY'
     },
-    'developer-profile.json': {
-      code: developerProfileCode,
-      linesCount: 8,
+    'system-config.json': {
+      code: systemConfigCode,
+      linesCount: 12,
       lang: 'JSON',
       color: 'var(--accent)',
       ping: '4ms',
@@ -718,8 +706,8 @@ export default function SystemConsole() {
 
   // Trigger typing simulation when active file changes
   useEffect(() => {
-    // Dispatch Toy Summon Event to CatCompanion if secure-uplink is loaded!
-    if (activeFile === 'secure-uplink.sh') {
+    // Dispatch Toy Summon Event to CatCompanion if summon-toy is loaded!
+    if (activeFile === 'summon-toy.sh') {
       const event = new CustomEvent('cat:summon_toy', { detail: { active: true } });
       document.dispatchEvent(event);
     }
@@ -899,8 +887,8 @@ export default function SystemConsole() {
               {Object.keys(filesMap).map((fileName) => {
                 const fileInfo = filesMap[fileName];
                 const isActive = activeFile === fileName;
-                // Only render active tab and profile tab to simulate open editor buffers
-                if (fileName !== 'developer-profile.json' && fileName !== activeFile) return null;
+                // Only render active tab and config tab to simulate open editor buffers
+                if (fileName !== 'system-config.json' && fileName !== activeFile) return null;
                 return (
                   <div 
                     key={fileName}
