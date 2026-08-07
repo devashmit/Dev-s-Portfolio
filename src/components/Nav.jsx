@@ -17,7 +17,7 @@ export default function Nav() {
   }, []);
 
   return (
-    <nav id="nav" aria-label="Main navigation" className={isOpen ? 'nav-open' : ''} style={{ transform: 'translateY(0)' }}>
+    <nav id="nav" aria-label="Main navigation" className={isOpen ? 'nav-open' : ''}>
       <Magnetic>
         <a className="nav-logo" href="#hero">ASHMIT<span className="nav-dot">·</span>DEV</a>
       </Magnetic>
