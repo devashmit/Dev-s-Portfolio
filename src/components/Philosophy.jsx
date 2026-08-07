@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 function CountUp({ value, duration = 1.5 }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: typeof window !== 'undefined' && window.innerWidth <= 768 ? "-20px" : "-100px" });
 
   useEffect(() => {
     if (!isInView) return;
