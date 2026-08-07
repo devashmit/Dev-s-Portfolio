@@ -997,7 +997,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   body{cursor:auto}
   #cursor-dot,#cursor-ring{display:none}
   
-  section:not(#hero){padding:2rem 1rem}
+  section:not(#hero){padding:5.5rem 1rem 2.5rem}
   .bento-card{padding:1.25rem}
   
   .hero-cta {
@@ -1511,6 +1511,8 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   border-radius: 6px;
   border-bottom: 1.5px solid rgba(250, 204, 21, 0.3);
   transition: background 0.3s ease;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .console-spotlight-sub:hover .text-highlight {
@@ -1576,6 +1578,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   .console-spotlight-sub {
     font-size: 0.95rem;
     padding: 0 0.5rem;
+    line-height: 1.8;
   }
 }
 
@@ -1638,7 +1641,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
 }
 
 @media(max-width: 900px) {
-  .ide-body { grid-template-columns: 1fr; }
+  .ide-body { grid-template-columns: minmax(0, 1fr); }
   .ide-sidebar { display: none !important; }
 }
 
@@ -1704,6 +1707,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   display: flex;
   flex-direction: column;
   background: var(--bg);
+  min-width: 0;
 }
 
 .ide-tabs {
@@ -1735,6 +1739,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
   flex: 1;
   padding: 1.5rem 0;
   overflow-y: auto;
+  min-width: 0;
 }
 
 .ide-line-numbers {
@@ -1750,6 +1755,7 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
 .ide-code {
   flex: 1;
   padding-right: 1.5rem;
+  min-width: 0;
 }
 
 .ide-code pre {
