@@ -530,8 +530,8 @@ section:not(#hero){padding:min(6vh,3.5rem) min(5vw,4rem)}
   display: flex;
   flex-wrap: nowrap;
   will-change: transform;
-  padding-left: 6%;
-  padding-right: 20%;
+  padding-left: 5vw;
+  padding-right: 5vw;
   align-items: center;
   height: 100%;
 }
@@ -1123,6 +1123,8 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
     font-size: 0.85rem;
   }
 }
+
+
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
