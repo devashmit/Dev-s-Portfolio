@@ -5003,16 +5003,11 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
     min-height: auto;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    gap: 0.75rem;
     border: none;
     background: transparent;
     padding: 0;
     box-shadow: none;
-  }
-  @media (max-width: 480px) {
-    .contact-os-workspace {
-      grid-template-columns: 1fr;
-    }
   }
   .os-window-card {
     position: relative !important;
@@ -5020,6 +5015,27 @@ footer{padding: 1.5rem 1.25rem;text-align:center;border-top:1px solid var(--bord
     left: 0 !important;
     top: 0 !important;
     transform: none !important;
+  }
+  .os-window-body {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+  .os-window-details h3 {
+    font-size: 1.1rem;
+  }
+  .os-window-details p {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+  .os-window-action {
+    font-size: 0.6rem;
+    padding-top: 0.6rem;
+  }
+  .os-window-bar {
+    padding: 0.4rem 0.6rem;
+  }
+  .os-window-title {
+    font-size: 0.55rem;
   }
   .contact-side-vertical-bar {
     flex-direction: row;
