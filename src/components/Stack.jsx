@@ -147,7 +147,7 @@ export default function Stack() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          02 / THE ARSENAL
+          03 / THE ARSENAL
         </motion.p>
         <TextReveal text="Tech Stack" className="section-title" tag="h2" delay={0.1} />
         <p className="keyboard-hint">(hint: hover over a key to type)</p>
